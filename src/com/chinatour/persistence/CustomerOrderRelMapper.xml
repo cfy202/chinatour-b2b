@@ -1,0 +1,890 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.CustomerOrderRelMapper">
+	<resultMap id="BaseResultMap" type="com.chinatour.entity.CustomerOrderRel">
+		<id column="CustomerOrderRelId" property="id" jdbcType="VARCHAR" />
+		<result column="CustomerId" property="customerId" jdbcType="VARCHAR" />
+		<result column="OrderId" property="orderId" jdbcType="VARCHAR" />
+		<result column="ContactFlag" property="contactFlag" jdbcType="INTEGER" />
+		<result column="CustomerOrderNo" property="customerOrderNo"
+			jdbcType="INTEGER" />
+		<result column="CustomerTourNo" property="customerTourNo"
+			jdbcType="INTEGER" />
+		<result column="SameComeIn" property="sameComeIn" jdbcType="VARCHAR" />
+		<result column="RoomNumber" property="roomNumber" jdbcType="INTEGER" />
+		<result column="GuestRoomType" property="guestRoomType"
+			jdbcType="VARCHAR" />
+		<result column="RoomIsFull" property="roomIsFull" jdbcType="INTEGER"/>
+		<result column="TicketType" property="ticketType" jdbcType="VARCHAR"/>  	
+		<result column="IsDel" property="isDel" jdbcType="INTEGER" />
+		<result column="OrdersTotalId" property="ordersTotalId" jdbcType="VARCHAR" />
+		<result column="VoucherStr" property="voucherStr" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<resultMap id="resultWithCustomer" type="com.chinatour.entity.CustomerOrderRel" extends="BaseResultMap">
+		<result column="CoIsDel" property="isDel" jdbcType="INTEGER" />
+		<association property="customer" javaType="com.chinatour.entity.Customer" resultMap="customerMapper" />  
+	</resultMap>
+	
+	<resultMap id="customerMapper" type="com.chinatour.entity.Customer" extends="com.chinatour.persistence.CustomerMapper.BaseResultMap">
+		<result column="CIsDel" property="isDel" jdbcType="INTEGER" />
+	</resultMap>
+	
+	<resultMap id="resultWithOrder" type="com.chinatour.entity.CustomerOrderRel" extends="BaseResultMap">
+		<result column="corOrderId" property="orderId" jdbcType="VARCHAR"/>
+		<result column="corOrdersTotalId" property="ordersTotalId" jdbcType="VARCHAR"/>
+		<association property="order" javaType="com.chinatour.entity.Order" resultMap="orderMapper"/>
+	</resultMap>
+	
+	<resultMap id="orderMapper" type="com.chinatour.entity.Order" extends="com.chinatour.persistence.OrderMapper.BaseResultMap">
+		<result column="oOrderId" property="id" jdbcType="VARCHAR"/>
+		<result column="oOrdersTotalId" property="ordersTotalId" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<resultMap id="resultWithCustomerFlight" type="com.chinatour.entity.CustomerOrderRel" extends="BaseResultMap">
+		<collection property="customerFlightList" javaType="ArrayList" ofType="CustomerFlight" column="CustomerOrderRelId" select="com.chinatour.persistence.CustomerFlightMapper.findByCustomerOrderRelId" />
+	</resultMap>
+
+	<resultMap id="ResultForCustomerFlightMap" type="com.chinatour.entity.CustomerOrderRel" extends="BaseResultMap">
+		<association property="customer" column="customerId" select="com.chinatour.persistence.CustomerMapper.findById" />
+		<collection property="customerFlightList" select="com.chinatour.persistence.CustomerFlightMapper.findByCustomerOrderRelId" ofType="com.chinatour.entity.CustomerFlight" javaType="java.util.List"
+				column="CustomerOrderRelId"/>
+	</resultMap>
+	
+	<resultMap id="resultForCustomerMap" type="com.chinatour.entity.CustomerOrderRel" extends="BaseResultMap">
+		<association property="customer" column="customerId" select="com.chinatour.persistence.CustomerMapper.findById" />
+	</resultMap>
+	
+	<sql id="Base_Column_List">
+		CustomerOrderRelId, CustomerId, OrderId, ContactFlag,
+		CustomerOrderNo, CustomerTourNo,
+		SameComeIn,RoomNumber,RoomIsFull,TicketType,
+		GuestRoomType, IsDel,OrdersTotalId,VoucherStr
+	</sql>
+	
+	<sql id="Column_With_Customer">
+		CustomerOrderRelId, cor.CustomerId CustomerId, OrderId, ContactFlag,
+		CustomerOrderNo, CustomerTourNo,
+		SameComeIn, RoomNumber,RoomIsFull,TicketType,
+		GuestRoomType, cor.IsDel CoIsDel,OrdersTotalId,
+		CustomerCode, LastName, FirstName, MiddleName,
+		DateOfBirth, Sex, MemoOfCustomer,VoucherStr,
+		NationalityOfPassport, PassportNo,
+		ExpireDateOfPassport, StreetAddress, City, Tel,Residency,
+		Mobile, Email, Zip, LanguageId, StateId, 
+		CountryId, CustomerSource, c.IsDel CIsDel, Advertised,Type,
+		Planticket, CreateDate, ModifyDate, OtherInfo, PayHistoryInfo
+	</sql>
+	
+	<sql id="Column_With_Order">
+		CustomerOrderRelId, CustomerId, cor.OrderId AS corOrderId, ContactFlag,
+		CustomerOrderNo, CustomerTourNo,
+		SameComeIn, RoomNumber,RoomIsFull,TicketType,
+		GuestRoomType, IsDel,cor.OrdersTotalId AS corOrdersTotalId,
+		o.OrderId AS oOrderId, OrderNo, OrderNoIn, TotalPeople, CommonTourFee,
+		Tax, State, UserId,VoucherStr,
+		TourTypeId, Contact,
+		TourCode, TourId, CreateTime,
+		PeerId,
+		OrderType, OrderTourType, ArriveDate, FlightPnr,
+		NonGroupType,
+		PeerUserId,
+		NoticeState, Brand, IsSelfOrganize, Rate,
+		PayState, WarnState, PeerState, ReviewState, CostState,
+		ModifyDate,o.OrdersTotalId AS oOrdersTotalId,DeptId,CheckTime,UserName,Planticket,OtherInfo
+	</sql>
+
+	<sql id="findForPage_sql">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM customer_order_rel
+		<where>
+			<if test="record.id != null">
+				CustomerOrderRelId = #{record.id,jdbcType=VARCHAR}
+			</if>
+			<if test="record.customerId != null">
+				AND CustomerId = #{record.customerId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.orderId != null">
+				AND OrderId = #{record.orderId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.contactFlag != null">
+				AND ContactFlag = #{record.contactFlag,jdbcType=INTEGER}
+			</if>
+			<if test="record.customerOrderNo != null">
+				AND CustomerOrderNo = #{record.customerOrderNo,jdbcType=INTEGER}
+			</if>
+			<if test="record.customerTourNo != null">
+				AND CustomerTourNo = #{record.customerTourNo,jdbcType=INTEGER}
+			</if>
+			<if test="record.sameComeIn != null">
+				AND SameComeIn = #{record.sameComeIn,jdbcType=VARCHAR}
+			</if>
+			<if test="record.RoomNumber != null">
+				AND RoomNumber = #{record.RoomNumber,jdbcType=INTEGER}
+			</if>
+			<if test="record.guestRoomType != null">
+				AND GuestRoomType = #{record.guestRoomType,jdbcType=VARCHAR}
+			</if>
+			<if test="record.roomIsFull != null">
+				AND RoomIsFull = #{record.roomIsFull,jdbcType=INTEGER}
+			</if>
+			<if test="record.ticketType != null">
+				AND TicketType = #{record.ticketType,jdbcType=VARCHAR}
+			</if>
+			<if test="record.voucherStr != null">
+				AND VoucherStr = #{record.voucherStr,jdbcType=VARCHAR}
+			</if>
+			<if test="record.ordersTotalId != null">
+				AND OrdersTotalId = #{record.ordersTotalId,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</sql>
+
+	<select id="findForPage" resultMap="BaseResultMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findForPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+
+	<select id="find" resultMap="BaseResultMap"
+		parameterType="com.chinatour.entity.CustomerOrderRel">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM customer_order_rel
+		<where>
+			<if test="id != null">
+				AND CustomerOrderRelId = #{id,jdbcType=VARCHAR}
+			</if>
+			<if test="customerId != null">
+				AND CustomerId = #{customerId,jdbcType=VARCHAR}
+			</if>
+			<if test="orderId != null">
+				AND OrderId = #{orderId,jdbcType=VARCHAR}
+			</if>
+			<if test="contactFlag != null">
+				AND ContactFlag = #{contactFlag,jdbcType=INTEGER}
+			</if>
+			<if test="customerOrderNo != null">
+				AND CustomerOrderNo = #{customerOrderNo,jdbcType=INTEGER}
+			</if>
+			<if test="customerTourNo != null">
+				AND CustomerTourNo = #{customerTourNo,jdbcType=INTEGER}
+			</if>
+			<if test="sameComeIn != null">
+				AND SameComeIn = #{sameComeIn,jdbcType=VARCHAR}
+			</if>
+			<if test="roomNumber != null">
+				AND RoomNumber = #{RoomNumber,jdbcType=INTEGER}
+			</if>
+			<if test="guestRoomType != null">
+				AND GuestRoomType = #{guestRoomType,jdbcType=VARCHAR}
+			</if>
+			<if test="roomIsFull != null">
+				AND RoomIsFull = #{roomIsFull,jdbcType=INTEGER}
+			</if>
+			<if test="ticketType != null">
+				AND TicketType = #{ticketType,jdbcType=VARCHAR}
+			</if>
+			<if test="voucherStr != null">
+				AND VoucherStr = #{voucherStr,jdbcType=VARCHAR}
+			</if>
+			<if test="ordersTotalId != null">
+				AND OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+
+	<select id="findAll" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM customer_order_rel
+	</select>
+
+	<select id="findWithCustomerFlightByOrderIdAndOrdersTotalId" resultMap="resultWithCustomerFlight">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM customer_order_rel
+		WHERE OrderId = #{orderId,jdbcType=VARCHAR}
+		AND OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+		AND IsDel IN (0,3)
+		ORDER BY CustomerTourNo,CustomerOrderNo
+	</select>
+	
+	<select id="findByOrderId" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM customer_order_rel
+		WHERE OrderId = #{orderId,jdbcType=VARCHAR}
+		AND OrdersTotalId = (
+			SELECT OrdersTotalId FROM orders WHERE OrderId = #{orderId,jdbcType=VARCHAR}
+		)
+		ORDER BY CustomerTourNo,CustomerOrderNo
+	</select>
+	
+	<select id="findWithCustomerById" resultMap="resultWithCustomer" parameterType="java.lang.String">
+		SELECT
+		<include refid="Column_With_Customer" />
+		FROM customer_order_rel cor JOIN Customer c
+		ON cor.customerId = c.CustomerId
+		AND cor.CustomerOrderRelId = #{id,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="findOneIdByOrdersTotalId" resultType="java.lang.String" parameterType="java.lang.String">
+		SELECT MAX(CustomerOrderRelId) FROM customer_order_rel WHERE OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="findWithCustomerByOrdersTotalId" resultMap="resultWithCustomer" parameterType="java.lang.String">
+		SELECT
+		<include refid="Column_With_Customer" />
+		FROM customer_order_rel cor JOIN Customer c
+		ON cor.customerId = c.CustomerId
+		AND cor.OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+		GROUP BY cor.CustomerId
+		ORDER BY CustomerOrderNo
+	</select>
+	<select id="findByOrdersTotalIdRoomNum" resultMap="resultWithCustomer" parameterType="java.lang.String">
+		SELECT
+		<include refid="Column_With_Customer" />
+		FROM customer_order_rel cor JOIN Customer c
+		ON cor.customerId = c.CustomerId
+		AND cor.OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+		GROUP BY cor.CustomerId
+		ORDER BY RoomNumber
+	</select>
+	
+	<select id="findByOrdersTotalIdOrderNo" resultMap="resultWithCustomer" parameterType="java.lang.String">
+		SELECT
+		<include refid="Column_With_Customer" />
+		FROM customer_order_rel cor JOIN Customer c
+		ON cor.customerId = c.CustomerId
+		AND cor.OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+		GROUP BY cor.CustomerId
+		ORDER BY cor.customerOrderNo
+	</select>
+	
+	<select id="findBySameProductOrdersTotalId" resultMap="BaseResultMap" parameterType="java.lang.String">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM customer_order_rel
+		WHERE OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+		AND OrderId = (
+			SELECT MAX(OrderId)
+			FROM customer_order_rel
+			WHERE OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+		)
+	</select>
+
+	<select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM customer_order_rel
+		WHERE CustomerOrderRelId = #{id,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="findMaxRoomNumberByOrdersTotalId" resultType="java.lang.Integer" parameterType="java.lang.String">
+		SELECT IFNULL(MAX(RoomNumber),0)
+		FROM customer_order_rel
+		WHERE OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="findExistOrdersByCustomerIdAndOrdersTotalId" resultMap="resultWithOrder">
+		SELECT 		
+		<include refid="Column_With_Order" />
+		FROM customer_order_rel cor, orders o 
+		WHERE cor.OrderId = o.OrderId 
+		AND o.State IN (0,2,3,7)
+		AND cor.CustomerId = #{customerId,jdbcType=VARCHAR} 
+		AND cor.OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+	</select>
+
+	<select id="findAllOrdersByCustomerIdAndOrdersTotalId" resultMap="resultWithOrder">
+		SELECT 		
+		<include refid="Column_With_Order" />
+		FROM customer_order_rel cor, orders o 
+		WHERE cor.OrderId = o.OrderId 
+		AND cor.CustomerId = #{customerId,jdbcType=VARCHAR} 
+		AND cor.OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+	</select>
+	
+	<!-- <select id="findNotDelCustomerByOrderId" resultMap="resultWithCustomer">
+		SELECT
+		CustomerOrderRelId, cor.CustomerId CustomerId, OrderId, ContactFlag,
+		CustomerOrderNo, CustomerTourNo,
+		SameComeIn, RoomNumber,RoomIsFull,TicketType,
+		GuestRoomType, cor.IsDel CoIsDel,OrdersTotalId,
+		CustomerCode, LastName, FirstName, MiddleName,
+		DateOfBirth, Sex, MemoOfCustomer,
+		NationalityOfPassport, PassportNo,
+		ExpireDateOfPassport, StreetAddress, City, Tel,
+		Mobile, Email, Zip, lg.language AS LanguageId, StateId, 
+		CountryId, CustomerSource, c.IsDel CIsDel, Advertised,
+		Planticket, CreateDate, ModifyDate, OtherInfo, PayHistoryInfo
+		FROM 
+		customer_order_rel cor 
+		JOIN Customer c ON cor.customerId = c.CustomerId
+		JOIN Language lg ON c.languageId = lg.languageId
+		AND cor.OrderId = #{orderId,jdbcType=VARCHAR}
+		AND cor.IsDel IN (0,3)
+		GROUP BY cor.CustomerId
+		ORDER BY CustomerOrderNo
+	</select> -->
+	
+	<select id="findNotDelCustomerByOrderId" resultMap="resultForCustomerMap">
+		SELECT
+			<include refid="Base_Column_List" />
+		FROM 
+		customer_order_rel 
+		where OrderId = #{orderId,jdbcType=VARCHAR}
+		AND IsDel IN (0,3)
+		ORDER BY CustomerOrderNo
+	</select>
+	<delete id="removeById" parameterType="java.lang.String">
+		UPDATE customer_order_rel
+		SET IsDel = 1
+		WHERE  CustomerOrderRelId = #{id,jdbcType=VARCHAR}
+	</delete>
+	<delete id="deleteId" parameterType="java.lang.String">
+		DELETE FROM customer_order_rel
+		WHERE  CustomerOrderRelId = #{id,jdbcType=VARCHAR}
+	</delete>
+
+	<insert id="save" parameterType="com.chinatour.entity.CustomerOrderRel">
+		INSERT INTO customer_order_rel
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				CustomerOrderRelId,
+			</if>
+			<if test="customerId != null">
+				CustomerId,
+			</if>
+			<if test="orderId != null">
+				OrderId,
+			</if>
+			<if test="contactFlag != null">
+				ContactFlag,
+			</if>
+			<if test="customerOrderNo != null">
+				CustomerOrderNo,
+			</if>
+			<if test="customerTourNo != null">
+				CustomerTourNo,
+			</if>
+			<if test="sameComeIn != null">
+				SameComeIn,
+			</if>
+			<if test="roomNumber != null">
+				RoomNumber,
+			</if>
+			<if test="guestRoomType != null">
+				GuestRoomType,
+			</if>
+			<if test="roomIsFull != null">
+				RoomIsFull,
+			</if>
+			<if test="ticketType != null">
+				TicketType,
+			</if>
+			<if test="voucherStr != null">
+				VoucherStr,
+			</if>
+			<if test="ordersTotalId != null">
+				OrdersTotalId,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="customerId != null">
+				#{customerId,jdbcType=VARCHAR},
+			</if>
+			<if test="orderId != null">
+				#{orderId,jdbcType=VARCHAR},
+			</if>
+			<if test="contactFlag != null">
+				#{contactFlag,jdbcType=INTEGER},
+			</if>
+			<if test="customerOrderNo != null">
+				#{customerOrderNo,jdbcType=INTEGER},
+			</if>
+			<if test="customerTourNo != null">
+				#{customerTourNo,jdbcType=INTEGER},
+			</if>
+			<if test="sameComeIn != null">
+				#{sameComeIn,jdbcType=VARCHAR},
+			</if>
+			<if test="roomNumber != null">
+				#{roomNumber,jdbcType=INTEGER},
+			</if>
+			<if test="guestRoomType != null">
+				#{guestRoomType,jdbcType=VARCHAR},
+			</if>
+			<if test="roomIsFull != null">
+				#{roomIsFull,jdbcType=INTEGER},
+			</if>
+			<if test="ticketType != null">
+				#{ticketType,jdbcType=VARCHAR},
+			</if>	
+			<if test="voucherStr != null">
+				#{voucherStr,jdbcType=VARCHAR},
+			</if>
+			<if test="ordersTotalId != null">
+				#{ordersTotalId,jdbcType=VARCHAR}
+			</if>
+		</trim>
+	</insert>
+	
+	<insert id="saveCustomerOrderRels" parameterType="java.util.List">
+		INSERT INTO customer_order_rel(
+		CustomerOrderRelId,CustomerId,OrderId,ContactFlag,CustomerOrderNo,
+		CustomerTourNo,SameComeIn,RoomNumber,GuestRoomType,RoomIsFull,TicketType,VoucherStr,IsDel,OrdersTotalId)
+		values
+		<foreach collection="customerOrderRelList" item="item" separator=",">
+		   (#{item.id},
+			#{item.customerId},
+			#{item.orderId},
+			#{item.contactFlag},
+			#{item.customerOrderNo},
+			#{item.customerTourNo},
+			#{item.sameComeIn},
+			#{item.roomNumber},
+			#{item.guestRoomType},
+			#{item.roomIsFull},
+			#{item.ticketType},
+			#{item.voucherStr},
+			#{item.isDel},
+			#{item.ordersTotalId})
+		</foreach>
+	</insert>
+
+	<update id="update" parameterType="com.chinatour.entity.CustomerOrderRel">
+		UPDATE customer_order_rel
+		<set>
+			<if test="customerId != null">
+				CustomerId = #{customerId,jdbcType=VARCHAR},
+			</if>
+			<if test="orderId != null">
+				OrderId = #{orderId,jdbcType=VARCHAR},
+			</if>
+			<if test="contactFlag != null">
+				ContactFlag = #{contactFlag,jdbcType=INTEGER},
+			</if>
+			<if test="customerOrderNo != null">
+				CustomerOrderNo = #{customerOrderNo,jdbcType=INTEGER},
+			</if>
+			<if test="customerTourNo != null">
+				CustomerTourNo = #{customerTourNo,jdbcType=INTEGER},
+			</if>
+			<if test="sameComeIn != null">
+				SameComeIn = #{sameComeIn,jdbcType=VARCHAR},
+			</if>
+			<if test="roomNumber != null">
+				RoomNumber = #{roomNumber,jdbcType=INTEGER},
+			</if>
+			<if test="guestRoomType != null">
+				GuestRoomType = #{guestRoomType,jdbcType=VARCHAR},
+			</if>
+			<if test="roomIsFull != null">
+				RoomIsFull = #{roomIsFull,jdbcType=INTEGER},
+			</if>
+			<if test="ticketType != null">
+				TicketType = #{ticketType,jdbcType=VARCHAR},
+			</if>
+			<if test="voucherStr != null">
+				<choose>
+					<when test="voucherStr=='none'">
+						VoucherStr ='',
+					</when>
+					<otherwise>
+						VoucherStr = #{voucherStr,jdbcType=VARCHAR},
+					</otherwise>
+				</choose>
+			</if>
+			<if test="ordersTotalId != null">
+				OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR},
+			</if>
+			<if test="isDel != null">
+				IsDel = #{isDel,jdbcType=INTEGER}
+			</if>
+		</set>
+		WHERE CustomerOrderRelId = #{id,jdbcType=VARCHAR}
+	</update>
+	
+	<update id="updateGuestRoomTypeByCustomerIdAndOrderId">
+		UPDATE customer_order_rel
+		SET GuestRoomType = #{guestRoomType,jdbcType=VARCHAR}
+		WHERE CustomerId = #{customerId,jdbcType=VARCHAR}
+		AND OrderId = #{orderId,jdbcType=VARCHAR}
+	</update>
+	
+	<update id="updateTicketTypeByCusIdAndOrdersTotalId">
+		UPDATE customer_order_rel
+		<choose>
+			<when test="ticketType == null">
+				SET TicketType = ''
+			</when>
+			<otherwise>
+				SET TicketType = #{ticketType,jdbcType=VARCHAR}
+			</otherwise>
+		</choose>
+		WHERE CustomerId = #{customerId,jdbcType=VARCHAR}
+		AND OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+	</update>
+	
+	<update id="setRoomIsFullByRoomNumberAndOrdersTotalId" >
+		UPDATE customer_order_rel
+		SET RoomIsFull = #{roomIsFull,jdbcType=VARCHAR}
+		WHERE OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+		AND RoomNumber = #{roomNumber,jdbcType=INTEGER}
+	</update>
+	
+	<select id="getExtraBedCustomerWithRoomNumberAndOrdersTotalId" resultType="java.lang.String">
+		SELECT DISTINCT IFNULL(CustomerId ,'')
+		FROM customer_order_rel 
+		WHERE GuestRoomType = 'Extra Bed' 
+		AND RoomNumber = #{roomNumber,jdbcType=INTEGER}
+		AND OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+	</select>	
+	
+	<update id="updateRoomTypeAndRoomNumberByCustomerIdAndOrdersTotalId">
+		UPDATE customer_order_rel
+		SET GuestRoomType = #{roomType,jdbcType=VARCHAR},RoomNumber = #{roomNumber,jdbcType=INTEGER}
+		WHERE CustomerId = #{customerId,jdbcType=VARCHAR} AND OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+	</update>
+	
+	<update id="changeCustomerState">
+		UPDATE customer_order_rel
+		SET IsDel = #{isDel,jdbcType=INTEGER}
+		WHERE CustomerOrderRelId = #{customerOrderRelId,jdbcType=VARCHAR}
+	</update>
+	
+	<update id="updateByOrderId" parameterType="com.chinatour.entity.CustomerOrderRel">
+		UPDATE customer_order_rel
+		<set>
+			<if test="customerId != null">
+				CustomerId = #{customerId,jdbcType=VARCHAR},
+			</if>
+			<if test="contactFlag != null">
+				ContactFlag = #{contactFlag,jdbcType=INTEGER},
+			</if>
+			<if test="customerOrderNo != null">
+				CustomerOrderNo = #{customerOrderNo,jdbcType=INTEGER},
+			</if>
+			<if test="customerTourNo != null">
+				CustomerTourNo = #{customerTourNo,jdbcType=INTEGER},
+			</if>
+			<if test="sameComeIn != null">
+				SameComeIn = #{sameComeIn,jdbcType=VARCHAR},
+			</if>
+			<if test="roomNumber != null">
+				RoomNumber = #{roomNumber,jdbcType=INTEGER},
+			</if>
+			<if test="guestRoomType != null">
+				GuestRoomType = #{guestRoomType,jdbcType=VARCHAR},
+			</if>
+			<if test="ticketType != null">
+				TicketType = #{ticketType,jdbcType=VARCHAR},
+			</if>
+			<if test="roomIsFull != null">
+				RoomIsFull = #{roomIsFull,jdbcType=INTEGER},
+			</if>
+			<if test="ordersTotalId != null">
+				OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR},
+			</if>
+			<if test="isDel != null">
+				IsDel = #{isDel,jdbcType=INTEGER}
+			</if>
+		</set>
+		WHERE OrderId = #{orderId,jdbcType=VARCHAR}
+	</update>
+	
+	<update id="setOrderIdByIds" parameterType="java.lang.String">
+		UPDATE customer_order_rel 
+		SET orderId = #{orderId,jdbcType=VARCHAR} 
+		WHERE CustomerOrderRelId IN  
+	    <foreach item="itemId" collection="ids" open="(" separator="," close=")">   
+	        #{itemId,jdbcType=VARCHAR}   
+	    </foreach> 	
+	</update>
+	
+	<update id="setContactFlagByCusIdAndOrToId">
+		UPDATE customer_order_rel 
+		SET ContactFlag = #{contactFlag,jdbcType=VARCHAR}
+		WHERE OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+		<if test="customerId != null">
+			AND customerId = #{customerId,jdbcType=VARCHAR}
+		</if>
+	</update>
+	
+	<delete id="removeByIds" >  
+	    DELETE FROM s_order_receive_item WHERE ItemId IN  
+	    <foreach item="itemId" collection="ids" open="(" separator="," close=")">   
+	        #{itemId,jdbcType=VARCHAR}   
+	    </foreach>  
+	</delete> 
+	
+	<update id="cancelAllCustomerByOrderId">
+		UPDATE customer_order_rel cor, orders o
+		SET cor.IsDel = 1,o.TotalPeople = 0
+		WHERE cor.OrderId = o.OrderId
+		AND cor.OrdersTotalId = o.OrdersTotalId
+		AND o.OrderId = #{orderId,jdbcType=VARCHAR}
+	</update>
+	
+	<update id="recoverAllCustomerByOrderId">
+		UPDATE customer_order_rel cor, orders o
+		SET cor.IsDel = cor.contactFlag, o.TotalPeople = #{totalPeople,jdbcType=INTEGER}
+		WHERE cor.OrderId = o.OrderId
+		AND cor.OrdersTotalId = o.OrdersTotalId
+		AND o.OrderId = #{orderId,jdbcType=VARCHAR}
+	</update>
+	
+	<select id="countCustomersInOrdersTotal" resultType="java.lang.Integer" parameterType="java.lang.String">
+		SELECT COUNT(*) FROM (
+		SELECT COUNT(OrderId) FROM customer_order_rel 
+		WHERE OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+		GROUP BY CustomerId) customer
+	</select>
+	
+	<select id="countExistCustomersInOrdersTotal" resultType="java.lang.Integer" parameterType="java.lang.String">
+		SELECT COUNT(*) FROM (
+		SELECT COUNT(OrderId) FROM customer_order_rel 
+		WHERE ContactFlag = 0
+		AND OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+		GROUP BY CustomerId) customer
+	</select>
+	
+	<select id="counTourCustomersByOrderId" resultType="java.lang.Integer" parameterType="java.lang.String">
+		SELECT COUNT(*) FROM customer_order_rel 
+		WHERE (IsDel = 0||IsDel = 3||IsDel = 5)
+		AND OrderId = #{orderId,jdbcType=VARCHAR}
+	</select>
+
+	<update id="recoverByCustomerIdAndOrdersTotalId">
+		UPDATE customer_order_rel
+		SET IsDel = 0
+		WHERE CustomerId = #{customerId,jdbcType=VARCHAR}
+		AND OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+	</update>
+		
+	<select id="findMaxCustomerOrderNo" resultType="java.lang.Integer" parameterType="java.lang.String">
+		SELECT IFNULL(MAX(CustomerOrderNo),0)
+        FROM customer_order_rel
+        WHERE OrderId = #{orderId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="findCountIsDelByOrderId" resultType="java.lang.Integer" parameterType="com.chinatour.entity.CustomerOrderRel">
+		SELECT IFNULL(COUNT(*),0)
+        FROM customer_order_rel
+        WHERE OrderId = #{orderId,jdbcType=VARCHAR}
+        <if test="isDel==0">
+			AND (IsDel=0 or IsDel=3)
+		</if>
+        <if test="isDel==1">
+			AND (IsDel=1 or IsDel=5)
+		</if>
+	</select>
+	
+	<select id="findCountCustomerByOrderId" resultType="java.lang.Integer" parameterType="com.chinatour.entity.CustomerOrderRel">
+		SELECT IFNULL(COUNT(*),0)
+        FROM customer_order_rel
+        WHERE OrderId = #{orderId,jdbcType=VARCHAR}
+        AND IsDel != #{isDel,jdbcType=INTEGER}
+	</select>
+	
+	<select id="findMaxCustomerOrderNoByOrdersTotalId" resultType="java.lang.Integer" parameterType="java.lang.String">
+		SELECT IFNULL(MAX(CustomerOrderNo),0)
+        FROM customer_order_rel
+        WHERE OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+	</select>
+		
+	<select id="findMaxCustomerTourNo" resultType="java.lang.Integer" parameterType="java.lang.String">
+		SELECT IFNULL(MAX(CustomerTourNo),0)
+        FROM customer_order_rel
+        WHERE OrderId IN (SELECT OrderId FROM orders 
+        WHERE TourId = #{tourId,jdbcType=VARCHAR})
+	</select>
+	
+	<select id="findCustomerFlightByOrderId" resultMap="ResultForCustomerFlightMap" parameterType="java.lang.String">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM customer_order_rel
+		WHERE OrderId = #{orderId,jdbcType=VARCHAR}
+		ORDER BY CustomerTourNo,CustomerOrderNo
+	</select>
+	
+	<select id="findCustomerNumberByRoomNumberAndOrdersTotalId" resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		FROM customer_order_rel
+		WHERE RoomNumber = #{roomNumber,jdbcType=INTEGER}
+		AND OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+		AND OrderId = (
+			SELECT MAX(OrderId)
+			FROM customer_order_rel
+			WHERE OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+		)
+	</select>
+	
+	<select id="getRoommates" resultMap="resultWithCustomer">
+		SELECT
+		<include refid="Column_With_Customer" />
+		FROM customer_order_rel cor JOIN Customer c
+		ON cor.customerId = c.CustomerId
+		AND cor.RoomIsFull = 0
+		AND cor.GuestRoomType = #{guestRoomType,jdbcType=VARCHAR}
+		AND cor.OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+		Group By cor.customerId
+	</select>
+	<select id="getNoRoom" resultMap="resultWithCustomer"><!-- 查找出未组房的客人 -->
+		SELECT
+		<include refid="Column_With_Customer" />
+		FROM customer_order_rel cor JOIN Customer c
+		ON cor.customerId = c.CustomerId
+		AND cor.GuestRoomType =""
+		AND cor.OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+		Group By cor.customerId
+	</select>
+	
+	<select id="getKingRoom" resultMap="BaseResultMap"><!-- 查找出已组可加人的客人 -->
+		SELECT a.RoomNumber,group_concat(a.customerName)AS CustomerId 
+		FROM(
+			SELECT
+				cor.*,concat(c.LastName,"/",c.FirstName,"/",c.MiddleName)AS customerName
+				FROM customer_order_rel cor JOIN Customer c
+				ON cor.customerId = c.CustomerId
+				AND cor.GuestRoomType ="King Bed"
+				AND cor.OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+				Group By cor.customerId
+		)a GROUP BY a.RoomNumber
+	</select>
+	
+	<select id="getRoommatesWithExtraBed" resultMap="resultWithCustomer">
+		SELECT
+		<include refid="Column_With_Customer" />
+		FROM customer_order_rel cor JOIN Customer c
+		ON cor.customerId = c.CustomerId
+		AND cor.RoomIsFull = 1
+		AND cor.GuestRoomType IN ('Twin Bed','King Bed')
+		AND cor.OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+		Group By cor.customerId
+	</select>
+	
+	<select id="getRoommatesWithRoomNumber" resultMap="resultWithCustomer">
+		SELECT
+		<include refid="Column_With_Customer" />
+		FROM customer_order_rel cor JOIN Customer c
+		ON cor.customerId = c.CustomerId
+		AND cor.RoomIsFull = 0
+		AND cor.GuestRoomType = #{guestRoomType,jdbcType=VARCHAR}
+		AND cor.OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+		Group By cor.CustomerId
+		UNION
+		SELECT
+		<include refid="Column_With_Customer" />
+		FROM customer_order_rel cor JOIN Customer c
+		ON cor.customerId = c.CustomerId
+		AND cor.RoomNumber = #{roomNumber,jdbcType=INTEGER}
+		AND cor.GuestRoomType != 'Extra Bed'
+		AND cor.OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+		Group By cor.CustomerId
+	</select>
+	
+	<select id="getExtraBedRoommatesWithRoomNumber" resultMap="resultWithCustomer">
+		SELECT
+		<include refid="Column_With_Customer" />
+		FROM customer_order_rel cor JOIN Customer c
+		ON cor.customerId = c.CustomerId
+		AND cor.RoomIsFull = 1
+		AND cor.GuestRoomType IN ('Twin Bed','King Bed')
+		AND cor.OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+		Group By cor.CustomerId
+		UNION
+		SELECT
+		<include refid="Column_With_Customer" />
+		FROM customer_order_rel cor JOIN Customer c
+		ON cor.customerId = c.CustomerId
+		AND cor.RoomNumber = #{roomNumber,jdbcType=INTEGER}
+		AND cor.GuestRoomType != 'Extra Bed'
+		AND cor.OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+		Group By cor.CustomerId
+	</select>
+	
+	<select id="findCustomerByOrderId" resultMap="resultForCustomerMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM customer_order_rel
+		WHERE OrderId = #{orderId,jdbcType=VARCHAR}
+		ORDER BY CustomerTourNo,CustomerOrderNo
+	</select>
+	
+	<select id="findCustomerTotalForInvoice" resultMap="BaseResultMap">
+		SELECT 
+			<include refid="Base_Column_List" />
+		FROM 
+			customer_order_rel 
+		WHERE 
+			OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+		AND IsDel!=1 AND IsDel!=5 
+		GROUP BY CustomerId 
+		ORDER BY CustomerOrderNo;
+	</select>
+	
+	<select id="findRoomCustomer" resultMap="resultWithCustomer">
+		SELECT 
+			<include refid="Column_With_Customer" />
+		FROM 
+			 customer_order_rel cor JOIN Customer c
+			ON cor.customerId = c.CustomerId
+		AND cor.OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+		AND cor.IsDel!=1 AND cor.IsDel!=5 
+		AND cor.GuestRoomType!=""
+		GROUP BY c.CustomerId 
+		ORDER BY cor.RoomNumber;
+	</select>
+	<select id="findRelByPeerUserId" resultMap="resultWithCustomer">
+		SELECT 
+			r.OrdersTotalId,r.CustomerOrderRelId,r.CustomerId 
+		FROM 
+			customer_order_rel r,
+			orders_total t,
+			customer c 
+		WHERE  
+			r.OrdersTotalId=t.OrdersTotalId 
+			AND c.CustomerId=r.CustomerId
+			<if test="isDel==5"><!-- 查找有子单的信息 -->
+				AND r.OrderId!=''
+			</if>
+			<if test="isDel==50"><!-- 查找没有子单的信息 -->
+				AND r.OrderId=''
+			</if>
+			<if test="ordersTotalId!=null">
+				AND	t.PeerUserId=#{ordersTotalId,jdbcType=VARCHAR}
+			</if>
+			<if test="customerId!=null">
+				AND	r.CustomerId=#{customerId,jdbcType=VARCHAR}
+			</if>
+	</select>
+	<update id="saveCarInfo">
+		UPDATE
+		      customer_order_rel
+		<set>
+			<if test="car.carName != null">
+				CarName = #{car.carName,jdbcType=VARCHAR},
+			</if>
+			<if test="car.carId != null">
+				CarId = #{car.carId,jdbcType=VARCHAR}
+			</if>
+		</set>
+		WHERE
+		 <foreach collection="customerOrderRelIds" item="item" open="CustomerOrderRelId IN(" separator="," close=")">  
+              #{item}
+         </foreach>
+	</update>
+</mapper>

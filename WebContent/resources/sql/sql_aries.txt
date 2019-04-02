@@ -1,0 +1,83 @@
+DROP TABLE IF EXISTS `tour_type_of_dept`;
+CREATE TABLE `tour_type_of_dept` (
+  `TourTypeOfDeptId` varchar(36) NOT NULL,
+  `DeptId` varchar(36) NOT NULL,
+  `TourTypeId` varchar(36) NOT NULL,
+  `Code` tinyint(2) NOT NULL DEFAULT '0',
+  `StartTime` datetime DEFAULT NULL,
+  `EndTime` datetime DEFAULT NULL,
+  PRIMARY KEY (`TourTypeOfDeptId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+/********************************************/
+DROP TABLE IF EXISTS `invoice_and_credit`;
+CREATE TABLE `invoice_and_credit` (
+  `InvoiceAndCreditId` varchar(36) NOT NULL,
+  `BusinessNo` int(11) NOT NULL DEFAULT '0',
+  `BillToDeptId` varchar(36) NOT NULL DEFAULT '',
+  `DeptId` varchar(36) NOT NULL DEFAULT '',
+  `EnterCurrency` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `Dollar` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `Month` varchar(16) NOT NULL DEFAULT '',
+  `RecordType` varchar(16) NOT NULL DEFAULT '' COMMENT 'INVOICE\\\\CREDIT',
+  `ConfirmStatus` varchar(16) NOT NULL DEFAULT '' COMMENT 'NEW,CONFIRM,REJECT (初始状态、确认、拒绝）',
+  `ConfirmRemarks` varchar(128) NOT NULL DEFAULT '' COMMENT '对方确认的反馈信息备注',
+  `CreateDate` date DEFAULT NULL COMMENT '期初值的设置，不写时间、不写团号，一旦对方确认时，将此种情况的记录值写到AccountRecord中作为余额使用，当写Invoice时，如果发现没有余额记录，则必须进行余额的初始化。',
+  `TourCode` varchar(128) NOT NULL DEFAULT '',
+  `BillToReceiver` varchar(64) NOT NULL DEFAULT '' COMMENT '接收INVOICE或者CREDIT的对象名称 如果是本分公司内部的，则BillToDept和BillToReceiver分别写本分公司的部门Id 和员工名字',
+  `Remarks` varchar(64) NOT NULL DEFAULT '' COMMENT 'INVOICE的摘要，用于显示在AccountRecord表中',
+  `EmailTo` varchar(128) NOT NULL DEFAULT '',
+  `IfBeginningValue` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否为初值账单',
+  `Prefix` varchar(64) NOT NULL DEFAULT '' COMMENT '业务编号的前缀，分公司名称',
+  `TourId` varchar(36) NOT NULL DEFAULT '',
+  `RateOfCurrencyId` varchar(36) NOT NULL DEFAULT '',
+  `UserName` varchar(64) NOT NULL DEFAULT '',
+  PRIMARY KEY (`InvoiceAndCreditId`,`BusinessNo`,`DeptId`),
+  KEY `InvoiceAndCreditId` (`InvoiceAndCreditId`,`BusinessNo`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+/******************************************************************/
+
+
+DROP TABLE IF EXISTS `invoice_and_credit_items`;
+CREATE TABLE `invoice_and_credit_items` (
+  `ItemsId` varchar(36) NOT NULL,
+  `Description` varchar(64) NOT NULL DEFAULT '' COMMENT '描述',
+  `Remarks` varchar(1280) NOT NULL DEFAULT '' COMMENT '摘要',
+  `Amount` decimal(10,0) NOT NULL DEFAULT '0' COMMENT '金额',
+  `DollarAmount` decimal(10,0) NOT NULL DEFAULT '0' COMMENT '美元金额',
+  `InvoiceAndCreditId` varchar(36) NOT NULL COMMENT '对账表',
+  `BusinessNo` int(11) NOT NULL DEFAULT '0' COMMENT '业务编码',
+  `BillToDeptId` varchar(36) NOT NULL DEFAULT '' COMMENT '发送部门',	
+  `DeptId` varchar(36) NOT NULL DEFAULT '' COMMENT '本部门',
+  `IfBeginningValue` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否期初',
+  `IfVerified` int(4) NOT NULL DEFAULT '0' COMMENT '审核状态',
+  `VerifyRemarks` varchar(256) NOT NULL DEFAULT '' COMMENT '审核摘要',
+  PRIMARY KEY (`ItemsId`,`InvoiceAndCreditId`,`BusinessNo`,`DeptId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+/********************************************************************************/
+DROP TABLE IF EXISTS `account_record`;
+CREATE TABLE `account_record` (
+  `AccountRecordId` varchar(36) NOT NULL,
+  `InvoiceAndCreditId` varchar(36) NOT NULL,
+  `BusinessNo` int(11) NOT NULL,
+  `BillToDeptId` varchar(36) NOT NULL DEFAULT '',
+  `DeptId` varchar(36) NOT NULL DEFAULT '',
+  `TourCode` varchar(128) NOT NULL DEFAULT '',
+  `ReceivableAmount` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `ReceivedAmount` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `BillToReceiver` varchar(64) NOT NULL DEFAULT '',
+  `CreateDate` timestamp NULL DEFAULT NULL,
+  `Month` varchar(16) NOT NULL DEFAULT '',
+  `IfBeginningValue` tinyint(10) NOT NULL DEFAULT '0' COMMENT '是否为期初余额',
+  `Remarks` varchar(64) NOT NULL DEFAULT '' COMMENT '与Invoice中的摘要保持一致',
+  `ReceivableCurrency` decimal(10,2) NOT NULL DEFAULT '0.00',
+  PRIMARY KEY (`AccountRecordId`,`InvoiceAndCreditId`,`BusinessNo`,`DeptId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+

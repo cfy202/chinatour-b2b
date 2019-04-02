@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.AdminRegionMapper">
+
+	<sql id="Base_Column_List">
+		AdminId, RegionId
+	</sql>
+	<resultMap type="com.chinatour.entity.AdminRegion" id="BaseResultMap">
+		<id property="adminId" column="AdminId" jdbcType="VARCHAR" />
+		<result property="regionId" column="RegionId" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap type="com.chinatour.entity.AdminRegion" id="ResultMapForAdmin">
+		<id property="adminId" column="AdminId" jdbcType="VARCHAR" />
+		<result property="regionId" column="RegionId" jdbcType="VARCHAR" />
+		<association property="region" column="regionId"
+			select="com.chinatour.persistence.RegionMapper.findById" />
+	</resultMap>
+
+	<select id="findById" parameterType="java.lang.String"
+		resultMap="ResultMapForAdmin">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM admin_region
+		WHERE
+		regionId = #{regionId,jdbcType=VARCHAR}
+	</select>
+	<select id="findByAdminId" parameterType="java.lang.String"
+		resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM admin_region
+		WHERE
+		AdminId = #{adminId,jdbcType=VARCHAR}
+	</select>
+	<select id="findAll" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM admin_region
+	</select>
+	<insert id="save" parameterType="com.chinatour.entity.AdminGroup">
+		INSERT INTO admin_region
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="adminId != null">
+				AdminId ,
+			</if>
+			<if test="regionId != null">
+				RegionId
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="adminId != null">
+				#{adminId,jdbcType=VARCHAR},
+			</if>
+			<if test="regionId != null">
+				#{regionId,jdbcType=VARCHAR}
+			</if>
+		</trim>
+	</insert>
+
+	<insert id="batchSave" parameterType="java.util.List">
+		INSERT INTO admin_region
+		(
+		<include refid="Base_Column_List" />
+		)
+		values
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			(
+			#{item.adminId,jdbcType=VARCHAR},
+			#{item.regionId,jdbcType=VARCHAR}
+			)
+		</foreach>
+	</insert>
+
+	<delete id="removeById" parameterType="String">
+	DELETE FROM
+	admin_region
+	WHERE
+	AdminId=#{adminId,jdbcType=INTEGER}
+	</delete>
+</mapper>

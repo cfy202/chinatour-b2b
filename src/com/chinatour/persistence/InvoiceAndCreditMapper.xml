@@ -1,0 +1,640 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.InvoiceAndCreditMapper">
+	<sql id="Base_Column_List">
+		InvoiceAndCreditId,
+  		BusinessNo,
+  		BillToDeptId,
+  		DeptId,
+  		EnterCurrency,
+  		Dollar,
+  		Month,
+  		RecordType,
+  		ConfirmStatus,
+ 		ConfirmRemarks,
+  		CreateDate,
+  		TourCode,
+  		BillToReceiver,
+  		Remarks,
+  		EmailTo,
+  		IfBeginningValue,
+  		Prefix,
+  		TourId,
+  		RateOfCurrencyId,
+  		UserName,
+  		ArriveDateTime,
+  		IsAuto
+	</sql>
+	<resultMap id="BaseResultMap" type="InvoiceAndCredit">
+		<result column="InvoiceAndCreditId" property="invoiceAndCreditId" jdbcType="VARCHAR" />
+		<result column="BusinessNo" property="businessNo" jdbcType="INTEGER" />
+		<result column="BillToDeptId" property="billToDeptId" jdbcType="VARCHAR" />
+		<result column="DeptId" property="deptId" jdbcType="VARCHAR" />
+		<result column="EnterCurrency" property="enterCurrency" jdbcType="DOUBLE" />
+		<result column="Dollar" property="dollar" jdbcType="DOUBLE" />
+		<result column="Month" property="month" jdbcType="TIMESTAMP" />
+		<result column="ArriveDateTime" property="arriveDateTime" jdbcType="TIMESTAMP" />
+		<result column="RecordType" property="recordType" jdbcType="VARCHAR" />
+		<result column="ConfirmStatus" property="confirmStatus" jdbcType="VARCHAR" />
+		<result column="ConfirmRemarks" property="confirmRemarks" jdbcType="VARCHAR" />
+		<result column="CreateDate" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="TourCode" property="tourCode" jdbcType="VARCHAR" />
+		<result column="BillToReceiver" property="billToReceiver" jdbcType="VARCHAR" />
+		<result column="Remarks" property="remarks" jdbcType="VARCHAR" />
+		<result column="EmailTo" property="emailTo" jdbcType="VARCHAR" />
+		<result column="IfBeginningValue" property="ifBeginningValue" jdbcType="INTEGER" />
+		<result column="Prefix" property="prefix" jdbcType="VARCHAR" />
+		<result column="TourId" property="tourId" jdbcType="VARCHAR" />
+		<result column="RateOfCurrencyId" property="rateOfCurrencyId" jdbcType="VARCHAR" />
+		<result column="UserName" property="userName" jdbcType="VARCHAR" />
+		<result column="IsAuto" property="isAuto" jdbcType="INTEGER" />
+		<!-- <association property="rateOfCurrency" column="Id" select="getRateOfCurrency"></association> -->
+	</resultMap>
+	<insert id="save" parameterType="InvoiceAndCredit">
+		INSERT INTO invoice_and_credit
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="invoiceAndCreditId != null">
+				InvoiceAndCreditId,
+			</if>
+			<if test="businessNo != null">
+				BusinessNo,
+			</if>
+			<if test="billToDeptId != null">
+				BillToDeptId,
+			</if>
+			<if test="deptId != null">
+				DeptId,
+			</if>
+			<if test="enterCurrency != null">
+				EnterCurrency,
+			</if>
+			<if test="dollar != null">
+				Dollar,
+			</if>
+			<if test="month != null">
+				Month,
+			</if>
+			<if test="recordType != null">
+				RecordType,
+			</if>
+			<if test="confirmStatus != null">
+				ConfirmStatus,
+			</if>
+			<if test="confirmRemarks != null">
+				ConfirmRemarks,
+			</if>
+			<if test="createDate != null">
+				CreateDate,
+			</if>
+			<if test="tourCode != null">
+				TourCode,
+			</if>
+			<if test="billToReceiver != null">
+				BillToReceiver,
+			</if>
+			<if test="remarks != null">
+				Remarks,
+			</if>
+			<if test="emailTo != null">
+				EmailTo,
+			</if>
+			<if test="ifBeginningValue != null">
+				IfBeginningValue,
+			</if>
+			<if test="isAuto != null">
+				IsAuto,
+			</if>
+			<if test="prefix != null">
+				Prefix,
+			</if>
+			<if test="tourId != null">
+				TourId,
+			</if>
+			<if test="rateOfCurrencyId != null">
+				RateOfCurrencyId,
+			</if>
+			<if test="userName != null">
+				UserName,
+			</if>
+			<if test="arriveDateTime != null">
+				ArriveDateTime
+			</if>
+		</trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="invoiceAndCreditId != null">
+				#{invoiceAndCreditId,jdbcType=VARCHAR},
+			</if>
+			<if test="businessNo != null">
+				#{businessNo,jdbcType=INTEGER},
+			</if>
+			<if test="billToDeptId != null">
+				#{billToDeptId,jdbcType=VARCHAR},
+			</if>
+			<if test="deptId != null">
+				#{deptId,jdbcType=VARCHAR},
+			</if>
+			<if test="enterCurrency != null">
+				#{enterCurrency,jdbcType=DOUBLE},
+			</if>
+			<if test="dollar != null">
+				#{dollar,jdbcType=DOUBLE},
+			</if>
+			<if test="month != null">
+				#{month,jdbcType=TIMESTAMP},
+			</if>
+			<if test="recordType != null">
+				#{recordType,jdbcType=VARCHAR},
+			</if>
+			<if test="confirmStatus != null">
+				#{confirmStatus,jdbcType=VARCHAR},
+			</if>
+			<if test="confirmRemarks != null">
+				#{confirmRemarks,jdbcType=VARCHAR},
+			</if>
+			<if test="createDate != null">
+				#{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="tourCode != null">
+				#{tourCode,jdbcType=VARCHAR},
+			</if>
+			<if test="billToReceiver != null">
+				#{billToReceiver,jdbcType=VARCHAR},
+			</if>
+			<if test="remarks != null">
+				#{remarks,jdbcType=VARCHAR},
+			</if>
+			<if test="emailTo != null">
+				#{emailTo,jdbcType=VARCHAR},
+			</if>
+			<if test="ifBeginningValue != null">
+				#{ifBeginningValue,jdbcType=INTEGER},
+			</if>
+			<if test="isAuto != null">
+				#{isAuto,jdbcType=INTEGER},
+			</if>
+			<if test="prefix != null">
+				#{prefix,jdbcType=VARCHAR},
+			</if>
+			<if test="tourId != null">
+				#{tourId,jdbcType=VARCHAR},
+			</if>
+			<if test="rateOfCurrencyId != null">
+				#{rateOfCurrencyId,jdbcType=VARCHAR},
+			</if>
+			<if test="userName != null">
+				#{userName,jdbcType=VARCHAR},
+			</if>
+			<if test="arriveDateTime != null">
+				#{arriveDateTime,jdbcType=TIMESTAMP}
+			</if>
+		</trim>
+	</insert>
+	
+	<update id="update" parameterType="InvoiceAndCredit">
+		UPDATE invoice_and_credit
+		<set>
+			<if test="businessNo != null">
+				BusinessNo=#{businessNo,jdbcType=INTEGER},
+			</if>
+			<if test="billToDeptId != null">
+				BillToDeptId=#{billToDeptId,jdbcType=VARCHAR},
+			</if>
+			<if test="deptId != null">
+				DeptId=#{deptId,jdbcType=VARCHAR},
+			</if>
+			<if test="enterCurrency != null">
+				EnterCurrency=#{enterCurrency,jdbcType=DOUBLE},
+			</if>
+			<if test="dollar != null">
+				Dollar=#{dollar,jdbcType=DOUBLE},
+			</if>
+			<if test="month != null">
+				Month=#{month,jdbcType=TIMESTAMP},
+			</if>
+			<if test="recordType != null">
+				RecordType=#{recordType,jdbcType=VARCHAR},
+			</if>
+			<if test="confirmStatus != null">
+				ConfirmStatus=#{confirmStatus,jdbcType=VARCHAR},
+			</if>
+			<if test="confirmRemarks != null">
+				ConfirmRemarks=#{confirmRemarks,jdbcType=VARCHAR},
+			</if>
+			<if test="createDate != null">
+				CreateDate=#{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="tourCode != null">
+				TourCode=#{tourCode,jdbcType=VARCHAR},
+			</if>
+			<if test="billToReceiver != null">
+				BillToReceiver=#{billToReceiver,jdbcType=VARCHAR},
+			</if>
+			<if test="remarks != null">
+				Remarks=#{remarks,jdbcType=VARCHAR},
+			</if>
+			<if test="emailTo != null">
+				EmailTo=#{emailTo,jdbcType=VARCHAR},
+			</if>
+			<if test="ifBeginningValue != null">
+				IfBeginningValue=#{ifBeginningValue,jdbcType=INTEGER},
+			</if>
+			<if test="prefix != null">
+				Prefix=#{prefix,jdbcType=VARCHAR},
+			</if>
+			<if test="tourId != null">
+				TourId=#{tourId,jdbcType=VARCHAR},
+			</if>
+			<if test="rateOfCurrencyId != null">
+				RateOfCurrencyId=#{rateOfCurrencyId,jdbcType=VARCHAR},
+			</if>
+			<if test="userName != null">
+				UserName=#{userName,jdbcType=VARCHAR},
+			</if>
+			<if test="arriveDateTime != null">
+				ArriveDateTime=#{arriveDateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="isSuccess != null">
+				IsSuccess = #{isSuccess,jdbcType=INTEGER},
+			</if>
+			<if test="isAuto != null">
+				IsAuto = #{isAuto,jdbcType=INTEGER},
+			</if>
+			<if test="approveDate != null">
+				ApproveDate = #{approveDate,jdbcType=TIMESTAMP}
+			</if>
+		</set>
+		WHERE 
+			InvoiceAndCreditId=#{invoiceAndCreditId,jdbcType=VARCHAR}
+	</update>
+	
+	
+	<select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT
+			<include refid="Base_Column_List" />
+		FROM
+			invoice_and_credit
+		WHERE 
+			InvoiceAndCreditId=#{invoiceAndCreditId,jdbcType=VARCHAR}
+	</select>
+		
+	<delete id="removeById" parameterType="java.lang.String">
+		DELETE FROM 
+			invoice_and_credit 
+		WHERE 
+			InvoiceAndCreditId=#{invoiceAndCreditId,jdbcType=VARCHAR}
+	</delete>
+	<sql id="findForPage_sql">
+		SELECT 
+			i.InvoiceAndCreditId,
+			i.BusinessNo,        
+			i.BillToDeptId,      
+			i.DeptId,
+			d.DeptName,           
+			CONCAT(CONCAT(r.RateUp,'/'),r.RateDown) AS ExRate,
+			i.RateOfCurrencyId,     
+			i.EnterCurrency,
+			i.EnterCurrency*r.RateUp/r.RateDown AS ExAmount,     
+			i.Dollar,            
+			i.Month AS Month,             
+			i.RecordType,        
+			i.ConfirmStatus,     
+			i.ConfirmRemarks,    
+			i.CreateDate,        
+			i.TourCode,          
+			i.BillToReceiver,    
+			i.Remarks,
+			i.EmailTo,
+			i.IfBeginningValue,
+			i.Prefix,
+			i.TourId,
+			i.UserName,           
+			i.ArriveDateTime,
+			i.IsAuto          
+		FROM 
+			invoice_and_credit i,RateOfCurrency r,dept d
+		WHERE i.RateOfCurrencyId=r.Id 
+			AND d.DeptId=i.BillToDeptId
+		<trim suffixOverrides="AND"> 
+			<if test="record.invoiceAndCreditId!= null">
+				AND i.InvoiceAndCreditId=#{record.invoiceAndCreditId}
+			</if>
+			<if test="record.businessNo!= null">
+				AND i.BusinessNo LIKE CONCAT(CONCAT('%', #{record.businessNo}),'%')
+			</if>
+			<if test="record.billToDeptId!= null">
+				AND i.BillToDeptId=#{record.billToDeptId}
+			</if>
+			<if test="record.deptId!=null">
+				AND i.DeptId=#{record.deptId}
+			</if>
+			<if test="record.rateOfCurrencyId!=null">
+			   AND i.RateOfCurrencyId=#{record.rateOfCurrencyId}
+			</if>
+			<if test="record.enterCurrency!=null">
+			  AND i.EnterCurrency LIKE CONCAT(CONCAT('%', #{record.enterCurrency}),'%')
+			</if>
+			<if test="record.dollar!=null">
+				AND i.Dollar=#{record.dollar}
+			</if>
+			<if test="record.month!=null">
+				AND i.Month <![CDATA[>=]]> #{record.month}
+			</if>
+			<if test="record.recordType!=null">
+				AND i.RecordType LIKE CONCAT(CONCAT('%',#{record.recordType}),'%') 
+			</if>
+			<if test="record.confirmStatus!=null and record.confirmStatus==1">
+				AND (i.confirmStatus='NEW' OR i.confirmStatus='NEWAUTO')
+			</if>
+			<if test="record.confirmStatus!=null and record.confirmStatus==2">
+				AND (i.confirmStatus='CONFIRM' OR i.confirmStatus='CONFIRMAUTO' OR i.confirmStatus='CONFIRMSEND')
+			</if>
+			<if test="record.confirmStatus!=null and record.confirmStatus==3">
+				AND i.confirmStatus='REJECT'
+			</if>
+			<if test="record.createDate!=null">
+				AND i.CreateDate <![CDATA[>=]]> #{record.createDate}
+			</if>
+			<if test="record.deptName!=null">
+				AND d.DeptName LIKE CONCAT(CONCAT('%', #{record.deptName}),'%')
+			</if>
+			<if test="record.tourCode!=null">
+				AND i.TourCode LIKE CONCAT(CONCAT('%', #{record.tourCode}),'%')
+			</if>
+			<if test="record.billToReceiver!=null">
+				AND i.BillToReceiver LIKE CONCAT(CONCAT('%', #{record.billToReceiver}),'%') 
+			</if>
+			<if test="record.remarks!=null">
+				AND i.Remarks LIKE CONCAT(CONCAT('%', #{record.remarks}),'%')
+			</if>
+			<if test="record.isAuto!=null">
+				AND i.IsAuto=#{record.isAuto}
+			</if> 
+			<if test="record.prefix!=null">
+				AND i.Prefix=#{record.prefix}
+			</if>
+			<if test="record.tourId!=null">
+				AND i.TourId=#{record.tourId}
+			</if>
+			<if test="record.userName!=null">
+				AND i.UserName LIKE CONCAT(CONCAT('%', #{record.userName}),'%')
+			</if>
+			<if test="record.beginningDate != null">
+				AND SUBSTRING(`Month`,1,7) <![CDATA[>=]]>SUBSTRING(#{record.beginningDate},1,7)
+			</if>
+			<if test="record.endingDate != null">
+				AND SUBSTRING(`Month`,1,7) <![CDATA[<=]]>SUBSTRING(#{record.endingDate},1,7)
+			</if>
+			<if test="record.beginningDateForArr != null">
+				AND SUBSTRING(ArriveDateTime,1,10) <![CDATA[>=]]>SUBSTRING(#{record.beginningDateForArr},1,10)
+			</if>
+			<if test="record.endingDateForArr != null">
+				AND SUBSTRING(ArriveDateTime,1,10) <![CDATA[<=]]>SUBSTRING(#{record.endingDateForArr},1,10)
+			</if>
+			ORDER BY i.BusinessNo DESC
+		</trim>
+	</sql>
+	<select id="findForPage" resultMap="BaseResultMap">
+        <include refid="Pager.paginationStart"/>
+        <include refid="findForPage_sql"/>
+        <include refid="Pager.paginationEnd"/>
+    </select>
+    
+    <select id="findForPageCount" resultType="int">
+        <include refid="Pager.countStart"/>
+        <include refid="findForPage_sql"/>
+        <include refid="Pager.countEnd"/>
+    </select>
+    <!-- 找出最大的业务编码并返回 -->
+    <select id="getBusinessNo" resultType="int">
+    	SELECT 
+    		COALESCE(MAX(BusinessNo),1000000)+1 AS BusinessNo 
+    	FROM 
+    		invoice_and_credit
+    	WHERE 
+    		DeptId=#{deptId}
+    </select>
+    
+   	<select id="find" resultMap="BaseResultMap" parameterType="com.chinatour.entity.InvoiceAndCredit">
+		SELECT
+			i.InvoiceAndCreditId,
+			i.BusinessNo,        
+			i.BillToDeptId,      
+			i.DeptId,
+			d.DeptName,           
+			r.UsRate AS ExchangeRate,
+			i.RateOfCurrencyId,     
+			i.EnterCurrency,     
+			i.Dollar,            
+			i.Month AS Month,             
+			i.RecordType,        
+			i.ConfirmStatus,     
+			i.ConfirmRemarks,    
+			i.CreateDate,        
+			i.TourCode,          
+			i.BillToReceiver,    
+			i.Remarks,
+			i.EmailTo,
+			i.IfBeginningValue,
+			i.Prefix,
+			i.TourId,
+			i.UserName,      
+			i.ArriveDateTime,
+			i.IsAuto      
+		FROM invoice_and_credit i,RateOfCurrency r,dept d
+		WHERE i.RateOfCurrencyId=r.Id 
+			AND d.DeptId=i.BillToDeptId
+			<trim suffixOverrides="AND"> 
+				<if test="invoiceAndCreditId!= null">
+					AND i.InvoiceAndCreditId=#{invoiceAndCreditId}
+				</if>
+				<if test="businessNo!= null">
+					AND i.BusinessNo=#{businessNo}
+				</if>
+				<if test="billToDeptId!= null">
+					AND i.BillToDeptId=#{billToDeptId}
+				</if>
+				<if test="deptId!=null">
+					AND i.DeptId=#{deptId}
+				</if>
+				<if test="rateOfCurrencyId!=null">
+				   AND i.RateOfCurrencyId=#{rateOfCurrencyId}
+				</if>
+				<if test="enterCurrency!=null">
+				  AND i.EnterCurrency LIKE CONCAT(CONCAT('%', #{enterCurrency}),'%')
+				</if>
+				<if test="dollar!=null">
+					AND i.Dollar=#{dollar}
+				</if>
+				<if test="month!=null">
+					AND i.Month <![CDATA[>=]]> #{month}
+				</if>
+				<if test="recordType!=null">
+					AND i.RecordType LIKE CONCAT(CONCAT('%', #{recordType}),'%')
+				</if>
+				<if test="confirmStatus!=null">
+					AND i.ConfirmStatus=#{confirmStatus}
+				</if>
+				<if test="confirmStatusForFlag!=null and confirmStatusForFlag==1">
+					AND i.ConfirmStatus!= 'CONFIRM' AND i.ConfirmStatus!= 'CONFIRMAUTO' AND i.ConfirmStatus!= 'CONFIRMSEND' AND i.ConfirmStatus!= 'REJECT'
+				</if>
+				<if test="confirmStatusForFlag!=null and confirmStatusForFlag==2">
+					AND i.ConfirmStatus!= 'NEW' AND i.ConfirmStatus!= 'NEWAUTO' AND i.ConfirmStatus!= 'REJECT'
+				<if test="confirmStatusForFlag!=null and confirmStatusForFlag==3">
+					AND i.ConfirmStatus= 'REJECT'
+				</if>
+				</if>
+				<if test="createDate!=null">
+					AND i.CreateDate <![CDATA[>=]]> #{createDate}
+				</if>
+				<if test="tourCode!=null">
+					AND i.TourCode LIKE CONCAT(CONCAT('%', #{tourCode}),'%')
+				</if>
+				<if test="billToReceiver!=null">
+					AND i.BillToReceiver LIKE CONCAT(CONCAT('%', #{billToReceiver}),'%') 
+				</if>
+				<if test="remarks!=null">
+					AND i.Remarks LIKE CONCAT(CONCAT('%', #{remarks}),'%')
+				</if>
+				<if test="isAuto!=null">
+					AND i.IsAuto=#{isAuto}
+				</if> 
+				<if test="prefix!=null">
+					AND i.Prefix=#{prefix}
+				</if>
+				<if test="tourId!=null">
+					AND i.TourId=#{tourId}
+				</if>
+				<if test="userName!=null">
+					AND i.UserName LIKE CONCAT(CONCAT('%', #{userName}),'%')
+				</if>
+				<if test="beginningDate != null">
+					AND SUBSTRING(`Month`,1,7) <![CDATA[>=]]>SUBSTRING(#{beginningDate},1,7)
+				</if>
+				<if test="endingDate != null">
+					AND SUBSTRING(`Month`,1,7) <![CDATA[<=]]>SUBSTRING(#{endingDate},1,7)
+				</if>
+				<if test="beginningDateForArr != null">
+					AND SUBSTRING(ArriveDateTime,1,10) <![CDATA[>=]]>SUBSTRING(#{beginningDateForArr},1,10)
+				</if>
+				<if test="endingDateForArr != null">
+					AND SUBSTRING(ArriveDateTime,1,10) <![CDATA[<=]]>SUBSTRING(#{endingDateForArr},1,10)
+				</if>
+				ORDER BY i.BusinessNo DESC
+			</trim>
+	</select>
+	
+   	<select id="findCount" resultType="int" parameterType="com.chinatour.entity.InvoiceAndCredit">
+		SELECT
+			count(*)     
+		FROM invoice_and_credit i,dept d
+		WHERE d.DeptId=i.DeptId
+			AND d.IsDel=0
+			<trim suffixOverrides="AND"> 
+				<if test="billToDeptId!= null">
+					AND i.BillToDeptId=#{billToDeptId}
+				</if>
+				<if test="deptId!=null">
+					AND i.DeptId=#{deptId}
+				</if>
+				<if test="confirmStatus!=null">
+					AND i.ConfirmStatus=#{confirmStatus}
+				</if>
+				AND (i.ConfirmStatus = 'NEW' OR i.ConfirmStatus = 'NEWAUTO')
+			</trim>
+	</select>
+	
+	<select id="queryDeptForBegVal" resultType='com.chinatour.entity.Dept' parameterType="string">
+		SELECT DISTINCT a.* FROM( 
+		SELECT DeptId, DeptName, IsDel FROM Dept WHERE DeptId <![CDATA[<>]]> #{deptId} And DeptId NOT IN(
+		SELECT DISTINCT DeptId FROM invoice_and_credit WHERE BillToDeptId=#{deptId} AND IfBeginningValue=2  AND DATE_FORMAT(NOW(),'%Y')=DATE_FORMAT(`Month`,'%Y')) 
+		)a WHERE NOT EXISTS(
+		SELECT b.BillToDeptId FROM(SELECT DISTINCT BillToDeptId FROM invoice_and_credit WHERE DeptId=#{deptId} AND IfBeginningValue=2  AND DATE_FORMAT(NOW(),'%Y')=DATE_FORMAT(`Month`,'%Y')
+		 )b WHERE a.DeptId = b.BillToDeptId )  AND a.IsDel=0  ORDER BY DeptId
+	</select>
+	<select id="querySum" resultType="com.chinatour.entity.InvoiceAndCredit">
+		SELECT 
+		SUM(IF(RecordType='CREDIT MEMO', -EnterCurrency, EnterCurrency)) as EnterCurrency,SUM(IF(RecordType='CREDIT MEMO', -Dollar, Dollar)) as Dollar 
+		FROM 
+		invoice_and_credit i,dept d,RateOfCurrency r
+		WHERE i.RateOfCurrencyId=r.Id 
+			AND d.DeptId=i.BillToDeptId
+		<trim suffixOverrides="AND"> 
+			<if test="invoiceAndCreditId!= null">
+				AND i.InvoiceAndCreditId=#{invoiceAndCreditId}
+			</if>
+			<if test="businessNo!= null">
+				AND i.BusinessNo LIKE CONCAT(CONCAT('%', #{businessNo}),'%')
+			</if>
+			<if test="billToDeptId!= null">
+				AND i.BillToDeptId=#{billToDeptId}
+			</if>
+			<if test="deptId!=null">
+				AND i.DeptId=#{deptId}
+			</if>
+			<if test="rateOfCurrencyId!=null">
+			   AND i.RateOfCurrencyId=#{rateOfCurrencyId}
+			</if>
+			<if test="enterCurrency!=null">
+			  AND i.EnterCurrency LIKE CONCAT(CONCAT('%', #{enterCurrency}),'%')
+			</if>
+			<if test="dollar!=null">
+				AND i.Dollar=#{dollar}
+			</if>
+			<if test="month!=null">
+				AND i.Month <![CDATA[>=]]> #{month}
+			</if>
+			<if test="recordType!=null">
+				AND i.RecordType LIKE CONCAT(CONCAT('%',#{recordType}),'%') 
+			</if>
+			<if test="confirmStatus!=null and confirmStatus==1">
+				AND (i.confirmStatus='NEW' OR i.confirmStatus='NEWAUTO')
+			</if>
+			<if test="confirmStatus!=null and confirmStatus==2">
+				AND (i.confirmStatus='CONFIRM' OR i.confirmStatus='CONFIRMAUTO' OR i.confirmStatus='CONFIRMSEND')
+			</if>
+			<if test="confirmStatus!=null and confirmStatus==3">
+				AND i.confirmStatus='REJECT'
+			</if>
+			<if test="createDate!=null">
+				AND i.CreateDate <![CDATA[>=]]> #{createDate}
+			</if>
+			<if test="deptName!=null">
+				AND d.DeptName LIKE CONCAT(CONCAT('%', #{deptName}),'%')
+			</if>
+			<if test="tourCode!=null">
+				AND i.TourCode LIKE CONCAT(CONCAT('%', #{tourCode}),'%')
+			</if>
+			<if test="billToReceiver!=null">
+				AND i.BillToReceiver LIKE CONCAT(CONCAT('%', #{billToReceiver}),'%') 
+			</if>
+			<if test="remarks!=null">
+				AND i.Remarks LIKE CONCAT(CONCAT('%', #{remarks}),'%')
+			</if>
+			<if test="isAuto!=null">
+				AND i.IsAuto=#{isAuto}
+			</if>
+			<if test="prefix!=null">
+				AND i.Prefix=#{prefix}
+			</if>
+			<if test="tourId!=null">
+				AND i.TourId=#{tourId}
+			</if>
+			<if test="userName!=null">
+				AND i.UserName LIKE CONCAT(CONCAT('%', #{userName}),'%')
+			</if>
+			<if test="beginningDate != null">
+				AND SUBSTRING(`Month`,1,7) <![CDATA[>=]]>SUBSTRING(#{beginningDate},1,7)
+			</if>
+			<if test="endingDate != null">
+				AND SUBSTRING(`Month`,1,7) <![CDATA[<=]]>SUBSTRING(#{endingDate},1,7)
+			</if>
+			<if test="beginningDateForArr != null">
+				AND SUBSTRING(ArriveDateTime,1,10) <![CDATA[>=]]>SUBSTRING(#{beginningDateForArr},1,10)
+			</if>
+			<if test="endingDateForArr != null">
+				AND SUBSTRING(ArriveDateTime,1,10) <![CDATA[<=]]>SUBSTRING(#{endingDateForArr},1,10)
+			</if>
+			ORDER BY i.BusinessNo DESC
+		</trim>
+	</select>
+</mapper>

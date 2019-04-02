@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.CustomerConsultMapper">
+
+	<sql id="Base_Column_List">
+		CustomerConsultId, CustomerId, UserId, ConsultMethod, ConsultContent,UserName,DeptId,CustomerSource,DeptName,CreateDate,EndDate
+	</sql>
+
+	<sql id="findForPage_sql">
+		select
+		cc.CustomerConsultId, cc.CustomerId, cc.UserId, cc.ConsultMethod, cc.ConsultContent,cc.UserName,cc.DeptId,cc.CustomerSource,cc.DeptName,cc.CreateDate,cc.EndDate,c.Tel AS Tel,c.LastName AS LastName,c.FirstName AS FirstName,c.MiddleName AS MiddleName
+		from customer_consult cc,customer c
+		<where>
+			cc.CustomerId=c.CustomerId
+			<if test="record.customerConsultId != null">
+				 AND cc.CustomerConsultId = #{record.customerConsultId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.firstName != null">
+				 AND c.FirstName = #{record.firstName,jdbcType=VARCHAR}
+			</if>
+			<if test="record.middleName != null">
+				 AND c.MiddleName = #{record.middleName,jdbcType=VARCHAR}
+			</if>
+			<if test="record.lastName != null">
+				 AND c.LastName = #{record.lastName,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tel != null">
+				 AND c.Tel = #{record.tel,jdbcType=VARCHAR}
+			</if>
+			<if test="record.customerId != null">
+				 AND cc.CustomerId = #{record.customerId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.userId != null">
+				 AND cc.UserId = #{record.userId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.consultMethod != null">
+				 AND cc.ConsultMethod = #{record.consultMethod,jdbcType=VARCHAR}
+			</if>
+			<if test="record.consultContent != null">
+				 AND cc.ConsultContent LIKE CONCAT('%','${record.consultContent}','%')
+			</if>
+			<if test="record.userName != null">
+				 AND cc.UserName = #{record.userName,jdbcType=VARCHAR}
+			</if>
+			<if test="record.deptId != null">
+				 AND cc.DeptId = #{record.deptId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.deptName != null">
+				 AND cc.DeptName = #{record.deptName,jdbcType=VARCHAR}
+			</if>
+			<if test="record.customerSource != null">
+				 AND cc.CustomerSource = #{record.customerSource,jdbcType=VARCHAR}
+			</if>
+			<if test="record.createDate != null">
+				 AND cc.CreateDate = #{record.createDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.beginningDate != null">
+				 AND cc.CreateDate <![CDATA[>=]]>#{record.beginningDate}
+			</if>
+			<if test="record.endingDate != null">
+				 AND cc.CreateDate <![CDATA[<=]]>#{record.endingDate}
+			</if>
+			<if test="record.endDateForString != null">
+				 AND  date(cc.EndDate) = curdate()
+			</if>
+		</where>
+		order by 
+		CreateDate desc
+	</sql>
+
+	<resultMap type="CustomerConsult" id="BaseResultMap">
+		<id property="customerConsultId" column="CustomerConsultId" jdbcType="VARCHAR" />
+		<result property="customerId" column="CustomerId" jdbcType="VARCHAR" />
+		<result property="userId" column="UserId" jdbcType="VARCHAR" />
+		<result property="consultMethod" column="ConsultMethod" jdbcType="VARCHAR" />
+		<result property="consultContent" column="ConsultContent" jdbcType="VARCHAR" />
+		<result property="userName" column="UserName" jdbcType="VARCHAR" />
+		<result property="deptId" column="DeptId" jdbcType="VARCHAR" />
+		<result property="deptName" column="DeptName" jdbcType="VARCHAR" />
+		<result property="customerSource" column="CustomerSource" jdbcType="VARCHAR" />
+		<result property="createDate" column="createDate" jdbcType="TIMESTAMP" />
+	</resultMap>
+
+	<select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from customer_consult
+		where
+		CustomerConsultId = #{id,jdbcType=VARCHAR}
+	</select>
+
+	<select id="findAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from customer_consult
+	</select>
+
+	<select id="findForPage" resultMap="BaseResultMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findForPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+
+	<delete id="removeById" parameterType="java.lang.String">
+		delete from customer_consult
+		where
+		CustomerConsultId = #{id,jdbcType=VARCHAR}
+	</delete>
+
+	<update id="update" parameterType="CustomerConsult">
+		UPDATE customer_consult
+		<set>
+			<if test="customerId != null">
+				CustomerId = #{customerId,jdbcType=VARCHAR},
+			</if>
+			<if test="userId != null">
+				UserId = #{userId,jdbcType=VARCHAR},
+			</if>
+			<if test="consultMethod != null">
+				ConsultMethod = #{consultMethod,jdbcType=VARCHAR}
+			</if>
+			<if test="consultContent != null">
+				ConsultContent = #{consultContent,jdbcType=INTEGER}
+			</if>
+			<if test="userName != null">
+				UserName = #{userName,jdbcType=INTEGER}
+			</if>
+			<if test="deptId != null">
+				DeptId = #{deptId,jdbcType=VARCHAR}
+			</if>
+			<if test="deptName != null">
+				DeptName = #{deptName,jdbcType=VARCHAR}
+			</if>
+			<if test="customerSource != null">
+				CustomerSource = #{customerSource,jdbcType=VARCHAR}
+			</if>
+		</set>
+		WHERE
+			CustomerConsultId = #{id,jdbcType=VARCHAR}
+	</update>
+
+	<insert id="save" parameterType="CustomerConsult">
+		INSERT INTO customer_consult
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="customerConsultId != null">
+				CustomerConsultId,
+			</if>
+			<if test="customerId != null">
+				CustomerId,
+			</if>
+			<if test="userId != null">
+				UserId,
+			</if>
+			<if test="consultMethod != null">
+				ConsultMethod,
+			</if>
+			<if test="consultContent != null">
+				ConsultContent,
+			</if>
+			<if test="userName != null">
+				UserName,
+			</if>
+			<if test="deptId != null">
+				DeptId,
+			</if>
+			<if test="deptName != null">
+				DeptName,
+			</if>
+			<if test="customerSource != null">
+				CustomerSource,
+			</if>
+			<if test="endDate != null">
+				EndDate
+			</if>
+		</trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="customerConsultId != null">
+				#{customerConsultId,jdbcType=VARCHAR},
+			</if>
+			<if test="customerId != null">
+				#{customerId,jdbcType=VARCHAR},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=VARCHAR},
+			</if>
+			<if test="consultMethod != null">
+				#{consultMethod,jdbcType=VARCHAR},
+			</if>
+			<if test="consultContent != null">
+				#{consultContent,jdbcType=VARCHAR},
+			</if>
+			<if test="userName != null">
+				#{userName,jdbcType=VARCHAR},
+			</if>
+			<if test="deptId != null">
+				#{deptId,jdbcType=VARCHAR},
+			</if>
+			<if test="deptName != null">
+				#{deptName,jdbcType=VARCHAR},
+			</if>
+			<if test="customerSource != null">
+				#{customerSource,jdbcType=VARCHAR},
+			</if>
+			<if test="endDate != null">
+				#{endDate,jdbcType=TIMESTAMP}
+			</if>
+		</trim>
+	</insert>
+	<select id="findByCustomerId" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from customer_consult
+		where
+		CustomerId = #{id,jdbcType=VARCHAR}
+	</select>
+	<select id="findCountCustomerConsult"  parameterType="CustomerConsult" resultType="CustomerConsult">
+		SELECT COUNT(*) AS CustomerSource FROM customer_consult
+		<where>
+			1=1
+			<if test="customerConsultId != null">
+				 AND CustomerConsultId = #{customerConsultId,jdbcType=VARCHAR}
+			</if>
+			<if test="customerId != null">
+				 AND CustomerId = #{customerId,jdbcType=VARCHAR}
+			</if>
+			<if test="userId != null">
+				 AND UserId = #{userId,jdbcType=VARCHAR}
+			</if>
+			<if test="consultMethod != null">
+				 AND ConsultMethod = #{consultMethod,jdbcType=VARCHAR}
+			</if>
+			<if test="consultContent != null">
+				 AND ConsultContent LIKE CONCAT('%','${record.consultContent}','%')
+			</if>
+			<if test="userName != null">
+				 AND UserName = #{userName,jdbcType=VARCHAR}
+			</if>
+			<if test="deptId != null">
+				 AND DeptId = #{deptId,jdbcType=VARCHAR}
+			</if>
+			<if test="deptName != null">
+				 AND DeptName = #{deptName,jdbcType=VARCHAR}
+			</if>
+			<if test="customerSource != null">
+				 AND CustomerSource = #{customerSource,jdbcType=VARCHAR}
+			</if>
+			<if test="createDate != null">
+				 AND CreateDate = #{createDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="beginningDate != null">
+				 AND CreateDate <![CDATA[>=]]>#{beginningDate}
+			</if>
+			<if test="endingDate != null">
+				 AND CreateDate <![CDATA[<=]]>#{endingDate}
+			</if>
+		</where>
+	</select>
+	<sql  id="findRegionForPage_sql">
+	    SELECT 
+	    cc.CustomerConsultId AS CustomerConsultId, cc.CustomerId AS CustomerId, cc.UserId AS UserId, cc.ConsultMethod AS ConsultMethod, cc.ConsultContent AS ConsultContent,cc.UserName AS UserName,cc.DeptId AS DeptId,cc.CustomerSource AS CustomerSource,cc.DeptName AS DeptName,cc.CreateDate AS CreateDate,c.Tel AS Tel,c.LastName AS LastName,c.FirstName AS FirstName,c.MiddleName AS MiddleName  
+	    FROM 
+	    admin_region ar, region r,region_dept_rel rdr,customer_consult cc,customer c 
+	    WHERE 
+	    ar.RegionId=r.RegionId 
+	    AND r.RegionId=rdr.RegionId 
+	    AND rdr.DeptId=cc.DeptId
+	    AND cc.CustomerId=c.CustomerId
+	    <if test="record.customerConsultId != null">
+			 AND cc.CustomerConsultId = #{record.customerConsultId,jdbcType=VARCHAR}
+		</if>
+		<if test="record.customerId != null">
+			 AND cc.CustomerId = #{record.customerId,jdbcType=VARCHAR}
+		</if>
+		<if test="record.firstName != null">
+			 AND c.FirstName = #{record.firstName,jdbcType=VARCHAR}
+		</if>
+		<if test="record.middleName != null">
+			 AND c.MiddleName = #{record.middleName,jdbcType=VARCHAR}
+		</if>
+		<if test="record.lastName != null">
+			 AND c.LastName = #{record.lastName,jdbcType=VARCHAR}
+		</if>
+		<if test="record.tel != null">
+			 AND c.Tel = #{record.tel,jdbcType=VARCHAR}
+		</if>
+		<if test="record.userId != null">
+			 AND ar.AdminId = #{record.userId,jdbcType=VARCHAR}
+		</if>
+		<if test="record.consultMethod != null">
+			 AND cc.ConsultMethod = #{record.consultMethod,jdbcType=VARCHAR}
+		</if>
+		<if test="record.consultContent != null">
+			 AND cc.ConsultContent LIKE CONCAT('%','${record.consultContent}','%')
+		</if>
+		<if test="record.userName != null">
+			 AND cc.UserName = #{record.userName,jdbcType=VARCHAR}
+		</if>
+		<if test="record.deptId != null">
+			 AND cc.DeptId = #{record.deptId,jdbcType=VARCHAR}
+		</if>
+		<if test="record.deptName != null">
+			 AND cc.DeptName = #{record.deptName,jdbcType=VARCHAR}
+		</if>
+		<if test="record.customerSource != null">
+			 AND cc.CustomerSource = #{record.customerSource,jdbcType=VARCHAR}
+		</if>
+		<if test="record.createDate != null">
+			 AND cc.CreateDate = #{record.createDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="record.beginningDate != null">
+			 AND cc.CreateDate <![CDATA[>=]]>#{record.beginningDate}
+		</if>
+		<if test="record.endingDate != null">
+			 AND cc.CreateDate <![CDATA[<=]]>#{record.endingDate}
+		</if>
+		ORDER BY cc.CreateDate DESC
+	</sql>
+	
+	<select id="findRegionForPage" resultMap="BaseResultMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findRegionForPage_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findRegionForPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findRegionForPage_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+	
+	<select id="findForEndDate" resultType="int">
+		select 
+		 count(*) 
+		from 
+		 customer_consult 
+		where 
+		 date(EndDate) = curdate()
+			<if test="userId != null">
+				 AND UserId = #{userId,jdbcType=VARCHAR}
+			</if>
+	</select>
+</mapper>

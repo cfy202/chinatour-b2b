@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.RateOfCurrencyMapper">
+	
+    <sql id="Base_Column_List">
+        Id,CurrencyId,ToCurrencyId,RateUp,RateDown,UsRate,UpdateTime,IsAvailable
+    </sql>
+    
+	<resultMap type="com.chinatour.entity.RateOfCurrency" id="BaseResultMap">
+	    <result column="Id" property="id" jdbcType="VARCHAR" />
+		<result column="CurrencyId" property="currencyId" jdbcType="VARCHAR" />
+		<result column="ToCurrencyId" property="toCurrencyId" jdbcType="VARCHAR" />
+		<result column="RateUp" property="rateUp" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+		<result column="RateDown" property="rateDown" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+		<result column="UsRate" property="usRate" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+		<result column="UpdateTime" property="updateTime" jdbcType="TIMESTAMP" />
+		<result column="IsAvailable" property="isAvailable" jdbcType="INTEGER" />
+	</resultMap>
+	
+	<select id="find" resultMap="BaseResultMap">
+		SELECT 
+			<include refid="Base_Column_List"/>
+	    FROM
+	    	rateofcurrency
+	    <where>
+            <trim suffixOverrides="AND">
+                <if test="id != null">
+                    id = #{id,jdbcType=VARCHAR} AND
+                </if>
+                <if test="currencyId != null">
+                    CurrencyId = #{currencyId,jdbcType=VARCHAR} AND
+                </if>
+                <if test="toCurrencyId != null">
+                    ToCurrencyId = #{toCurrencyId,jdbcType=VARCHAR} AND
+                </if>
+                <if test="rateUp != null">
+                    RateUp = #{rateUp,javaType="java.math.BigDecimal" jdbcType="DECIMAL"} AND
+                </if>
+                <if test="rateDown != null">
+                    RateDown = #{rateDown,javaType="java.math.BigDecimal" jdbcType="DECIMAL"} AND
+                </if>
+                <if test="usRate != null">
+                    UsRate = #{usRate,javaType="java.math.BigDecimal" jdbcType="DECIMAL"} AND
+                </if>
+                <if test="updateTime != null">
+                    UpdateTime = #{updateTime,jdbcType=TIMESTAMP} AND
+                </if>
+                <if test="isAvailable != null">
+                    IsAvailable = #{isAvailable,jdbcType=VARCHAR} AND
+                </if>
+            </trim>
+        </where>	
+        ORDER BY CurrencyId
+	</select>
+	
+	
+	<delete id="removeById" parameterType="String">
+	    DELETE FROM 
+		    rateofcurrency 
+		WHERE 
+		     Id=#{id}
+	</delete>	
+	
+	
+	<select id="findById" resultMap="BaseResultMap" parameterType="String">
+		SELECT 
+			<include refid="Base_Column_List"/>
+	    FROM
+	    	rateofcurrency 
+		WHERE 
+		     Id=#{id}
+	</select>
+	
+	<update id="update" parameterType="com.chinatour.entity.RateOfCurrency">
+		UPDATE rateofcurrency
+			<set>
+			    <if test="id != null">
+                    Id = #{id} ,
+                </if>
+                <if test="currencyId != null">
+                    CurrencyId = #{currencyId} ,
+                </if>
+                <if test="toCurrencyId != null">
+                    ToCurrencyId = #{toCurrencyId} ,
+                </if>
+                <if test="rateUp !=null">
+	                RateUp = #{rateUp} ,
+                </if>
+                <if test="rateDown !=null">
+	                RateDown = #{rateDown} ,
+                </if>
+                <if test="usRate !=null">
+	                UsRate = #{usRate} ,
+                </if>
+                <if test="updateTime !=null">
+	                UpdateTime = #{updateTime} ,
+                </if>
+                <if test="isAvailable != null">
+                    IsAvailable = #{isAvailable} ,
+                </if>
+			</set>
+		WHERE 
+            Id=#{id}
+	</update> 
+	
+	
+	 <insert id="save" parameterType="com.chinatour.entity.RateOfCurrency">
+	     INSERT INTO rateofcurrency
+	     	<trim prefix="(" suffix=")" suffixOverrides=",">
+	     		 <if test="id != null">
+                    Id ,
+                </if>
+                <if test="currencyId != null">
+                    CurrencyId ,
+                </if>
+                <if test="toCurrencyId != null">
+                    ToCurrencyId ,
+                </if>
+                <if test="rateUp !=null">
+	                RateUp ,
+                </if>
+                <if test="rateDown !=null">
+	                RateDown ,
+                </if>
+                <if test="usRate !=null">
+	                UsRate ,
+                </if>
+                <if test="updateTime != null">
+                    UpdateTime ,
+                </if>
+                <if test="isAvailable !=null">
+	                IsAvailable 
+                </if>
+	     	</trim> 
+	     		
+	     	<trim prefix="values (" suffix=")" suffixOverrides=",">
+	     		<if test="id != null">
+                    #{id} ,
+                </if>
+                <if test="currencyId != null">
+                    #{currencyId} ,
+                </if>
+                <if test="toCurrencyId !=null">
+	                #{toCurrencyId} ,
+                </if>
+                <if test="rateUp !=null">
+	                #{rateUp} ,
+                </if>
+                <if test="rateDown !=null">
+	                #{rateDown} ,
+                </if>
+                <if test="usRate != null">
+                    #{usRate} ,
+                </if>
+                <if test="updateTime != null">
+                    #{updateTime} ,
+                </if>
+                <if test="isAvailable !=null">
+	                #{isAvailable} 
+                </if>
+	     	</trim>
+	</insert>
+	<select id="getRate"  resultMap="BaseResultMap">
+		select
+        	<include refid="Base_Column_List"/>
+        from rateofcurrency
+        <where>
+            <trim suffixOverrides="AND">
+                <if test="record.id != null">
+                    Id = #{record.id} AND
+                </if>
+                <if test="record.currencyId != null">
+                    CurrencyId = #{record.currencyId} AND
+                </if>
+                <if test="record.toCurrencyId != null">
+                    ToCurrencyId = #{record.toCurrencyId} AND
+                </if>
+                <if test="record.rateUp !=null">
+	                RateUp = #{record.rateUp} AND
+                </if>
+                <if test="record.rateDown !=null">
+	                RateDown = #{record.rateDown} AND
+                </if>
+                <if test="record.usRate !=null">
+	                UsRate = #{record.usRate} AND
+                </if>
+                <if test="record.updateTime !=null">
+	                UpdateTime = #{record.updateTime} AND
+                </if>
+                <if test="record.isAvailable !=null">
+                    <if test="record.isAvailable !=1">
+	                    IsAvailable = #{record.isAvailable} 
+                    </if>
+                </if>
+            </trim>
+        </where>
+	</select>
+	 
+	<sql id="findForPage_sql">
+        select
+        	<include refid="Base_Column_List"/>
+        from rateofcurrency
+        <where>
+            <trim suffixOverrides="AND">
+                <if test="record.id != null">
+                    Id = #{record.id} AND
+                </if>
+                <if test="record.currencyId != null">
+                    CurrencyId = #{record.currencyId} AND
+                </if>
+                <if test="record.toCurrencyId != null">
+                    ToCurrencyId = #{record.toCurrencyId} AND
+                </if>
+                <if test="record.rateUp !=null">
+	                RateUp = #{record.rateUp} AND
+                </if>
+                <if test="record.rateDown !=null">
+	                RateDown = #{record.rateDown} AND
+                </if>
+                <if test="record.usRate !=null">
+	                UsRate = #{record.usRate} AND
+                </if>
+                <if test="record.updateTime !=null">
+	                UpdateTime = #{record.updateTime} AND
+                </if>
+                <if test="record.isAvailable !=null">
+                    <if test="record.isAvailable !=1">
+	                    IsAvailable = #{record.isAvailable} 
+                    </if>
+                </if>
+            </trim>
+        </where>
+    </sql>
+    
+    <select id="findForPage" resultMap="BaseResultMap">
+        <include refid="Pager.paginationStart"/>
+        <include refid="findForPage_sql"/>
+        <include refid="Pager.paginationEnd"/>
+    </select>
+    
+    <select id="findForPageCount" resultType="int">
+        <include refid="Pager.countStart"/>
+        <include refid="findForPage_sql"/>
+        <include refid="Pager.countEnd"/>
+    </select>
+</mapper>

@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chinatour.persistence.BusinessFlowMapper">
+	<sql id="Base_Column_List">
+		BusinessFlowId,
+		DeptId,
+		AccountDate,
+		CreateTime,
+		AccountSubjectId,
+		AccountsSum,
+		IsDel,
+		IsAvailable,
+		IfClose,
+		Remark
+	</sql>
+	
+	<resultMap type="BusinessFlow" id="BaseResultMap">
+		<result column="BusinessFlowId" property="businessFlowId" jdbcType="VARCHAR"/>
+		<result column="DeptId" property="deptId" jdbcType="VARCHAR" />
+		<result column="AccountDate" property="accountDate" jdbcType="TIMESTAMP" />
+		<result column="CreateTime" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="AccountSubjectId" property="accountSubjectId" jdbcType="INTEGER" />
+		<result column="AccountsSum" property="accountsSum" jdbcType="DOUBLE" />
+		<result column="IsDel" property="isDel" jdbcType="INTEGER" />
+		<result column="IsAvailable" property="isAvailable" jdbcType="INTEGER" />
+		<result column="IfClose" property="ifClose" jdbcType="INTEGER" />
+		<result column="Remark" property="remark" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<delete id="removeById" parameterType="java.lang.String">
+		DELETE FROM 
+			business_flow 
+		WHERE
+		BusinessFlowId = #{businessFlowId,jdbcType=VARCHAR}
+	</delete>
+	
+	
+	<update id="update" parameterType="com.chinatour.entity.BusinessFlow">
+		UPDATE 
+			business_flow
+		<set>
+			<if test="accountsSum != null">
+				AccountsSum = #{accountsSum,jdbcType=DOUBLE},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		WHERE BusinessFlowId = #{businessFlowId,jdbcType=VARCHAR}
+	</update>
+	
+	<sql id="findForPage_sql">
+		SELECT
+			b.BusinessFlowId,
+			b.DeptId,
+			b.AccountDate,
+			b.CreateTime,
+			b.AccountSubjectId,
+			b.AccountsSum,
+			b.IsDel,
+			b.IsAvailable,
+			b.IfClose,
+			b.Remark,
+			a.SubjectCode,
+			a.SubjectName,
+			a.SubjectType
+		FROM business_flow b,account_subject a
+		WHERE
+		b.AccountSubjectId=a.AccountSubjectId
+			<trim suffixOverrides="AND">
+				<if test="record.deptId!= null">
+					AND b.DeptId=#{record.deptId,jdbcType=VARCHAR}
+				</if>
+				<if test="record.beginningDate != null">
+					AND SUBSTRING(`AccountDate`,1,7) <![CDATA[>=]]>SUBSTRING(#{record.beginningDate},1,7)
+				</if>
+				<if test="record.endingDate != null">
+					AND SUBSTRING(`AccountDate`,1,7) <![CDATA[<=]]>SUBSTRING(#{record.endingDate},1,7)
+				</if>
+				<if test="record.createTime!= null">
+					AND b.CreateTime=#{record.createTime,jdbcType=TIMESTAMP}
+				</if>
+				<if test="record.accountSubjectId!= null">
+					AND b.AccountSubjectId=#{record.accountSubjectId,jdbcType=VARCHAR}
+				</if>
+				<if test="record.accountsSum!= null">
+					AND b.AccountsSum=#{record.accountsSum,jdbcType=DOUBLE}
+				</if>
+				<if test="record.isDel!= null">
+					AND b.IsDel=#{record.isDel,jdbcType=INTEGER}
+				</if>
+				<if test="record.isAvailable!= null">
+					AND b.IsAvailable=#{record.isAvailable,jdbcType=INTEGER}
+				</if>
+				<if test="record.ifClose!= null">
+					AND b.IfClose=#{record.ifClose,jdbcType=INTEGER}
+				</if>
+				<if test="record.subjectCode!= null">
+					AND a.SubjectCode LIKE CONCAT('%','${record.subjectCode}','%')
+				</if>
+				<if test="record.subjectName!= null">
+					AND a.SubjectName LIKE CONCAT('%','${record.subjectName}','%')
+				</if>
+				<if test="record.subjectType!= null">
+					AND a.SubjectType=#{record.subjectType,jdbcType=INTEGER}
+				</if>
+				<if test="record.remark!= null">
+					AND b.Remark=#{record.remark,jdbcType=VARCHAR}
+				</if>
+			</trim>
+			ORDER BY b.AccountDate DESC, a.SubjectCode
+	</sql>
+	<select id="findForPage" resultMap="BaseResultMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findForPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+	
+	<select id="sumPayCostOfMonth" parameterType="statisticalProfit" resultType="tabRecord">
+		SELECT
+			SUM(a.SalesIncome) AS SalesIncome,
+			SUM(a.TourCost) AS TourCost,
+			SUM(a.Income) AS Income,
+			SUM(a.Cost) AS Cost,
+			a.AccountDateStr time
+		FROM(
+			SELECT
+				IF(a.SubjectType=3,b.AccountsSum,0) AS SalesIncome,
+				IF(a.SubjectType=4,b.AccountsSum,0) AS TourCost,
+				IF(a.SubjectType=1,b.AccountsSum,0) AS Income,
+				IF(a.SubjectType=2,b.AccountsSum,0) AS Cost,
+				a.SubjectType,
+				DATE_FORMAT(b.AccountDate,'%m') AS AccountDateStr
+			FROM account_subject a,business_flow b
+			WHERE b.AccountSubjectId=a.AccountSubjectId
+			<if test="deptId!= null">
+				AND b.DeptId=#{deptId}
+			</if>
+			<if test="childAccDept!=null">
+				AND a.ChildAccDept=#{childAccDept}
+			</if>
+			<if test="time!= null">
+				AND DATE_FORMAT(b.AccountDate,'%Y')=#{time}
+			</if>
+			AND b.IsDel=0)a GROUP BY a.AccountDateStr
+	</select>
+	
+	<insert id="insertBatch"  parameterType="java.util.List" useGeneratedKeys="false">  
+	    INSERT INTO business_flow 
+	    (
+	    	`BusinessFlowId`,
+			`DeptId`,
+			`AccountDate`,
+			`CreateTime`,
+			`AccountSubjectId`,
+			`AccountsSum`,
+			`IsDel`,
+			`IsAvailable`,
+			`IfClose`,
+			`Remark`
+	    )
+	    VALUES  
+		    <foreach collection="list" item="item" index="index" separator=",">  
+			(
+				#{item.businessFlowId},
+				#{item.deptId},
+				#{item.accountDate},
+				#{item.createTime},
+				#{item.accountSubjectId},
+				#{item.accountsSum},
+				#{item.isDel},
+				#{item.isAvailable},
+				#{item.ifClose},
+				#{item.remark}
+			)
+		    </foreach>  
+	</insert>
+	
+	<select id="queryBusinessFlowOfDept" parameterType="businessFlow" resultType="businessFlow">
+	   SELECT 
+	   		a.*,
+	   		b.BusinessFlowId,
+   			b.IfClose,
+			SUM(b.AccountsSum) AS AccountsSum,
+			DATE_FORMAT(b.AccountDate,'%m') AS AccountDateStr
+		FROM
+			(		
+				SELECT 	
+					a.AccountSubjectId,
+					a.SubjectCode,
+					a.SubjectName,
+					a.ParentSubjectId,
+					a.SubjectType,
+					a.HasChild,
+					a.Level
+				FROM
+					 account_subject a
+				WHERE 1=1
+				<if test="deptId!= null">
+					AND a.DeptId=#{deptId}
+				</if>
+				<!-- 添加 -->
+				<if test="subjectCode!= null">
+					AND a.SubjectCode=#{subjectCode}
+				</if>
+				<if test="childAccDept!= null">
+					AND a.ChildAccDept=#{childAccDept}
+				</if>
+				ORDER BY a.SubjectCode
+			) a LEFT JOIN	
+			business_flow b 
+		ON (    b.AccountSubjectId=a.AccountSubjectId 
+			AND b.IsDel=0
+		<if test="accountDateStr!= null">
+			AND DATE_FORMAT(b.AccountDate,'%Y')=#{accountDateStr}
+		</if>
+		<if test="isAvailable!= null">
+			AND b.IsAvailable=#{isAvailable}
+		</if>
+		<if test="ifClose!= null">
+			AND b.IfClose=#{ifClose}
+		</if>
+		)
+		WHERE 
+			1=1
+			GROUP BY a.AccountSubjectId,DATE_FORMAT(b.AccountDate,'%Y-%m')
+			ORDER BY a.SubjectCode
+	</select>
+</mapper>

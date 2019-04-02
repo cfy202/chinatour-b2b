@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.TourTypeOfDeptMapper">
+
+	<sql id="Base_Column_List">
+		TourTypeOfDeptId,DeptId,TourTypeId, Code, StartTime, EndTime
+	</sql>
+	<resultMap type="com.chinatour.entity.TourTypeOfDept" id="BaseResultMap">
+		<result property="tourTypeOfDeptId" column="TourTypeOfDeptId" jdbcType="VARCHAR" />
+		<result property="deptId" column="DeptId" jdbcType="VARCHAR" />
+		<result property="tourTypeId" column="TourTypeId" jdbcType="VARCHAR" />
+		<result property="code" column="Code" jdbcType="VARCHAR" />
+		<result property="startTime" column="StartTime" jdbcType="TIMESTAMP" />
+		<result property="endTime" column="EndTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<sql id="Base_Column_ListForDept">
+		td.TourTypeOfDeptId TourTypeOfDeptId,td.DeptId DeptId,td.TourTypeId TourTypeId, td.Code Code, td.StartTime StartTime, td.EndTime endTime,t.TypeName typeName,t.brand brand
+	</sql>
+	<sql id="Base_Column_List_forTourType">
+		t.TourTypeOfDeptId TourTypeOfDeptId,t.DeptId DeptId,t.TourTypeId TourTypeId, t.Code Code, t.StartTime StartTime, t.EndTime EndTime,d.deptName deptName
+	</sql>
+	<select id="queryTourTypeList" resultMap="BaseResultMap">
+	    select
+		<include refid="Base_Column_List" />
+		from tour_type_of_dept
+		where
+		DeptId=#{id,jdbcType=VARCHAR}
+	</select>
+	<!-- 通过tourTYpeId查询tourTypeOfDeptList -->
+
+	<select id="findAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tour_type_of_dept
+		
+	</select>
+	
+	<select id="findTourTypeIdByDeptId" resultType="String">
+		SELECT TourTypeId
+		FROM tour_type_of_dept
+		WHERE DeptId = #{DeptId,jdbcType=VARCHAR}
+		AND NOW() BETWEEN StartTime AND EndTime
+	</select>	
+	
+	<select id="query" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tour_type_of_dept
+		WHERE
+			TourTypeId in{id,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="queryByTourType" resultType="com.chinatour.entity.TourTypeOfDept">
+		select
+		<include refid="Base_Column_List_forTourType" />
+		from tour_type_of_dept t,dept d
+		WHERE
+		t.deptId=d.deptId
+		And	TourTypeId =#{id,jdbcType=VARCHAR}
+	</select>
+	
+	 <insert id="save" parameterType="com.chinatour.entity.TourTypeOfDept">
+	     INSERT INTO tour_type_of_dept
+	     	<trim prefix="(" suffix=")" suffixOverrides=",">
+	     		<if test="tourTypeOfDeptId != null">
+                    TourTypeOfDeptId ,
+                </if>
+	     		<if test="deptId != null">
+                    DeptId ,
+                </if>
+	     		<if test="tourTypeId != null">
+                    TourTypeId ,
+                </if>
+                <if test="code != null">
+                    Code ,
+                </if>
+                <if test="startTime != null">
+                    StartTime ,
+                </if>
+                <if test="endTime !=null">
+	                EndTime 
+                </if>
+	     	</trim> 
+	     		
+	     	<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="tourTypeOfDeptId != null">
+				#{tourTypeOfDeptId,jdbcType=VARCHAR},
+			</if>
+			<if test="deptId != null">
+				#{deptId,jdbcType=VARCHAR},
+			</if>
+			<if test="tourTypeId != null">
+				#{tourTypeId,jdbcType=VARCHAR},
+			</if>
+			<if test="code != null">
+				#{code,jdbcType=VARCHAR},
+			</if>
+			<if test="startTime != null">
+				#{startTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="endTime != null">
+				#{endTime,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+	
+	<insert id="batchSave" parameterType="java.util.List">
+		INSERT INTO tour_type_of_dept
+			(<include refid="Base_Column_List"/>)
+		values 
+			<foreach collection="list" item="item" index="index" separator="," >
+				(
+					#{item.tourTypeOfDeptId,jdbcType=VARCHAR},
+					#{item.deptId,jdbcType=VARCHAR},
+					#{item.tourTypeId,jdbcType=VARCHAR},
+					#{item.code,jdbcType=VARCHAR},
+					#{item.startTime,jdbcType=TIMESTAMP},
+					#{item.endTime,jdbcType=TIMESTAMP}
+				)
+			</foreach>
+	</insert>
+	<select id="removeByIds" resultMap="BaseResultMap">
+		delete 
+		from tour_type_of_dept
+		<where>
+            <trim suffixOverrides="AND">
+                TourTypeOfDeptId in
+                <foreach item="item" index="index" collection="ids" open="("
+                         separator="," close=")">
+                    #{item}
+                </foreach>
+                AND
+            </trim>
+        </where>
+			
+	</select>
+	
+	<select id="findTourTypeIdByTourTypeId" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tour_type_of_dept
+		WHERE
+		TourTypeId =#{id,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="findTourTypeOfDeptByDept" resultType="com.chinatour.entity.TourTypeOfDept">
+		select
+			<include refid="Base_Column_ListForDept" />
+		FROM tour_type_of_dept td,tour_type t,dept d
+		WHERE
+			td.tourTypeId=t.tourTypeId
+		AND
+			td.DeptId=d.DeptId
+		AND
+			d.DeptName =#{deptName,jdbcType=VARCHAR}
+	</select>
+</mapper>

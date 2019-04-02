@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.EuropeCustomerFeeMapper">
+	<sql id="Base_Column_List">
+		EuropeCustomerFeeId,   
+		OrderId,
+		EuropeTourPriceId,
+		EnterCurrency,    
+		Amount,
+		Dollar,     
+		Remark,
+		RateOfCurrencyId,
+		CreateDate
+	</sql>
+	<resultMap id="BaseResultMap" type="EuropeTourPrice">
+		<result column="EuropeCustomerFeeId" property="europeCustomerFeeId" jdbcType="VARCHAR" />
+		<result column="EuropeTourPriceId" property="europeTourPriceId" jdbcType="VARCHAR" />
+		<result column="OrderId" property="orderId" jdbcType="VARCHAR" />
+		<result column="EnterCurrency" property="enterCurrency" jdbcType="DECIMAL" />
+		<result column="Amount" property="amount" jdbcType="DECIMAL" />
+		<result column="Remark" property="remark" jdbcType="VARCHAR" />
+		<result column="RateOfCurrencyId" property="rateOfCurrencyId" jdbcType="VARCHAR" />
+		<result column="CreateDate" property="createDate" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<!-- 欧洲团给每个客人录费用 -->
+	<select id="findCustomerWithFee" resultType="com.chinatour.entity.EuropeCustomerFee" parameterType="java.lang.String">
+		 SELECT s.EuropeCustomerFeeId AS EuropeCustomerFeeId,s.EnterCurrency AS EnterCurrency, tt.CustomerOrderNo AS CustomerOrderNo,tt.LastName AS LastName,tt.FirstName AS FirstName,tt.MiddleName AS MiddleName,tt.CustomerOrderNo AS CustomerOrderNo,tt.CustomerOrderRelId AS CustomerOrderRelId,s.Amount AS Amount,s.Remark AS Remark,s.State AS State,s.OrderId AS OrderId FROM (SELECT 
+		   cor.CustomerOrderRelId AS CustomerOrderRelId, cor.CustomerOrderNo AS CustomerOrderNo,cor.OrderId AS OrderId,c.LastName AS LastName,c.FirstName AS FirstName,c.MiddleName AS MiddleName
+		FROM 
+			customer_order_rel cor,customer c WHERE cor.CustomerId=c.CustomerId AND cor.OrderId=#{id,jdbcType=VARCHAR})tt  
+		LEFT JOIN 
+			europecustomerfee s ON tt.CustomerOrderRelId=s.CustomerOrderRelId
+		ORDER BY 
+			tt.CustomerOrderNo
+	</select>
+	
+	<insert id="save" parameterType="com.chinatour.entity.EuropeCustomerFee">     
+		INSERT INTO europecustomerFee
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="europeCustomerFeeId != null">
+				EuropeCustomerFeeId,
+			</if>
+			<if test="createDate != null">
+				CreateDate,
+			</if>
+			<if test="enterCurrency != null">
+				EnterCurrency,
+			</if>
+			<if test="amount != null">
+				Amount,
+			</if>
+			<if test="dollar != null">
+				Dollar,
+			</if>
+			<if test="europeTourPriceId != null">
+				EuropeTourPriceId,
+			</if>
+			<if test="orderId != null">
+				OrderId,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+			<if test="state != null">
+				State,
+			</if>
+			<if test="rateOfCurrencyId != null">
+				RateOfCurrencyId,
+			</if>
+			<if test="customerOrderRelId != null">
+				CustomerOrderRelId
+			</if>
+		</trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="europeCustomerFeeId != null">
+				#{europeCustomerFeeId,jdbcType=VARCHAR},
+			</if>
+			<if test="createDate != null">
+				#{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="enterCurrency != null">
+				#{enterCurrency,jdbcType=DECIMAL},
+			</if>
+			<if test="amount != null">
+				#{amount,jdbcType=DECIMAL},
+			</if>
+			<if test="dollar != null">
+				#{dollar,jdbcType=DECIMAL},
+			</if>
+			<if test="europeTourPriceId != null">
+				#{europeTourPriceId,jdbcType=DECIMAL},
+			</if>
+			<if test="orderId != null">
+				#{orderId,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="state != null">
+				#{state,jdbcType=INTEGER},
+			</if>
+			<if test="rateOfCurrencyId != null">
+				#{rateOfCurrencyId,jdbcType=INTEGER},
+			</if>
+			<if test="customerOrderRelId != null">
+				#{customerOrderRelId,jdbcType=INTEGER}
+			</if>
+		</trim>
+	</insert>
+	<update id="update" parameterType="com.chinatour.entity.EuropeCustomerFee">
+		UPDATE europeCustomerFee
+			<set>
+				<trim suffixOverrides=","> 
+					<if test="orderId!= null">
+						OrderId=#{orderId},
+					</if>
+					<if test="europeTourPriceId!= null">
+						EuropeTourPriceId=#{europeTourPriceId},
+					</if>
+					<if test="enterCurrency!=null">
+						EnterCurrency=#{enterCurrency},
+					</if>
+					<if test="amount!=null">
+					   	Amount=#{amount},
+					</if>
+					<if test="dollar!=null">
+					  	Dollar=#{dollar},
+					</if>
+					<if test="remark!=null">
+						Remark=#{remark},
+					</if>
+					<if test="rateOfCurrencyId!=null">
+						RateOfCurrencyId=#{rateOfCurrencyId},
+					</if>
+					<if test="createDate!=null">
+						CreateDate=#{createDate},
+					</if>
+					<if test="customerOrderRelId!=null">
+						CustomerOrderRelId=#{customerOrderRelId},
+					</if>
+					<if test="state!=null">
+						State=#{state}
+					</if>
+				</trim>
+			</set>
+		WHERE 
+            EuropeCustomerFeeId=#{europeCustomerFeeId}
+	</update>
+	<select id="find" resultType="com.chinatour.entity.EuropeCustomerFee" parameterType="com.chinatour.entity.EuropeCustomerFee">
+		SELECT
+			EuropeCustomerFeeId,
+			CustomerOrderRelId,   
+			OrderId,
+			EuropeTourPriceId,
+			EnterCurrency,    
+			Amount,
+			Dollar,
+			State,    
+			Remark,
+			RateOfCurrencyId,
+			CreateDate  
+		FROM 
+			europeCustomerFee
+		WHERE 
+			1=1 
+			<trim suffixOverrides="AND"> 
+				<if test="europeCustomerFeeId!= null">
+					AND EuropeCustomerFeeId=#{europeCustomerFeeId}
+				</if>
+				<if test="orderId!= null">
+					AND OrderId=#{orderId}
+				</if>
+				<if test="europeTourPriceId!= null">
+					AND EuropeTourPriceId=#{europeTourPriceId}
+				</if>
+				<if test="enterCurrency!=null">
+					AND EnterCurrency=#{enterCurrency}
+				</if>
+				<if test="amount!=null">
+				   	AND Amount=#{amount}
+				</if>
+				<if test="dollar!=null">
+				  	AND Dollar=#{dollar}
+				</if>
+				<if test="remark!=null">
+					AND Remark=#{remark}
+				</if>
+				<if test="rateOfCurrencyId!=null">
+					AND RateOfCurrencyId=#{rateOfCurrencyId}
+				</if>
+				<if test="createDate!=null">
+					AND CreateDate=#{createDate}
+				</if>
+				<if test="customerOrderRelId!=null">
+					AND CustomerOrderRelId=#{customerOrderRelId}
+				</if>
+				<if test="state!=null">
+					AND State=#{state}
+				</if>
+			</trim>
+	</select>
+	<select id="findById" parameterType="java.lang.String" resultType="com.chinatour.entity.EuropeCustomerFee">
+	    SELECT
+		<include refid="Base_Column_List" />
+		FROM europeCustomerFee
+		WHERE
+		EuropeCustomerFeeId = #{id,jdbcType=VARCHAR}
+	</select> 
+</mapper>

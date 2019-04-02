@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.ProductAreaMapper">
+
+	<sql id="Base_Column_List">
+		ProductAreaId, AreaName
+	</sql>
+	<resultMap type="com.chinatour.entity.ProductArea" id="BaseResultMap">
+	    <result property="id" column="ProductAreaId"  jdbcType="VARCHAR" />
+		<result property="areaName" column="AreaName" jdbcType="VARCHAR" />
+	</resultMap>
+	<select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
+	    select
+		<include refid="Base_Column_List" />
+		from product_area
+		where
+		ProductAreaId = #{id,jdbcType=VARCHAR}
+	</select>
+
+	<select id="findAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from product_area
+		ORDER BY Ord
+	</select>
+</mapper>

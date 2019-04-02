@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.DeptMapper">
+	
+    <sql id="Base_Column_List">
+        DeptId,DeptName,Tel,Mobile,Email,Address,Fax,CurrencyTypeId,ZipCode,
+        CreateDate,CountryId,CityId,Explains,IsDel,Account
+    </sql>
+    
+	<resultMap type="Dept" id="BaseResultMap">
+	    <result column="DeptId" property="deptId" jdbcType="VARCHAR" />
+		<result column="DeptName" property="deptName" jdbcType="VARCHAR" />
+		<result column="Tel" property="tel" jdbcType="VARCHAR" />
+		<result column="Mobile" property="mobile" jdbcType="VARCHAR" />
+		<result column="Email" property="email" jdbcType="VARCHAR" />
+		<result column="Address" property="address" jdbcType="VARCHAR" />
+		<result column="Fax" property="fax" jdbcType="VARCHAR" />
+		<result column="CurrencyTypeId" property="currencyTypeId" jdbcType="VARCHAR" />
+		<result column="ZipCode" property="zipCode" jdbcType="VARCHAR" />
+		<result column="CreateDate" property="createDate" />
+		<result column="CountryId" property="countryId" jdbcType="VARCHAR" />
+		<result column="CityId" property="cityId" jdbcType="VARCHAR" />
+		<result column="Explains" property="explains" jdbcType="VARCHAR" />
+		<result column="IsDel" property="isDel" jdbcType="TINYINT" />
+		<result column="Account" property="account" jdbcType="VARCHAR" />
+		<result column="Symbol" property="symbol" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<update id="update" parameterType="Dept">
+		UPDATE dept
+			<set>
+                <if test="deptName != null">
+                    DeptName = #{deptName} ,
+                </if>
+                <if test="tel != null">
+                    Tel = #{tel} ,
+                </if>
+                <if test="mobile != null">
+                    Mobile = #{mobile} ,
+                </if>
+                <if test="email != null">
+                    Email = #{email} ,
+                </if>
+                <if test="address != null">
+                    Address = #{address} ,
+                </if>
+                <if test="fax !=null">
+	                Fax = #{fax} ,
+                </if>
+                <if test="currencyTypeId !=null">
+	                CurrencyTypeId = #{currencyTypeId} ,
+                </if>
+                <if test="zipCode !=null">
+	                ZipCode = #{zipCode},
+                </if>
+                <if test="createDate !=null">
+	                CreateDate = #{createDate} ,
+                </if>
+                <if test="countryId !=null">
+	                CountryId = #{countryId},
+                </if>
+                <if test="cityId !=null">
+	                CityId = #{cityId} ,
+                </if>
+                <if test="explains !=null">
+	                Explains = #{explains} ,
+                </if>
+                <if test="account !=null">
+	                Account = #{account} ,
+                </if>
+                <if test="isDel !=null">
+	                IsDel = #{isDel} 
+                </if>
+			</set>
+		WHERE 
+            DeptId=#{deptId}
+	</update> 
+	
+	<select id="findAll" resultMap="BaseResultMap">
+		SELECT 
+			<include refid="Base_Column_List"/>
+	    FROM
+	    	dept
+	    WHERE IsDel=0 ORDER BY deptId
+	</select>
+	<!-- 除本部门的其他部门列表 -->
+	<select id="listBillDept" resultMap="BaseResultMap">
+		SELECT 
+			<include refid="Base_Column_List"/>
+	    FROM
+	    	dept
+	    WHERE
+	    	IsDel=0
+	    	AND
+	    	DeptId <![CDATA[<>]]>#{deptId}
+	</select>
+	
+	<select id="findById" resultMap="BaseResultMap" parameterType="String">
+		SELECT 
+			<include refid="Base_Column_List"/>
+	    FROM
+	    	dept
+	    	where 
+	    	DeptId=#{deptId}
+	</select>
+	
+	<delete id="removeById" parameterType="String">
+	    DELETE FROM 
+		    dept 
+		WHERE 
+		     DeptId=#{deptId}
+	</delete>
+	
+	 <insert id="save" parameterType="Dept">
+	     INSERT INTO dept
+	     	<trim prefix="(" suffix=")" suffixOverrides=",">
+	     		 <if test="deptId != null">
+                    DeptId,
+                </if>
+                <if test="deptName != null">
+                    DeptName,
+                </if>
+                <if test="tel != null">
+                    Tel,
+                </if>
+                <if test="mobile != null">
+                    Mobile,
+                </if>
+                <if test="email != null">
+                    Email,
+                </if>
+                <if test="address != null">
+                    Address,
+                </if>
+                <if test="fax !=null">
+	                Fax,
+                </if>
+                <if test="currencyTypeId !=null">
+	                CurrencyTypeId,
+                </if>
+                <if test="zipCode !=null">
+	                ZipCode,
+                </if>
+                <if test="createDate !=null">
+	                CreateDate,
+                </if>
+                <if test="countryId !=null">
+	                CountryId,
+                </if>
+                <if test="cityId !=null">
+	                CityId, 
+                </if>
+                <if test="explains !=null">
+	                Explains, 
+                </if>
+                <if test="account !=null">
+	                Account, 
+                </if>
+                <if test="isDel !=null">
+	                IsDel, 
+                </if>
+	     	</trim> 
+	     		
+	     	<trim prefix="values (" suffix=")" suffixOverrides=",">
+	     		<if test="deptId != null">
+                    #{deptId} ,
+                </if>
+                <if test="deptName != null">
+                    #{deptName} ,
+                </if>
+                <if test="tel != null">
+                    #{tel} ,
+                </if>
+                <if test="mobile != null">
+                    #{mobile} ,
+                </if>
+                <if test="email != null">
+                    #{email} ,
+                </if>
+                <if test="address != null">
+                    #{address} ,
+                </if>
+                <if test="fax !=null">
+	                #{fax} ,
+                </if>
+                <if test="currencyTypeId !=null">
+	                #{currencyTypeId} ,
+                </if>
+                <if test="zipCode !=null">
+	                #{zipCode},
+                </if>
+                <if test="createDate !=null">
+	                #{createDate} ,
+                </if>
+                <if test="countryId !=null">
+	                #{countryId},
+                </if>
+                <if test="cityId !=null">
+	                #{cityId} ,
+                </if>
+                <if test="explains !=null">
+	                #{explains},
+                </if>
+                <if test="account !=null">
+	                #{account},
+                </if>
+                <if test="isDel !=null">
+	               #{isDel},
+                </if>
+	     	</trim>
+	</insert>
+	
+    
+    	<sql id="findForPage_sql">
+        select
+        	<include refid="Base_Column_List"/>
+        from dept
+        <where>
+            <trim suffixOverrides="AND">
+                <if test="record.deptId != null">
+                    DeptId = #{record.deptId} AND
+                </if>
+                <if test="record.deptName != null">
+                    DeptName LIKE CONCAT('%','${record.deptName}','%') AND
+                </if>
+                <if test="record.tel != null">
+                    Tel = #{record.tel} AND
+                </if>
+                <if test="record.mobile != null">
+                    Mobile = #{record.mobile} AND
+                </if>
+                <if test="record.email != null">
+                    Email = #{record.email} AND
+                </if>
+                <if test="record.address != null">
+                    Address = #{record.address} AND
+                </if>
+                <if test="record.fax !=null">
+	                Fax = #{record.fax} AND
+                </if>
+                <if test="record.currencyTypeId !=null">
+	                CurrencyTypeId = #{record.currencyTypeId} AND
+                </if>
+                <if test="record.zipCode !=null">
+	                ZipCode = #{record.zipCode} AND
+                </if>
+                <if test="record.createDate !=null">
+	                CreateDate = #{record.createDate} AND
+                </if>
+                <if test="record.countryId !=null">
+	                CountryId = #{record.countryId} AND
+                </if>
+					IsDel = 0 AND
+                <if test="record.cityId !=null">
+	                CityId = #{record.cityId} 
+                </if>
+            </trim>
+        </where>
+    </sql>
+    
+    <select id="findForPage" resultMap="BaseResultMap">
+        <include refid="Pager.paginationStart"/>
+        <include refid="findForPage_sql"/>
+        <include refid="Pager.paginationEnd"/>
+    </select>
+    
+    <select id="findForPageCount" resultType="int">
+        <include refid="Pager.countStart"/>
+        <include refid="findForPage_sql"/>
+        <include refid="Pager.countEnd"/>
+    </select>
+	<select id="findNameById" resultType="String" parameterType="String">
+		SELECT 
+			DeptName
+		FROM 
+			Dept
+		WHERE 
+			DeptId=#{deptId}
+	</select>
+	<select id="findNameByAdminId" resultType="String" parameterType="String">
+		SELECT 
+			DeptName
+		FROM 
+			Dept d,zs_admin za
+		WHERE 
+			d.deptId=za.deptId
+			AND za.id = #{id,jdbcType=VARCHAR}
+	</select>
+	<select id="findCountryNameById" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        	c.CountryName as CountryId
+        from dept d, country c
+        WHERE
+        	d.CountryId=c.CountryId
+           	AND	d.DeptId = #{deptId,jdbcType=VARCHAR}
+		    AND	d.IsDel = 0
+    </select>
+    
+    <select id="findCountryNameByIdForLogin" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        	c.CountryName as CountryId
+        from dept d, country c
+        WHERE
+        	d.CountryId=c.CountryId
+           	AND	d.DeptId = #{deptId,jdbcType=VARCHAR}
+    </select>
+    
+   	<select id="findCurrencyTypeAll" resultMap="BaseResultMap">
+		SELECT 
+			d.DeptId,d.DeptName,ct.Symbol
+	    FROM
+	    	dept d,currency_type ct
+	    WHERE d.CurrencyTypeId=ct.CurrencyTypeId
+	    AND IsDel=0
+	</select>
+	
+	<select id="findDeptByRegionId" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        	d.*
+        from dept d, region_dept_rel rd
+        WHERE
+        	d.DeptId=rd.DeptId
+           	AND	rd.RegionId = #{id,jdbcType=VARCHAR}
+    </select>
+</mapper>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.RoleAuthorityMapper">
+
+	<sql id="Base_Column_List">
+		Role, Authorities
+	</sql>
+	<resultMap type="com.chinatour.entity.RoleAuthority" id="BaseResultMap">
+		<id property="role" column="Role" jdbcType="VARCHAR" />
+		<result property="authorities" column="Authorities" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
+	    SELECT
+		<include refid="Base_Column_List" />
+		FROM zs_role_authority
+		WHERE
+		Role = #{role,jdbcType=VARCHAR}
+	</select>
+
+	<select id="findAll" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM zs_role_authority
+	</select>
+		<delete id="removeById" parameterType="java.lang.String">
+		delete from zs_role_authority
+		where
+		Role = #{role,jdbcType=VARCHAR}
+	</delete>
+
+	<update id="update" parameterType="RoleAuthority">
+		update zs_role_authority
+		<set>
+			<if test="role != null">
+				Role = #{role,jdbcType=VARCHAR},
+			</if>
+			<if test="authorities != null">
+				Authorities = #{authorities,jdbcType=VARCHAR}
+			</if>
+		</set>
+		where Role = #{role,jdbcType=VARCHAR}
+	</update>
+
+	<insert id="save" parameterType="RoleAuthority">
+		insert into zs_role_authority
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="role != null">
+				Role,
+			</if>
+			<if test="authorities != null">
+				Authorities
+			</if>
+		</trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="role != null">
+				#{role,jdbcType=VARCHAR},
+			</if>
+			<if test="authorities != null">
+				#{authorities,jdbcType=VARCHAR}
+			</if>
+		</trim>
+	</insert>
+</mapper>

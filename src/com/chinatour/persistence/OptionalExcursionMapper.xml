@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.OptionalExcursionMapper">
+
+	<sql id="Base_Column_List">
+		Id,Name,Price,Remark,Type,CreateDate,ModifyDate
+	</sql>
+
+	<sql id="findForPage_sql">
+		select
+		<include refid="Base_Column_List" />
+		from OptionalExcursion
+		<where>
+			<if test="record.id != null">
+				Id = #{record.id,jdbcType=VARCHAR}
+			</if>
+			<if test="record.name != null">
+				Name = #{record.name,jdbcType=VARCHAR}
+			</if>
+			<if test="record.price != null">
+				Price = #{record.price,jdbcType=INTEGER}
+			</if>
+			<if test="record.type != null">
+				Type = #{record.type,jdbcType=VARCHAR}
+			</if>
+			<if test="record.remark != null">
+				AND Remark LIKE CONCAT('%','${record.remark}','%')
+			</if>
+		</where>
+	</sql>
+
+	<resultMap type="OptionalExcurition" id="BaseResultMap">
+		<id property="id" column="Id" jdbcType="VARCHAR" />
+		<result property="name" column="Name" jdbcType="VARCHAR" />
+		<result property="price" column="Price" jdbcType="DECIMAL" />
+		<result property="remark" column="Remark" jdbcType="VARCHAR" />
+		<result property="type" column="Type" jdbcType="VARCHAR" />
+		<result property="createDate" column="CreateDate" jdbcType="TIMESTAMP" />
+		<result property="modifyDate" column="ModifyDate" jdbcType="DATE" />
+	</resultMap>
+
+	<select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
+	    select
+		<include refid="Base_Column_List" />
+		from OptionalExcursion
+		where
+		Id = #{id,jdbcType=VARCHAR}
+	</select>
+
+	<select id="findAll" resultMap="BaseResultMap">
+		select
+		Id,TRIM(`Name`) AS Name,Price,Remark,Type,CreateDate,ModifyDate
+		from OptionalExcursion
+	</select>
+
+	<select id="findForPage" resultMap="BaseResultMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findForPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+
+	<delete id="removeById" parameterType="java.lang.String">
+		delete from OptionalExcursion
+		where
+		Id = #{id,jdbcType=VARCHAR}
+	</delete>
+
+	<update id="update" parameterType="OptionalExcurition">
+		update OptionalExcursion
+		<set>
+			<if test="name != null">
+				Name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="price != null">
+				Price = #{price,jdbcType=DECIMAL},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				Type = #{type,jdbcType=VARCHAR},
+			</if>
+			<if test="modifyDate != null">
+				ModifyDate = #{modifyDate,jdbcType=DATE}
+			</if>
+		</set>
+		where Id = #{id,jdbcType=VARCHAR}
+	</update>
+
+	<insert id="save" parameterType="com.chinatour.entity.OptionalExcurition">
+		insert into OptionalExcursion
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				Id,
+			</if>
+			<if test="name != null">
+				Name,
+			</if>
+			<if test="price != null">
+				Price,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+			<if test="type != null">
+				Type,
+			</if>
+			<if test="createDate != null">
+				CreateDate,
+			</if>
+			<if test="modifyDate != null">
+				ModifyDate
+			</if>
+		</trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="price != null">
+				#{price,jdbcType=DECIMAL},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=VARCHAR},
+			</if>
+			<if test="createDate != null">
+				#{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifyDate != null">
+				#{modifyDate,jdbcType=DATE}
+			</if>
+		</trim>
+	</insert>
+	<select id="findByCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+	    select
+		<include refid="Base_Column_List" />
+		from OptionalExcursion
+		where
+		Type = #{Type,jdbcType=VARCHAR}
+	</select>
+</mapper>

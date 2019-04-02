@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.DiscountMapper">
+	<sql id="Base_Column_List">
+		DiscountId, DiscountPrice, OrderId
+	</sql>
+	<resultMap type="Discount" id="BaseResultMap">
+		<id property="id" column="DiscountId" jdbcType="VARCHAR" />
+		<result property="discountPrice" column="DiscountPrice" jdbcType="DECIMAL" />
+		<result property="orderId" column="OrderId" jdbcType="VARCHAR" />
+	</resultMap>
+	<select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
+	    select
+		<include refid="Base_Column_List" />
+		from discount
+		where
+		DiscountId = #{id,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="findByOrderId" parameterType="java.lang.String" resultMap="BaseResultMap">
+	    select
+		<include refid="Base_Column_List" />
+		from discount
+		where
+		OrderId = #{id,jdbcType=VARCHAR}
+	</select>
+
+	<select id="findAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from discount
+	</select>
+
+	<update id="update" parameterType="Discount">
+		update discount
+		<set>
+			<if test="discountPrice != null">
+				DiscountPrice = #{discountPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="orderId != null">
+				OrderId = #{orderId,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where DiscountId = #{id,jdbcType=VARCHAR}
+	</update>
+
+	<insert id="save" parameterType="City">
+		insert into discount
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				DiscountId,
+			</if>
+			<if test="discountPrice != null">
+				DiscountPrice,
+			</if>
+			<if test="orderId != null">
+				OrderId
+			</if>
+		</trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="discountPrice != null">
+				#{discountPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="orderId != null">
+				#{orderId,jdbcType=VARCHAR}
+			</if>
+		</trim>
+	</insert>
+</mapper>

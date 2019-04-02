@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.LanguageMapper">
+
+	<sql id="Base_Column_List">
+		LanguageId, Language, Sort
+	</sql>
+	<resultMap type="Language" id="BaseResultMap">
+		<id property="languageId" column="LanguageId" jdbcType="VARCHAR" />
+		<result property="language" column="language" jdbcType="VARCHAR" />
+		<result property="sort" column="Sort" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
+	    select
+		<include refid="Base_Column_List" />
+		from Language
+		where
+		LanguageId = #{languageId,jdbcType=VARCHAR}
+	</select>
+
+	<select id="findAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Language order by Sort
+	</select>
+	
+	<select id="find" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Language
+		<where>
+			<trim suffixOverrides="AND">
+				<if test="languageId != null">
+					LanguageId = #{id} AND
+				</if>
+				<if test="language != null">
+					Language LIKE CONCAT('%','${language}','%')
+				</if>
+			</trim>
+		</where>
+	</select>
+</mapper>

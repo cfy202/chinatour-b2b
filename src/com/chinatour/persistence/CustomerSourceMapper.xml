@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.CustomerSourceMapper">
+	<resultMap id="BaseResultMap" type="com.chinatour.entity.CustomerSource">
+		<id column="CustomerSourceId" property="customerSourceId" jdbcType="VARCHAR" />
+		<result column="SourceName" property="sourceName" jdbcType="VARCHAR"/>
+		<result column="DeptId" property="deptId" jdbcType="VARCHAR"/> 
+	</resultMap>
+	
+	<sql id="Base_Column_List">
+		CustomerSourceId, SourceName, DeptId
+	</sql>
+
+	<sql id="findForPage_sql">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM customer_source
+		<where>
+			<if test="record.customerSourceId != null">
+				CustomerSourceId = #{record.customerSourceId, jdbcType=VARCHAR}
+			</if>
+			<if test="record.sourceName != null">
+				SourceName = #{record.sourceName,jdbcType=VARCHAR}
+			</if>
+			<if test="record.deptId != null">
+				DeptId = #{record.deptId,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</sql>
+
+	<select id="findForPage" resultMap="BaseResultMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findForPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+
+	<select id="findAll" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM customer_source
+	</select>
+
+	<select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM customer_source
+		WHERE CustomerSourceId = #{customerSourceId, jdbcType=VARCHAR}
+	</select>
+
+	<select id="find" resultMap="BaseResultMap" parameterType="com.chinatour.entity.CustomerSource">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM customer_source
+		<where>
+			<if test="customerSourceId != null">
+				CustomerSourceId = #{customerSourceId, jdbcType=VARCHAR}
+			</if>
+			<if test="sourceName != null">
+				SourceName LIKE CONCAT('%','${sourceName}','%')
+			</if>
+			<if test="deptId != null">
+				DeptId = #{deptId, jdbcType=VARCHAR}
+			</if>
+		</where>
+		order by orders
+	</select>
+
+	<insert id="save" parameterType="com.chinatour.entity.CustomerSource">
+		INSERT INTO customer_source
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="customerSourceId != null">
+				CustomerSourceId,
+			</if>
+			<if test="sourceName != null">
+				SourceName,
+			</if>
+			<if test="deptId != null">
+				DeptId
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="customerSourceId != null">
+				#{CustomerSourceId,jdbcType=VARCHAR},
+			</if>
+			<if test="sourceName != null">
+				#{SourceName,jdbcType=VARCHAR},
+			</if>
+			<if test="deptId != null">
+				#{DeptId,jdbcType=VARCHAR}
+			</if>
+		</trim>
+	</insert>
+
+	<update id="update" parameterType="com.chinatour.entity.CustomerSource">
+		UPDATE customer_source
+		<set>
+			<if test="sourceName != null">
+				SourceName = #{sourceName,jdbcType=VARCHAR},
+			</if>
+			<if test="deptId != null">
+				DeptId  = #{deptId,jdbcType=VARCHAR}
+			</if>
+		</set>
+		WHERE CustomerSourceId = #{customerSourceId, jdbcType=VARCHAR}
+	</update>
+	<select id="findSource" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM customer_source GROUP BY SourceName
+	</select>
+</mapper>

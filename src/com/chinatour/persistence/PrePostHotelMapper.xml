@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.PrePostHotelMapper">
+
+	<sql id="Base_Column_List">
+		PrePostHotelId, RoomType,Nights,Type,OrderId,RoomNo,Guest
+	</sql>
+
+	<resultMap type="PrePostHotel" id="BaseResultMap">
+		<id property="prePostHotelId" column="PrePostHotelId" jdbcType="VARCHAR" />
+		<result property="orderId" column="OrderId" jdbcType="VARCHAR" />
+		<result property="roomType" column="RoomType" jdbcType="VARCHAR" />
+		<result property="guest" column="Guest" jdbcType="VARCHAR" />
+		<result property="roomNo" column="RoomNo" jdbcType="INTEGER" />
+		<result property="nights" column="Nights" jdbcType="INTEGER" />
+		<result property="type" column="Type" jdbcType="INTEGER" />
+	</resultMap>
+
+	<select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from pre_post_hotel
+		where
+		PrePostHotelId = #{prePostHotelId,jdbcType=VARCHAR}
+	</select>
+
+	<select id="findByOrderId" resultMap="BaseResultMap" parameterType="com.chinatour.entity.PrePostHotel">
+		select
+		<include refid="Base_Column_List" />
+		from pre_post_hotel
+		where 
+		<if test="orderId!=null">
+			OrderId = #{orderId,jdbcType=VARCHAR}
+		</if>
+		<if test="type!=null">
+			AND type=#{type,jdbcType=INTEGER}
+		</if>
+	</select>
+
+	<delete id="removeById" parameterType="java.lang.String">
+		delete from pre_post_hotel
+		where
+		PrePostHotelId = #{prePostHotelId,jdbcType=VARCHAR}
+	</delete>
+	<update id="update" parameterType="PrePostHotel">
+		update pre_post_hotel
+		<set>
+			<if test="roomType != null">
+				RoomType=#{roomType, jdbcType=INTEGER},
+			</if>
+			<if test="nights != null">
+				Nights=#{nights, jdbcType=INTEGER},
+			</if>
+			<if test="type != null">
+				Type=#{type, jdbcType=INTEGER},
+			</if>
+			<if test="orderId != null">
+				OrderId=#{orderId, jdbcType=VARCHAR},
+			</if>
+			<if test="roomNo != null">
+				RoomNo=#{roomNo, jdbcType=INTEGER},
+			</if>
+			<if test="guest != null">
+				Guest=#{guest, jdbcType=VARCHAR}
+			</if>
+		</set>
+		where PrePostHotelId = #{prePostHotelId,jdbcType=VARCHAR}
+	</update>
+	<insert id="save" parameterType="PrePostHotel">
+		insert into pre_post_hotel
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="prePostHotelId != null">
+				PrePostHotelId,
+			</if>
+			<if test="roomType != null">
+				RoomType,
+			</if>
+			<if test="nights != null">
+				Nights,
+			</if>
+			<if test="type != null">
+				Type,
+			</if>
+			<if test="orderId != null">
+				OrderId,
+			</if>
+			<if test="roomNo != null">
+				RoomNo,
+			</if>
+			<if test="guest !=null">
+	            Guest
+            </if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="prePostHotelId != null">
+				 #{prePostHotelId, jdbcType=VARCHAR},
+			</if>
+			<if test="roomType != null">
+				#{roomType, jdbcType=INTEGER},
+			</if>
+			<if test="nights != null">
+				#{nights, jdbcType=INTEGER},
+			</if>
+			<if test="type != null">
+				#{type, jdbcType=INTEGER},
+			</if>
+			<if test="orderId != null">
+				#{orderId, jdbcType=VARCHAR},
+			</if>
+			<if test="roomNo != null">
+				#{roomNo, jdbcType=INTEGER},
+			</if>
+			<if test="guest != null">
+				#{guest, jdbcType=VARCHAR}
+			</if>
+		</trim>
+	</insert>
+</mapper>

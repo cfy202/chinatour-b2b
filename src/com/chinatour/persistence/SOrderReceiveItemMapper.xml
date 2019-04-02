@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.SOrderReceiveItemMapper">
+
+	<resultMap id="BaseResultMap" type="com.chinatour.entity.OrderReceiveItem">
+		<id column="ItemId" property="id" jdbcType="VARCHAR" />
+		<result column="ReceivableInfoOfOrderId" property="receivableInfoOfOrderId"
+			jdbcType="VARCHAR" />
+		<result column="Type" property="type" jdbcType="TINYINT" />
+		<result column="ItemFee" property="itemFee" jdbcType="DECIMAL" />
+		<result column="ItemFeeNum" property="itemFeeNum" jdbcType="TINYINT" />
+		<result column="Num" property="num" jdbcType="INTEGER" />
+		<result column="Remark" property="remark" jdbcType="LONGVARCHAR" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		ItemId, ReceivableInfoOfOrderId, Type, ItemFee, ItemFeeNum,
+		Num, Remark
+	</sql>
+
+	<sql id="findForPage_sql">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM s_order_receive_item
+		<where>
+			<if test="record.id != null">
+				ItemId = #{record.id,jdbcType=VARCHAR}
+			</if>
+			<if test="record.receivableInfoOfOrderId != null">
+				AND ReceivableInfoOfOrderId =
+				#{record.receivableInfoOfOrderId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.type != null">
+				AND Type = #{record.type,jdbcType=TINYINT}
+			</if>
+			<if test="record.itemFee != null">
+				AND ItemFee = #{record.itemFee,jdbcType=DECIMAL}
+			</if>
+			<if test="record.itemFeeNum != null">
+				AND ItemFeeNum = #{record.itemFeeNum,jdbcType=TINYINT}
+			</if>
+			<if test="record.num != null">
+				AND Num = #{record.num,jdbcType=INTEGER}
+			</if>
+			<if test="record.remark != null">
+				AND Remark = #{record.remark,jdbcType=LONGVARCHAR}
+			</if>
+		</where>
+	</sql>
+
+	<select id="findForPage" resultMap="BaseResultMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findForPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+
+	<select id="find" resultMap="BaseResultMap"
+		parameterType="com.chinatour.entity.OrderReceiveItem">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM s_order_receive_item
+		<where>
+			<if test="id != null">
+				ItemId = #{id,jdbcType=VARCHAR}
+			</if>
+			<if test="receivableInfoOfOrderId != null">
+				AND ReceivableInfoOfOrderId =
+				#{receivableInfoOfOrderId,jdbcType=VARCHAR}
+			</if>
+			<if test="type != null">
+				AND Type = #{type,jdbcType=TINYINT}
+			</if>
+			<if test="itemFee != null">
+				AND ItemFee = #{itemFee,jdbcType=DECIMAL}
+			</if>
+			<if test="itemFeeNum != null">
+				AND ItemFeeNum = #{itemFeeNum,jdbcType=TINYINT}
+			</if>
+			<if test="num != null">
+				AND Num = #{num,jdbcType=INTEGER}
+			</if>
+			<if test="remark != null">
+				AND Remark = #{remark,jdbcType=LONGVARCHAR}
+			</if>
+		</where>
+	</select>
+
+	<select id="findAll" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM s_order_receive_item
+	</select>
+
+	<select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM s_order_receive_item
+		WHERE ItemId = #{id,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="findByReceivableInfoOfOrderId" resultMap="BaseResultMap" parameterType="java.lang.String">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM s_order_receive_item
+		WHERE ReceivableInfoOfOrderId = #{receivableInfoOfOrderId,jdbcType=VARCHAR}
+		ORDER BY Num
+	</select>
+
+	<delete id="removeById" parameterType="java.lang.String">
+		DELETE FROM
+		s_order_receive_item
+		WHERE ItemId = #{id,jdbcType=VARCHAR}
+	</delete>
+	
+	<delete id="removeByReceivableInfoOfOrderId" parameterType="java.lang.String">
+		DELETE FROM
+		s_order_receive_item
+		WHERE ReceivableInfoOfOrderId = #{receivableInfoOfOrderId,jdbcType=VARCHAR}
+	</delete>
+	
+	<delete id="removeByIds" parameterType="java.lang.String">  
+	    DELETE FROM s_order_receive_item WHERE ItemId IN  
+	    <foreach item="itemId" collection="ids" open="(" separator="," close=")">   
+	        #{itemId,jdbcType=VARCHAR}   
+	    </foreach>  
+	</delete> 
+
+	<insert id="save" parameterType="com.chinatour.entity.OrderReceiveItem">
+		INSERT INTO s_order_receive_item
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ItemId,
+			</if>
+			<if test="receivableInfoOfOrderId != null">
+				ReceivableInfoOfOrderId,
+			</if>
+			<if test="type != null">
+				Type,
+			</if>
+			<if test="itemFee != null">
+				ItemFee,
+			</if>
+			<if test="itemFeeNum != null">
+				ItemFeeNum,
+			</if>
+			<if test="num != null">
+				Num,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="receivableInfoOfOrderId != null">
+				#{receivableInfoOfOrderId,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=TINYINT},
+			</if>
+			<if test="itemFee != null">
+				#{itemFee,jdbcType=DECIMAL},
+			</if>
+			<if test="itemFeeNum != null">
+				#{itemFeeNum,jdbcType=TINYINT},
+			</if>
+			<if test="num != null">
+				#{num,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=LONGVARCHAR},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="update" parameterType="com.chinatour.entity.OrderReceiveItem">
+		UPDATE s_order_receive_item
+		<set>
+			<if test="receivableInfoOfOrderId != null">
+				ReceivableInfoOfOrderId =
+				#{receivableInfoOfOrderId,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				Type = #{type,jdbcType=TINYINT},
+			</if>
+			<if test="itemFee != null">
+				ItemFee = #{itemFee,jdbcType=DECIMAL},
+			</if>
+			<if test="itemFeeNum != null">
+				ItemFeeNum = #{itemFeeNum,jdbcType=TINYINT},
+			</if>
+			<if test="num != null">
+				Num = #{num,jdbcType=INTEGER},
+			</if>
+			<choose>
+				<when test="remark != null">
+					Remark = #{remark,jdbcType=LONGVARCHAR}
+				</when>
+				<otherwise>
+					Remark = ''
+				</otherwise>
+			</choose>
+		</set>
+		WHERE ItemId = #{id,jdbcType=VARCHAR}
+	</update>
+</mapper>

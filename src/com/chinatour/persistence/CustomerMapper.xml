@@ -1,0 +1,899 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.CustomerMapper">
+	<resultMap id="BaseResultMap" type="com.chinatour.entity.Customer">
+		<id column="CustomerId" property="customerId" jdbcType="VARCHAR" />
+		<result column="CustomerCode" property="customerCode" jdbcType="VARCHAR" />
+		<result column="LastName" property="lastName" jdbcType="VARCHAR" />
+		<result column="FirstName" property="firstName" jdbcType="VARCHAR" />
+		<result column="MiddleName" property="middleName" jdbcType="VARCHAR" />
+		<result column="DateOfBirth" property="dateOfBirth" jdbcType="TIMESTAMP" />
+		<result column="Sex" property="sex" jdbcType="INTEGER" />
+		<result column="MemoOfCustomer" property="memoOfCustomer"
+			jdbcType="VARCHAR" />
+		<result column="NationalityOfPassport" property="nationalityOfPassport"
+			jdbcType="VARCHAR" />
+		<result column="PassportNo" property="passportNo" jdbcType="VARCHAR" />
+		<result column="ExpireDateOfPassport" property="expireDateOfPassport"
+			jdbcType="DATE" />
+		<result column="StreetAddress" property="streetAddress"
+			jdbcType="VARCHAR" />
+		<result column="Residency" property="residency" jdbcType="VARCHAR" />
+		<result column="City" property="cityId" jdbcType="VARCHAR" />
+		<result column="Tel" property="tel" jdbcType="VARCHAR" />
+		<result column="Mobile" property="mobile" jdbcType="VARCHAR" />
+		<result column="Email" property="email" jdbcType="VARCHAR" />
+		<result column="Zip" property="zip" jdbcType="VARCHAR" />
+		<result column="LanguageId" property="languageId" jdbcType="VARCHAR" />
+		<result column="StateId" property="stateId" jdbcType="VARCHAR" />
+		<result column="CountryId" property="countryId" jdbcType="VARCHAR" />
+		<result column="CustomerSource" property="customerSource"
+			jdbcType="VARCHAR" />
+		<result column="IsDel" property="isDel" jdbcType="INTEGER" />
+		<result column="Type" property="type" jdbcType="INTEGER" />
+		<result column="Advertised" property="advertised" jdbcType="INTEGER" />
+		<result column="Planticket" property="planticket" jdbcType="VARCHAR" />
+		<result column="CreateDate" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="ModifyDate" property="modifyDate" jdbcType="TIMESTAMP" />
+		<result column="OtherInfo" property="otherInfo" jdbcType="LONGVARCHAR" />
+		<result column="WR" property="wr" jdbcType="INTEGER" />
+		<result column="PayHistoryInfo" property="payHistoryInfo"
+			jdbcType="LONGVARCHAR" />
+		<result column="PeerId" property="peerId" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<resultMap id="ResultMapForCity" type="com.chinatour.entity.Customer" extends="BaseResultMap">
+		<association property="city" column="City"
+			select="com.chinatour.persistence.CityMapper.findById" />
+		<association property="country" column="CountryId"
+			select="com.chinatour.persistence.CountryMapper.findById" />
+		<association property="state" column="StateId"
+			select="com.chinatour.persistence.StateMapper.findById" />
+		<association property="language" column="LanguageId"
+			select="com.chinatour.persistence.LanguageMapper.findById" />
+	</resultMap>
+	
+	<sql id="Base_Column_List">
+		CustomerId, CustomerCode, LastName, FirstName, MiddleName,
+		DateOfBirth, Sex, MemoOfCustomer,
+		NationalityOfPassport, PassportNo,
+		ExpireDateOfPassport, StreetAddress, City, Tel,
+		Mobile, Email, Zip,
+		LanguageId, StateId, CountryId, CustomerSource, IsDel,
+		Advertised,
+		Planticket, CreateDate, ModifyDate, OtherInfo, PayHistoryInfo,PeerId,WR,Type,Residency
+	</sql>
+
+	<sql id="findForPage_sql">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM customer c
+		WHERE 
+		c.IsDel = 0
+		<if test="record.customerId != null">
+			AND c.CustomerId = #{record.customerId,jdbcType=VARCHAR}
+		</if>
+		<if test="record.customerCode != null">
+			AND c.CustomerCode LIKE CONCAT('%','${record.customerCode}','%')
+		</if>
+		<if test="record.lastName != null">
+			AND c.LastName LIKE CONCAT('%','${record.lastName}','%')
+		</if>
+		<if test="record.firstName != null">
+			AND c.FirstName LIKE CONCAT('%','${record.firstName}','%')
+		</if>
+		<if test="record.middleName != null">
+			AND c.MiddleName LIKE CONCAT('%','${record.middleName}','%')
+		</if>
+		<if test="record.dateOfBirth != null">
+			AND c.DateOfBirth = #{record.dateOfBirth,jdbcType=TIMESTAMP}
+		</if>
+		<if test="record.sex != null">
+			AND c.Sex = #{record.sex,jdbcType=VARCHAR}
+		</if>
+		<if test="record.memoOfCustomer != null">
+			AND c.MemoOfCustomer =
+			#{record.memoOfCustomer,jdbcType=VARCHAR}
+		</if>
+		<if test="record.nationalityOfPassport != null">
+			AND c.NationalityOfPassport =
+			#{record.nationalityOfPassport,jdbcType=VARCHAR}
+		</if>
+		<if test="record.passportNo != null">
+			AND c.PassportNo LIKE CONCAT('%','${record.passportNo}','%')
+		</if>
+		<if test="record.expireDateOfPassport != null">
+			AND c.ExpireDateOfPassport =
+			#{record.expireDateOfPassport,jdbcType=DATE}
+		</if>
+		<if test="record.streetAddress != null">
+			AND c.StreetAddress =
+			#{record.streetAddress,jdbcType=VARCHAR}
+		</if>
+		<if test="record.cityId != null">
+			AND c.City = #{record.cityId,jdbcType=VARCHAR}
+		</if>
+		<if test="record.tel != null">
+			AND c.Tel = #{record.tel,jdbcType=VARCHAR}
+		</if>
+		<if test="record.mobile != null">
+			AND c.Mobile = #{record.mobile,jdbcType=VARCHAR}
+		</if>
+		<if test="record.email != null">
+			AND c.Email = #{record.email,jdbcType=VARCHAR}
+		</if>
+		<if test="record.zip != null">
+			AND c.Zip = #{record.zip,jdbcType=VARCHAR}
+		</if>
+		<if test="record.languageId != null">
+			AND c.LanguageId = #{record.languageId,jdbcType=VARCHAR}
+		</if>
+		<if test="record.stateId != null">
+			AND c.StateId = #{record.stateId,jdbcType=VARCHAR}
+		</if>
+		<if test="record.countryId != null">
+			AND c.CountryId = #{record.countryId,jdbcType=VARCHAR}
+		</if>
+		<if test="record.customerSource != null">
+			AND c.CustomerSource =
+			#{record.customerSource,jdbcType=VARCHAR}
+		</if>
+		<if test="record.advertised != null">
+			AND c.Advertised = #{record.advertised,jdbcType=INTEGER}
+		</if>
+		<if test="record.planticket != null">
+			AND c.Planticket = #{record.planticket,jdbcType=VARCHAR}
+		</if>
+		<if test="record.createDate != null">
+			AND c.CreateDate = #{record.createDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="record.modifyDate != null">
+			AND c.ModifyDate = #{record.modifyDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="record.otherInfo != null">
+			AND c.OtherInfo = #{record.otherInfo,jdbcType=LONGVARCHAR}
+		</if>
+		<if test="record.payHistoryInfo != null">
+			AND c.PayHistoryInfo =
+			#{record.payHistoryInfo,jdbcType=LONGVARCHAR}
+		</if>
+		<if test="record.peerId != null">
+			AND c.PeerId = #{record.peerId,jdbcType=VARCHAR}
+		</if>
+	</sql>
+
+	<select id="findForPage" resultMap="ResultMapForCity">
+		<include refid="Pager.paginationStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findForPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+
+	<select id="find" resultMap="BaseResultMap" parameterType="com.chinatour.entity.Customer">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM customer
+		WHERE isDel = 0
+		<if test="customerId != null">
+			AND CustomerId = #{customerId,jdbcType=VARCHAR}
+		</if>
+		<if test="customerCode != null">
+			AND CustomerCode LIKE CONCAT('%','${customerCode}','%')
+		</if>
+		<if test="lastName != null">
+			AND LastName LIKE CONCAT('%','${lastName}','%')
+		</if>
+		<if test="firstName != null">
+			AND FirstName LIKE CONCAT('%','${firstName}','%')
+		</if>
+		<if test="middleName != null">
+			AND MiddleName LIKE CONCAT('%','${middleName}','%')
+		</if>
+		<if test="dateOfBirth != null">
+			AND DateOfBirth = #{dateOfBirth,jdbcType=TIMESTAMP}
+		</if>
+		<if test="sex != null">
+			AND Sex = #{sex,jdbcType=VARCHAR}
+		</if>
+		<if test="memoOfCustomer != null">
+			AND MemoOfCustomer = #{memoOfCustomer,jdbcType=VARCHAR}
+		</if>
+		<if test="nationalityOfPassport != null">
+			AND NationalityOfPassport =
+			#{nationalityOfPassport,jdbcType=VARCHAR}
+		</if>
+		<if test="passportNo != null">
+			AND PassportNo = #{passportNo,jdbcType=VARCHAR}
+		</if>
+		<if test="expireDateOfPassport != null">
+			AND ExpireDateOfPassport =
+			#{expireDateOfPassport,jdbcType=DATE}
+		</if>
+		<if test="streetAddress != null">
+			AND StreetAddress = #{streetAddress,jdbcType=VARCHAR}
+		</if>
+		<if test="cityId != null">
+			AND City = #{cityId,jdbcType=VARCHAR}
+		</if>
+		<if test="tel != null">
+			AND Tel = #{tel,jdbcType=VARCHAR}
+		</if>
+		<if test="mobile != null">
+			AND Mobile = #{mobile,jdbcType=VARCHAR}
+		</if>
+		<if test="email != null">
+			AND Email = #{email,jdbcType=VARCHAR}
+		</if>
+		<if test="zip != null">
+			AND Zip = #{zip,jdbcType=VARCHAR}
+		</if>
+		<if test="languageId != null">
+			AND LanguageId = #{languageId,jdbcType=VARCHAR}
+		</if>
+		<if test="stateId != null">
+			AND StateId = #{stateId,jdbcType=VARCHAR}
+		</if>
+		<if test="countryId != null">
+			AND CountryId = #{countryId,jdbcType=VARCHAR}
+		</if>
+		<if test="customerSource != null">
+			AND CustomerSource = #{customerSource,jdbcType=VARCHAR}
+		</if>
+		<if test="advertised != null">
+			AND Advertised = #{advertised,jdbcType=INTEGER}
+		</if>
+		<if test="planticket != null">
+			AND Planticket = #{planticket,jdbcType=VARCHAR}
+		</if>
+		<if test="createDate != null">
+			AND CreateDate = #{createDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="modifyDate != null">
+			AND ModifyDate = #{modifyDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="otherInfo != null">
+			AND OtherInfo = #{otherInfo,jdbcType=LONGVARCHAR}
+		</if>
+		<if test="payHistoryInfo != null">
+			AND PayHistoryInfo =
+			#{payHistoryInfo,jdbcType=LONGVARCHAR}
+		</if>
+		<if test="peerId != null">
+			AND PeerId = #{peerId,jdbcType=VARCHAR}
+		</if>
+	</select>
+	
+	<select id="findCustomerForOrder" resultMap="BaseResultMap" parameterType="com.chinatour.entity.Customer">
+		SELECT
+		c.*
+		FROM orders o,customer_order_rel cor,customer c
+		WHERE 
+		o.OrderId=cor.OrderId AND cor.CustomerId = c.CustomerId AND c.IsDel = 0
+		<if test="customerId != null">
+			AND c.CustomerId = #{customerId,jdbcType=VARCHAR}
+		</if>
+		<if test="customerCode != null">
+			AND c.CustomerCode LIKE CONCAT('%','${customerCode}','%')
+		</if>
+		<if test="lastName != null">
+			AND c.LastName LIKE CONCAT('%','${lastName}','%')
+		</if>
+		<if test="firstName != null">
+			AND c.FirstName LIKE CONCAT('%','${firstName}','%')
+		</if>
+		<if test="middleName != null">
+			AND c.MiddleName LIKE CONCAT('%','${middleName}','%')
+		</if>
+		<if test="dateOfBirth != null">
+			AND c.DateOfBirth = #{dateOfBirth,jdbcType=TIMESTAMP}
+		</if>
+		<if test="sex != null">
+			AND c.Sex = #{sex,jdbcType=VARCHAR}
+		</if>
+		<if test="memoOfCustomer != null">
+			AND c.MemoOfCustomer = #{memoOfCustomer,jdbcType=VARCHAR}
+		</if>
+		<if test="nationalityOfPassport != null">
+			AND c.NationalityOfPassport =
+			#{nationalityOfPassport,jdbcType=VARCHAR}
+		</if>
+		<if test="passportNo != null">
+			AND c.PassportNo = #{passportNo,jdbcType=VARCHAR}
+		</if>
+		<if test="expireDateOfPassport != null">
+			AND c.ExpireDateOfPassport =
+			#{expireDateOfPassport,jdbcType=DATE}
+		</if>
+		<if test="streetAddress != null">
+			AND c.StreetAddress = #{streetAddress,jdbcType=VARCHAR}
+		</if>
+		<if test="cityId != null">
+			AND c.City = #{cityId,jdbcType=VARCHAR}
+		</if>
+		<if test="tel != null">
+			AND c.Tel = #{tel,jdbcType=VARCHAR}
+		</if>
+		<if test="mobile != null">
+			AND c.Mobile = #{mobile,jdbcType=VARCHAR}
+		</if>
+		<if test="email != null">
+			AND c.Email = #{email,jdbcType=VARCHAR}
+		</if>
+		<if test="zip != null">
+			AND c.Zip = #{zip,jdbcType=VARCHAR}
+		</if>
+		<if test="languageId != null">
+			AND c.LanguageId = #{languageId,jdbcType=VARCHAR}
+		</if>
+		<if test="stateId != null">
+			AND c.StateId = #{stateId,jdbcType=VARCHAR}
+		</if>
+		<if test="countryId != null">
+			AND c.CountryId = #{countryId,jdbcType=VARCHAR}
+		</if>
+		<if test="customerSource != null">
+			AND c.CustomerSource = #{customerSource,jdbcType=VARCHAR}
+		</if>
+		<if test="advertised != null">
+			AND c.Advertised = #{advertised,jdbcType=INTEGER}
+		</if>
+		<if test="planticket != null">
+			AND c.Planticket = #{planticket,jdbcType=VARCHAR}
+		</if>
+		<if test="createDate != null">
+			AND c.CreateDate = #{createDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="modifyDate != null">
+			AND c.ModifyDate = #{modifyDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="otherInfo != null">
+			AND c.OtherInfo = #{otherInfo,jdbcType=LONGVARCHAR}
+		</if>
+		<if test="payHistoryInfo != null">
+			AND c.PayHistoryInfo =
+			#{payHistoryInfo,jdbcType=LONGVARCHAR}
+		</if>
+		<if test="peerId != null">
+			AND c.PeerId = #{peerId,jdbcType=VARCHAR}
+		</if>
+		<if test="brand != null">
+			AND o.Brand = #{brand,jdbcType=VARCHAR}
+		</if>
+		<if test="beginDateForBook != null">
+			AND  o.CreateTime <![CDATA[>=]]>#{beginDateForBook}
+		</if>
+		<if test="endDateForBook != null">
+			AND  o.CreateTime <![CDATA[<=]]>#{endDateForBook}
+		</if>
+	</select>
+
+	<select id="findAll" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM customer WHERE isDel = 0
+	</select>
+
+	<select id="findById" resultMap="ResultMapForCity" parameterType="java.lang.String">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM customer WHERE isDel = 0
+		AND CustomerId = #{customerId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="findByIds" resultMap="BaseResultMap" parameterType="java.lang.String">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM customer WHERE CustomerId IN  
+	    <foreach item="itemId" collection="ids" open="(" separator="," close=")">   
+	        #{itemId,jdbcType=VARCHAR}   
+	    </foreach>  
+	</select>
+
+	<delete id="removeById" parameterType="java.lang.String">
+		UPDATE customer
+		SET isDel = 1
+		WHERE CustomerId = #{customerId,jdbcType=VARCHAR}
+	</delete>
+	<delete id="deleteId" parameterType="java.lang.String">
+		DELETE FROM customer
+		WHERE CustomerId = #{customerId,jdbcType=VARCHAR}
+	</delete>
+
+	<insert id="save" parameterType="com.chinatour.entity.Customer">
+		INSERT INTO customer
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="customerId != null">
+				CustomerId,
+			</if>
+			<if test="lastName != null">
+				LastName,
+			</if>
+			<if test="firstName != null">
+				FirstName,
+			</if>
+			<if test="middleName != null">
+				MiddleName,
+			</if>
+			<if test="dateOfBirth != null">
+				DateOfBirth,
+			</if>
+			<if test="sex != null">
+				Sex,
+			</if>
+			<if test="memoOfCustomer != null">
+				MemoOfCustomer,
+			</if>
+			<if test="nationalityOfPassport != null">
+				NationalityOfPassport,
+			</if>
+			<if test="passportNo != null">
+				PassportNo,
+			</if>
+			<if test="expireDateOfPassport != null">
+				ExpireDateOfPassport,
+			</if>
+			<if test="streetAddress != null">
+				StreetAddress,
+			</if>
+			<if test="cityId != null">
+				City,
+			</if>
+			<if test="tel != null">
+				Tel,
+			</if>
+			<if test="mobile != null">
+				Mobile,
+			</if>
+			<if test="email != null">
+				Email,
+			</if>
+			<if test="zip != null">
+				Zip,
+			</if>
+			<if test="languageId != null">
+				LanguageId,
+			</if>
+			<if test="stateId != null">
+				StateId,
+			</if>
+			<if test="countryId != null">
+				CountryId,
+			</if>
+			<if test="customerSource != null">
+				CustomerSource,
+			</if>
+			<if test="advertised != null">
+				Advertised,
+			</if>
+			<if test="planticket != null">
+				Planticket,
+			</if>
+			<if test="createDate != null">
+				CreateDate,
+			</if>
+			<if test="modifyDate != null">
+				ModifyDate,
+			</if>
+			<if test="otherInfo != null">
+				OtherInfo,
+			</if>
+			<if test="payHistoryInfo != null">
+				PayHistoryInfo,
+			</if>
+			<if test="peerId != null">
+				PeerId,
+			</if>
+			<if test="type != null">
+				Type,
+			</if>
+			<if test="residency!=null">
+				Residency,
+			</if>
+		</trim>
+		 <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="customerId != null">
+				#{customerId,jdbcType=VARCHAR},
+			</if>
+			<if test="lastName != null">
+				#{lastName,jdbcType=VARCHAR},
+			</if>
+			<if test="firstName != null">
+				#{firstName,jdbcType=VARCHAR},
+			</if>
+			<if test="middleName != null">
+				#{middleName,jdbcType=VARCHAR},
+			</if>
+			<if test="dateOfBirth != null">
+				#{dateOfBirth,jdbcType=TIMESTAMP},
+			</if>
+			<if test="sex != null">
+				#{sex,jdbcType=INTEGER},
+			</if>
+			<if test="memoOfCustomer != null">
+				#{memoOfCustomer,jdbcType=VARCHAR},
+			</if>
+			<if test="nationalityOfPassport != null">
+				#{nationalityOfPassport,jdbcType=VARCHAR},
+			</if>
+			<if test="passportNo != null">
+				#{passportNo,jdbcType=VARCHAR},
+			</if>
+			<if test="expireDateOfPassport != null">
+				#{expireDateOfPassport,jdbcType=DATE},
+			</if>
+			<if test="streetAddress != null">
+				#{streetAddress,jdbcType=VARCHAR},
+			</if>
+			<if test="cityId != null">
+				#{cityId,jdbcType=VARCHAR},
+			</if>
+			<if test="tel != null">
+				#{tel,jdbcType=VARCHAR},
+			</if>
+			<if test="mobile != null">
+				#{mobile,jdbcType=VARCHAR},
+			</if>
+			<if test="email != null">
+				#{email,jdbcType=VARCHAR},
+			</if>
+			<if test="zip != null">
+				#{zip,jdbcType=VARCHAR},
+			</if>
+			<if test="languageId != null">
+				#{languageId,jdbcType=VARCHAR},
+			</if>
+			<if test="stateId != null">
+				#{stateId,jdbcType=VARCHAR},
+			</if>
+			<if test="countryId != null">
+				#{countryId,jdbcType=VARCHAR},
+			</if>
+			<if test="customerSource != null">
+				#{customerSource,jdbcType=VARCHAR},
+			</if>
+			<if test="advertised != null">
+				#{advertised,jdbcType=INTEGER},
+			</if>
+			<if test="planticket != null">
+				#{planticket,jdbcType=VARCHAR},
+			</if>
+			<if test="createDate != null">
+				#{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifyDate != null">
+				#{modifyDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="otherInfo != null">
+				#{otherInfo,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="payHistoryInfo != null">
+				#{payHistoryInfo,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="peerId != null">
+				#{peerId,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=INTEGER},
+			</if>
+			<if test="residency!=null">
+				#{residency,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	
+	<insert id="saveCustomers" parameterType="ArrayList">
+		INSERT INTO　Customer(CustomerId,CustomerCode,ModifyDate,LastName,FirstName,MiddleName,DateOfBirth,Sex,MemoOfCustomer,NationalityOfPassport,
+		PassportNo,ExpireDateOfPassport,StreetAddress,City,Tel,Mobile,Email,Zip,OtherInfo,LanguageId,StateId,CountryId,CustomerSource,Advertised,Planticket,
+		PayHistoryInfo,PeerId,Residency)
+		values
+		<foreach collection="customerList" item="customer" open="(" separator="," close=")">
+			#{customer.customerId}, 
+			#{customer.customerCode}, 
+			#{customer.modifyDate},
+			#{customer.lastName}, 
+			#{customer.firstName},
+			#{customer.middleName}, 
+			#{customer.dateOfBirth},
+			#{customer.sex},
+			#{customer.memoOfCustomer},
+			#{customer.nationalityOfPassport}, 
+			#{customer.passportNo}, 
+			#{customer.expireDateOfPassport},
+			#{customer.streetAddress}, 
+			#{customer.city},
+			#{customer.tel},
+			#{customer.mobile}, 
+			#{customer.email}, 
+			#{customer.zip},
+			#{customer.otherInfo}, 
+			#{customer.languageId}, 
+			#{customer.stateId},
+			#{customer.countryId}, 
+			#{customer.customerSource}, 
+			#{customer.advertised},
+			#{customer.planticket}, 
+			#{customer.payHistoryInfo},
+			#{customer.peerId},
+			#{customer.residency}
+		</foreach>
+	</insert>
+
+	<update id="update" parameterType="com.chinatour.entity.Customer">
+		UPDATE customer
+		<set>
+			<if test="customerCode != null">
+				CustomerCode = #{customerCode,jdbcType=VARCHAR},
+			</if>
+			<choose>
+				<when test="lastName != null">
+					LastName = #{lastName,jdbcType=VARCHAR},		
+				</when>
+				<otherwise>
+					LastName = '',		
+				</otherwise>
+			</choose>
+			<choose>
+				<when test="firstName != null">
+					FirstName = #{firstName,jdbcType=VARCHAR},		
+				</when>
+				<otherwise>
+					FirstName = '',		
+				</otherwise>
+			</choose>
+			<choose>
+				<when test="middleName != null">
+					MiddleName = #{middleName,jdbcType=VARCHAR},		
+				</when>
+				<otherwise>
+					MiddleName = '',		
+				</otherwise>
+			</choose>
+			<if test="dateOfBirth != null">
+				DateOfBirth = #{dateOfBirth,jdbcType=TIMESTAMP},
+			</if>
+			<if test="sex != null">
+				Sex = #{sex,jdbcType=INTEGER},
+			</if>
+			<choose>
+				<when test="memoOfCustomer != null">
+					MemoOfCustomer = #{memoOfCustomer,jdbcType=VARCHAR},	
+				</when>
+				<otherwise>
+					MemoOfCustomer ='',
+				</otherwise>
+			</choose>
+			<if test="nationalityOfPassport != null">
+				NationalityOfPassport =
+				#{nationalityOfPassport,jdbcType=VARCHAR},
+			</if>
+			<if test="passportNo != null">
+				PassportNo = #{passportNo,jdbcType=VARCHAR},
+			</if>
+			<if test="expireDateOfPassport != null">
+				ExpireDateOfPassport =
+				#{expireDateOfPassport,jdbcType=DATE},
+			</if>
+			<if test="streetAddress != null">
+				StreetAddress = #{streetAddress,jdbcType=VARCHAR},
+			</if>
+			<if test="cityId != null">
+				City = #{cityId,jdbcType=VARCHAR},
+			</if>
+			<if test="tel != null">
+				Tel = #{tel,jdbcType=VARCHAR},
+			</if>
+			<if test="mobile != null">
+				Mobile = #{mobile,jdbcType=VARCHAR},
+			</if>
+			<if test="email != null">
+				Email = #{email,jdbcType=VARCHAR},
+			</if>
+			<if test="zip != null">
+				Zip = #{zip,jdbcType=VARCHAR},
+			</if>
+			<if test="languageId != null">
+				LanguageId = #{languageId,jdbcType=VARCHAR},
+			</if>
+			<if test="stateId != null">
+				StateId = #{stateId,jdbcType=VARCHAR},
+			</if>
+			<if test="countryId != null">
+				CountryId = #{countryId,jdbcType=VARCHAR},
+			</if>
+			<if test="customerSource != null">
+				CustomerSource = #{customerSource,jdbcType=VARCHAR},
+			</if>
+			<if test="advertised != null">
+				Advertised = #{advertised,jdbcType=INTEGER},
+			</if>
+			<if test="planticket != null">
+				Planticket = #{planticket,jdbcType=VARCHAR},
+			</if>
+			<if test="createDate != null">
+				CreateDate = #{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifyDate != null">
+				ModifyDate = #{modifyDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="otherInfo != null">
+				OtherInfo = #{otherInfo,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="payHistoryInfo != null">
+				PayHistoryInfo = #{payHistoryInfo,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="peerId != null">
+				PeerId = #{peerId,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				Type = #{type,jdbcType=INTEGER},
+			</if>
+			<if test="residency != null">
+				Residency = #{residency,jdbcType=INTEGER}
+			</if>
+		</set>
+		WHERE CustomerId = #{customerId,jdbcType=VARCHAR}
+	</update>
+	
+	<select id="findByOrderId" resultMap="BaseResultMap">
+		SELECT 
+		<include refid="Base_Column_List" />
+		FROM customer
+		WHERE customerId = (SELECT min(CustomerId) FROM customer_order_rel
+		WHERE OrderId = #{orderId, jdbcType=VARCHAR})
+	</select>
+	
+	<!-- <select id="findByOrdersTotalId" resultMap="BaseResultMap">
+		SELECT 
+		<include refid="Base_Column_List" />
+		FROM customer
+		WHERE customerId IN(SELECT CustomerId FROM customer_order_rel
+		WHERE OrdersTotalId = #{ordersTotalId, jdbcType=VARCHAR})
+	</select> -->
+	<select id="findByOrdersTotalId" resultMap="BaseResultMap">
+		SELECT 
+			c.CustomerId, 
+			c.CustomerCode, 
+			c.LastName, 
+			c.FirstName, 
+			c.MiddleName,
+			c.DateOfBirth, 
+			c.Sex, 
+			c.MemoOfCustomer,
+			c.NationalityOfPassport, 
+			c.PassportNo,
+			c.ExpireDateOfPassport, 
+			c.StreetAddress, 
+			c.City, 
+			c.Tel,
+			c.Mobile, 
+			c.Email, 
+			c.Zip,
+			c.LanguageId, 
+			c.StateId, 
+			c.CountryId, 
+			c.CustomerSource, 
+			c.IsDel,
+			c.Advertised,
+			c.Planticket, 
+			c.CreateDate, 
+			c.ModifyDate, 
+			c.OtherInfo, 
+			c.PayHistoryInfo
+		FROM customer c,customer_order_rel crel
+		WHERE c.customerId=crel.customerId
+		AND crel.OrdersTotalId = #{ordersTotalId, jdbcType=VARCHAR}
+		GROUP BY c.CustomerId
+	</select>
+	
+	<select id="findByOrdersId" resultMap="BaseResultMap">
+		SELECT 
+		c.*
+		FROM 
+			customer c,customer_order_rel relc 
+		WHERE 
+			relc.CustomerId=c.CustomerId 
+		AND OrderId = #{ordersId, jdbcType=VARCHAR}
+	</select>
+	
+	<select id="findByCustomerName" parameterType="com.chinatour.entity.Customer" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM customer
+		WHERE trim(LastName) = trim(#{lastName,jdbcType=VARCHAR})
+		AND trim(FirstName) = trim(#{firstName,jdbcType=VARCHAR})
+		AND trim(MiddleName) = trim(#{middleName,jdbcType=VARCHAR})
+	</select>
+	<select id="findCustomerTourInfo" parameterType="com.chinatour.entity.Customer" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM customer
+		WHERE
+			IsDel=0
+			<if test="lastName != null">
+				AND LastName LIKE CONCAT('%','${lastName}','%')
+			</if>
+			<if test="firstName != null">
+				AND FirstName LIKE CONCAT('%','${firstName}','%')
+			</if>
+			<if test="middleName != null">
+				AND MiddleName LIKE CONCAT('%','${middleName}','%')
+			</if>
+			<if test="passportNo != null">
+				AND PassportNo LIKE CONCAT('%','${passportNo}','%')
+			</if> 
+			limit 1
+	</select>
+	<select id="findCustomerList" resultMap="BaseResultMap">
+	   	SELECT * FROM customer
+	   	WHERE
+			WR=0
+	       <if test="lastName != null">
+				AND LastName LIKE CONCAT('%','${lastName}','%')
+			</if>
+			<if test="firstName != null">
+				AND FirstName LIKE CONCAT('%','${firstName}','%')
+			</if>
+			<if test="tel != null">
+				AND REPLACE(REPLACE(tel,' ',''),'-','') LIKE CONCAT('%','${tel}','%')
+			</if>
+				AND CreateDate>'2013-01-01'
+		GROUP BY LastName,Tel,FirstName
+		ORDER BY LENGTH(FirstName) ASC
+		LIMIT 0,8
+	</select>
+	
+	<select id="findCountCustomerList" resultType="int">
+	   	SELECT 
+	   	COUNT(*) FROM(
+		    SELECT * FROM customer
+		   	WHERE
+				WR=0
+		    <if test="lastName != null">
+				AND LastName LIKE CONCAT('%','${lastName}','%')
+			</if>
+			<if test="firstName != null">
+				AND FirstName LIKE CONCAT('%','${firstName}','%')
+			</if>
+			<if test="tel != null">
+				AND REPLACE(REPLACE(tel,' ',''),'-','') LIKE CONCAT('%','${tel}','%')
+			</if>
+				AND CreateDate>'2013-01-01'
+			GROUP BY LastName,Tel,FirstName
+		)tt
+	</select>
+	
+	<sql id="findAllCustomerList_sql">
+	   	SELECT * FROM customer
+	   	WHERE
+			WR=0
+	        <if test="record.lastName != null">
+				AND LastName LIKE CONCAT('%','${record.lastName}','%')
+			</if>
+			<if test="record.firstName != null">
+				AND FirstName LIKE CONCAT('%','${record.firstName}','%')
+			</if>
+			<if test="record.tel != null">
+				AND REPLACE(REPLACE(tel,' ',''),'-','') LIKE CONCAT('%','${record.tel}','%')
+			</if>
+				AND CreateDate>'2013-01-01'
+		GROUP BY LastName,Tel,FirstName
+		ORDER BY LENGTH(FirstName) ASC
+	</sql>
+	
+	<select id="findAllCustomerListForPage" resultMap="ResultMapForCity">
+		<include refid="Pager.paginationStart" />
+		<include refid="findAllCustomerList_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findAllCustomerListForPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findAllCustomerList_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+</mapper>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.AppendixMapper">
+    <delete id="removeById" parameterType="java.lang.String">
+        delete from appendix
+        where noticeId = #{noticeId,jdbcType=VARCHAR}
+    </delete>
+    <sql id="Base_Column_List">
+        appendixId, appendixFile, appendixName, noticeId,ServerIp
+    </sql>
+    <resultMap id="BaseResultMap" type="com.chinatour.entity.Appendix">
+        <id column="AppendixId" property="appendixId" jdbcType="VARCHAR"/>
+        <result column="AppendixFile" property="appendixFile" jdbcType="VARCHAR"/>
+        <result column="AppendixName" property="appendixName" jdbcType="VARCHAR"/>
+        <result column="NoticeId" property="noticeId" jdbcType="VARCHAR"/>
+        <result column="ServerIp" property="serverIp" jdbcType="VARCHAR"/>
+    </resultMap>
+    <select id="findAll" resultMap="BaseResultMap">
+        SELECT
+        	<include refid="Base_Column_List" />
+        FROM appendix
+    </select>
+    <select id="findById" resultMap="BaseResultMap">
+        SELECT
+        	<include refid="Base_Column_List"/>
+        FROM appendix
+        WHERE AppendixId = #{appendixId,jdbcType=VARCHAR}
+    </select>
+    
+    <select id="findByNoticeId" resultMap="BaseResultMap">
+        SELECT
+        	<include refid="Base_Column_List"/>
+        FROM appendix
+        WHERE NoticeId = #{noticeId,jdbcType=VARCHAR}
+    </select>
+    
+    <update id="update" parameterType="com.chinatour.entity.Appendix">
+        update appendix
+        <set>
+            <if test="appendixFile != null">
+                AppendixFile = #{appendixFile,jdbcType=VARCHAR},
+            </if>
+            <if test="appendixName != null">
+                AppendixName = #{appendixName,jdbcType=VARCHAR},
+            </if>
+            <if test="noticeId != null">
+                NoticeId = #{noticeId,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where appendixId = #{appendixId,jdbcType=VARCHAR}
+    </update>
+    
+    <insert id="save" parameterType="com.chinatour.entity.Appendix">
+        insert into appendix
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="appendixId != null">
+                appendixId,
+            </if>
+            <if test="appendixFile != null">
+                appendixFile,
+            </if>
+            <if test="appendixName != null">
+                appendixName,
+            </if>
+            <if test="noticeId != null">
+                noticeId,
+            </if>
+            <if test="serverIp != null">
+                serverIp
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="appendixId != null">
+                #{appendixId,jdbcType=VARCHAR},
+            </if>
+            <if test="appendixFile != null">
+                #{appendixFile,jdbcType=VARCHAR},
+            </if>
+            <if test="appendixName != null">
+                #{appendixName,jdbcType=VARCHAR},
+            </if>
+            <if test="noticeId != null">
+                #{noticeId,jdbcType=VARCHAR},
+            </if>
+            <if test="serverIp != null">
+                #{serverIp,jdbcType=VARCHAR}
+            </if>
+        </trim>
+    </insert>
+</mapper>

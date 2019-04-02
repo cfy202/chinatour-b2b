@@ -1,0 +1,700 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.PayCostRecordsMapper">
+	<resultMap id="BaseResultMap" type="com.chinatour.entity.PayCostRecords">
+		<id column="RecordsId" property="id" jdbcType="VARCHAR" />
+		<result column="OrderId" property="orderId" jdbcType="VARCHAR" />
+		<result column="Code" property="code" jdbcType="VARCHAR" />
+		<result column="Sum" property="sum" jdbcType="DECIMAL" />
+		<result column="Way" property="way" jdbcType="VARCHAR" />
+		<result column="Item" property="item" jdbcType="VARCHAR" />
+		<result column="Time" property="time" jdbcType="DATE" />
+		<result column="Status" property="status" jdbcType="TINYINT" />
+		<result column="ConfirmRemark" property="confirmRemark"
+			jdbcType="VARCHAR" />
+		<result column="BillNo" property="billNo" jdbcType="VARCHAR" />
+		<result column="CreateTime" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="VenderId" property="venderId" jdbcType="VARCHAR" />
+		<result column="PayOrCost" property="payOrCost" jdbcType="TINYINT" />
+		<result column="Type" property="type" jdbcType="TINYINT" />
+		<result column="Remark" property="remark" jdbcType="LONGVARCHAR" />
+		<result column="CheckUserId" property="checkUserId" jdbcType="LONGVARCHAR" />
+	</resultMap>
+	<resultMap id="ResultWithOrders" type="com.chinatour.entity.PayCostRecords" extends="BaseResultMap">
+		<association property="orderNo" column="OrderId" select="com.chinatour.persistence.OrderMapper.findOrderNoById" />
+		<association property="venderString" column="VenderId"
+			select="com.chinatour.persistence.VenderMapper.findNameById" />
+	</resultMap>
+	<resultMap id="ResultMapForOrd" type="com.chinatour.entity.PayCostRecords">
+		<id column="RecordsId" property="id" jdbcType="VARCHAR" />
+		<result column="OrderId" property="orderId" jdbcType="VARCHAR" />
+		<result column="Code" property="code" jdbcType="VARCHAR" />
+		<result column="Sum" property="sum" jdbcType="DECIMAL" />
+		<result column="Way" property="way" jdbcType="VARCHAR" />
+		<result column="Item" property="item" jdbcType="VARCHAR" />
+		<result column="Time" property="time" jdbcType="DATE" />
+		<result column="Status" property="status" jdbcType="TINYINT" />
+		<result column="ConfirmRemark" property="confirmRemark"
+			jdbcType="VARCHAR" />
+		<result column="BillNo" property="billNo" jdbcType="VARCHAR" />
+		<result column="CreateTime" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="VenderId" property="venderId" jdbcType="VARCHAR" />
+		<result column="PayOrCost" property="payOrCost" jdbcType="TINYINT" />
+		<result column="Type" property="type" jdbcType="TINYINT" />
+		<result column="Remark" property="remark" jdbcType="LONGVARCHAR" />
+		<result column="CheckUserId" property="checkUserId" jdbcType="LONGVARCHAR" />
+		<association property="venderString" column="VenderId"
+			select="com.chinatour.persistence.VenderMapper.findNameById" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		RecordsId, OrderId, Code, Sum, Way, Item, Time, Status, ConfirmRemark,
+		BillNo,
+		CreateTime, VenderId, PayOrCost, Type, Remark,CheckUserId
+	</sql>
+	
+	<sql id="findForPage_sql">
+	SELECT p.*,v.name as venderString FROM 
+		( SELECT
+			RecordsId, p.OrderId, Code, Sum, Way, Item, DATE_FORMAT(Time,'%Y-%m-%d') as Time, Status, ConfirmRemark,
+			BillNo,p.CreateTime,  o.PeerId, PayOrCost, Type, Remark,CheckUserId,o.userName,o.orderNo,o.tourCode,DATE_FORMAT(tfo.ScheduleOfArriveTime,'%Y-%m-%d') as ScheduleOfArriveTime
+		FROM pay_cost_records p,orders o,tour_info_for_order tfo
+		<where>
+			o.OrderId=p.OrderId
+			AND o.orderId=tfo.orderId
+		    <if test="record.id != null">
+		      	AND  RecordsId = #{record.id,jdbcType=VARCHAR}
+		    </if>
+			<if test="record.orderId != null">
+				AND OrderId = #{record.orderId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.code != null">
+				AND Code LIKE CONCAT(CONCAT('%',#{record.code}),'%')
+			</if>
+			<if test="record.orderNo!=null">
+				AND o.OrderNo LIKE CONCAT(CONCAT('%',#{record.orderNo}),'%')
+			</if>
+			<if test="record.tourCode!=null">
+				AND o.tourCode LIKE CONCAT(CONCAT('%',#{record.tourCode}),'%')
+			</if>
+			<if test="record.sum != null">
+				AND Sum LIKE CONCAT(CONCAT('%',#{record.sum}),'%')
+			</if>
+			<if test="record.way != null">
+				AND Way = #{record.way,jdbcType=VARCHAR}
+			</if>
+			<if test="record.item != null">
+				AND Item = #{record.item,jdbcType=VARCHAR}
+			</if>
+			<if test="record.status != null">
+				AND Status LIKE CONCAT('%','${record.status}','%')
+			</if>
+			<if test="record.confirmRemark != null">
+				AND ConfirmRemark = #{record.confirmRemark,jdbcType=VARCHAR}
+			</if>
+			<if test="record.billNo != null">
+				AND BillNo = #{record.billNo,jdbcType=VARCHAR}
+			</if>
+			<if test="record.createDate != null">
+				AND CreateTime = #{record.createDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.venderId != null">
+				AND VenderId = #{record.venderId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.payOrCost != null">
+				AND PayOrCost = #{record.payOrCost,jdbcType=TINYINT}
+			</if>
+			<if test="record.type != null">
+				AND Type = #{record.type,jdbcType=TINYINT}
+			</if>
+			<if test="record.remark != null">
+				AND Remark LIKE CONCAT('%','${record.remark}','%')
+			</if>
+			<if test="record.checkUserId != null">
+				AND CheckUserId = #{record.checkUserId,jdbcType=LONGVARCHAR}
+			</if>
+			<if test="record.deptIdString != null">
+				AND o.deptId = #{record.deptIdString,jdbcType=VARCHAR}
+			</if>
+			<if test="record.userName != null">
+				AND o.UserName LIKE CONCAT('%','${record.userName}','%')
+			</if>
+			<if test="record.beginningDate != null">
+				AND tfo.ScheduleOfArriveTime <![CDATA[>=]]> #{record.beginningDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.endingDate != null">
+				AND tfo.ScheduleOfArriveTime <![CDATA[<=]]> #{record.endingDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.beginningTime != null">
+				AND Time <![CDATA[>=]]> #{record.beginningTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.endingTime != null">
+				AND Time <![CDATA[<=]]> #{record.endingTime,jdbcType=TIMESTAMP}
+			</if>
+		</where>
+		 )p LEFT JOIN vender v ON v.VenderId= p.PeerId
+		 <where>
+		 	<if test="record.venderString != null">
+				 v.name LIKE CONCAT('%','${record.venderString}','%')
+			</if>
+		 </where>
+		ORDER BY p.Status , p.time desc
+	</sql>
+	
+	<sql id="findCostForPage_sql">
+	SELECT p.*,v.name as venderString FROM 
+		( SELECT
+			RecordsId, p.OrderId, Code, Sum, Way, Item, DATE_FORMAT(Time,'%Y-%m-%d') as Time, Status, ConfirmRemark,
+			BillNo,p.CreateTime, p.VenderId, PayOrCost, Type, Remark,CheckUserId,o.userName,o.orderNo,o.tourCode,DATE_FORMAT(tfo.ScheduleOfArriveTime,'%Y-%m-%d') as ScheduleOfArriveTime
+		FROM pay_cost_records p,orders o,tour_info_for_order tfo
+		<where>
+			o.OrderId=p.OrderId
+			AND o.orderId=tfo.orderId
+		    <if test="record.id != null">
+		      	AND  RecordsId = #{record.id,jdbcType=VARCHAR}
+		    </if>
+			<if test="record.orderId != null">
+				AND OrderId = #{record.orderId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.code != null">
+				AND Code LIKE CONCAT(CONCAT('%',#{record.code}),'%')
+			</if>
+			<if test="record.orderNo!=null">
+				AND o.OrderNo LIKE CONCAT(CONCAT('%',#{record.orderNo}),'%')
+			</if>
+			<if test="record.tourCode!=null">
+				AND o.tourCode LIKE CONCAT(CONCAT('%',#{record.tourCode}),'%')
+			</if>
+			<if test="record.sum != null">
+				AND Sum LIKE CONCAT(CONCAT('%',#{record.sum}),'%')
+			</if>
+			<if test="record.way != null">
+				AND Way LIKE CONCAT(CONCAT('%',#{record.way}),'%')
+			</if>
+			<if test="record.item != null">
+				AND Item = #{record.item,jdbcType=VARCHAR}
+			</if>
+			<if test="record.status != null">
+				AND Status LIKE CONCAT('%','${record.status}','%')
+			</if>
+			<if test="record.confirmRemark != null">
+				AND ConfirmRemark = #{record.confirmRemark,jdbcType=VARCHAR}
+			</if>
+			<if test="record.billNo != null">
+				AND BillNo = #{record.billNo,jdbcType=VARCHAR}
+			</if>
+			<if test="record.createDate != null">
+				AND CreateTime = #{record.createDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.venderId != null">
+				AND VenderId = #{record.venderId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.payOrCost != null">
+				AND PayOrCost = #{record.payOrCost,jdbcType=TINYINT}
+			</if>
+			<if test="record.type != null">
+				AND Type = #{record.type,jdbcType=TINYINT}
+			</if>
+			<if test="record.remark != null">
+				AND Remark LIKE CONCAT('%','${record.remark}','%')
+			</if>
+			<if test="record.checkUserId != null">
+				AND CheckUserId = #{record.checkUserId,jdbcType=LONGVARCHAR}
+			</if>
+			<if test="record.deptIdString != null">
+				AND o.deptId = #{record.deptIdString,jdbcType=VARCHAR}
+			</if>
+			<if test="record.userName != null">
+				AND o.UserName LIKE CONCAT('%','${record.userName}','%')
+			</if>
+			<if test="record.beginningDate != null">
+				AND tfo.ScheduleOfArriveTime <![CDATA[>=]]> #{record.beginningDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.endingDate != null">
+				AND tfo.ScheduleOfArriveTime <![CDATA[<=]]> #{record.endingDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.beginningTime != null">
+				AND Time <![CDATA[>=]]> #{record.beginningTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.endingTime != null">
+				AND Time <![CDATA[<=]]> #{record.endingTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.time != null">
+				AND Time = #{record.time,jdbcType=DATE}
+			</if>
+		</where>
+		 )p LEFT JOIN vender v ON v.VenderId=p.VenderId
+		 <where>
+		 	<if test="record.venderString != null">
+				 v.name LIKE CONCAT('%','${record.venderString}','%')
+			</if>
+		 </where>
+		ORDER BY p.Status , p.time desc
+	</sql>
+	<select id="findForPage" resultMap="ResultMapForOrd">
+		<include refid="Pager.paginationStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findForPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+	
+	<sql id="findForGroupPage_sql">
+		SELECT p.*,v.name as venderString FROM 
+		(	SELECT
+			RecordsId, p.OrderId, Code, Sum, Way, Item, DATE_FORMAT(Time,'%Y-%m-%d') as Time, Status, ConfirmRemark,
+			BillNo,p.CreateTime, p.VenderId, PayOrCost, Type, Remark,CheckUserId,o.userName,o.orderNo,o.tourCode,DATE_FORMAT(tfo.ScheduleOfArriveTime,'%Y-%m-%d') as ScheduleOfArriveTime
+			FROM pay_cost_records p,orders o,admin_group ag,tour_info_for_order tfo
+			<where>
+				o.OrderId=p.OrderId
+				AND o.UserId=ag.AdminId
+				AND o.orderId=tfo.orderId
+			    <if test="record.id != null">
+			      	AND  RecordsId = #{record.id,jdbcType=VARCHAR}
+			    </if>
+				<if test="record.orderId != null">
+					AND OrderId = #{record.orderId,jdbcType=VARCHAR}
+				</if>
+				<if test="record.code != null">
+					AND Code = #{record.code,jdbcType=VARCHAR}
+				</if>
+				<if test="record.orderNo!=null">
+					AND o.OrderNo LIKE CONCAT(CONCAT('%',#{record.orderNo}),'%')
+				</if>
+				<if test="record.tourCode!=null">
+					AND o.tourCode LIKE CONCAT(CONCAT('%',#{record.tourCode}),'%')
+				</if>
+				<if test="record.sum != null">
+					AND Sum LIKE CONCAT(CONCAT('%',#{record.sum}),'%')
+				</if>
+				<if test="record.way != null">
+					AND Way = #{record.way,jdbcType=VARCHAR}
+				</if>
+				<if test="record.item != null">
+					AND Item = #{record.item,jdbcType=VARCHAR}
+				</if>
+				<if test="record.time != null">
+					AND Time = #{record.time,jdbcType=DATE}
+				</if>
+				<if test="record.status != null">
+					AND Status LIKE CONCAT('%','${record.status}','%')
+				</if>
+				<if test="record.confirmRemark != null">
+					AND ConfirmRemark = #{record.confirmRemark,jdbcType=VARCHAR}
+				</if>
+				<if test="record.billNo != null">
+					AND BillNo = #{record.billNo,jdbcType=VARCHAR}
+				</if>
+				<if test="record.createDate != null">
+					AND CreateTime = #{record.createDate,jdbcType=TIMESTAMP}
+				</if>
+				<if test="record.venderId != null">
+					AND VenderId = #{record.venderId,jdbcType=VARCHAR}
+				</if>
+				<if test="record.payOrCost != null">
+					AND PayOrCost = #{record.payOrCost,jdbcType=TINYINT}
+				</if>
+				<if test="record.type != null">
+					AND Type = #{record.type,jdbcType=TINYINT}
+				</if>
+				<if test="record.remark != null">
+					AND Remark LIKE CONCAT('%','${record.remark}','%')
+				</if>
+				<if test="record.checkUserId != null">
+					AND CheckUserId = #{record.checkUserId,jdbcType=LONGVARCHAR}
+				</if>
+				<if test="record.deptIdString != null">
+			  		AND o.deptId = #{record.deptIdString,jdbcType=VARCHAR}
+				</if>
+				<if test="record.groupId != null">
+					AND ag.GroupId = #{record.groupId,jdbcType=VARCHAR}
+				</if>
+				<if test="record.userName != null">
+					AND o.UserName LIKE CONCAT('%','${record.userName}','%')
+				</if>
+			</where>
+		 )p LEFT JOIN vender v ON v.VenderId=p.VenderId
+		 <where>
+		 	<if test="record.venderString != null">
+				 v.name LIKE CONCAT('%','${record.venderString}','%')
+			</if>
+		 </where>
+			ORDER BY p.Status , p.time desc
+	</sql>
+	<select id="findForGroupPage" resultMap="ResultMapForOrd">
+		<include refid="Pager.paginationStart" />
+		<include refid="findForGroupPage_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findForGroupPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findForGroupPage_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+	
+	<select id="findCostForPage" resultMap="ResultMapForOrd">
+		<include refid="Pager.paginationStart" />
+		<include refid="findCostForPage_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findCostForPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findCostForPage_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+	
+	<select id="find" resultMap="ResultWithOrders" parameterType="java.lang.String">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM pay_cost_records
+		<where>
+		    <if test="id != null">
+		        RecordsId = #{id,jdbcType=VARCHAR}
+		    </if>
+			<if test="orderId != null">
+				AND OrderId = #{orderId,jdbcType=VARCHAR}
+			</if>
+			<if test="code != null">
+				AND Code = #{code,jdbcType=VARCHAR}
+			</if>
+			<if test="sum != null">
+				AND Sum = #{sum,jdbcType=DECIMAL}
+			</if>
+			<if test="way != null">
+				AND Way = #{way,jdbcType=VARCHAR}
+			</if>
+			<if test="item != null">
+				AND Item = #{item,jdbcType=VARCHAR}
+			</if>
+			<if test="time != null">
+				AND Time = #{time,jdbcType=DATE}
+			</if>
+			<if test="status != null">
+				AND Status = #{status,jdbcType=TINYINT}
+			</if>
+			<if test="confirmRemark != null">
+				AND ConfirmRemark = #{confirmRemark,jdbcType=VARCHAR}
+			</if>
+			<if test="billNo != null">
+				AND BillNo = #{billNo,jdbcType=VARCHAR}
+			</if>
+			<if test="createDate != null">
+				AND CreateTime = #{createDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="venderId != null">
+				AND VenderId = #{venderId,jdbcType=VARCHAR}
+			</if>
+			<if test="payOrCost != null">
+				AND PayOrCost = #{payOrCost,jdbcType=TINYINT}
+			</if>
+			<if test="type != null">
+				AND Type = #{type,jdbcType=TINYINT}
+			</if>
+			<if test="remark != null">
+				AND Remark = #{remark,jdbcType=LONGVARCHAR}
+			</if>
+			<if test="checkUserId != null">
+				AND CheckUserId = #{checkUserId,jdbcType=LONGVARCHAR}
+			</if>
+		</where>
+	</select>
+	
+	<select id="findByOrderId" resultMap="BaseResultMap" parameterType="java.lang.String">
+	   SELECT p.*,v.Name AS venderString FROM(
+	   SELECT
+		RecordsId, Code, Sum, Way, Item, Time, Status, ConfirmRemark,
+		VenderId, PayOrCost, Type, Remark,CheckUserId,
+		o.orderNo
+		FROM pay_cost_records p, orders o
+		WHERE p.orderId=o.orderId
+		AND	p.orderId = #{orderId,jdbcType=VARCHAR}
+		ORDER BY  p.CreateTime DESC
+		)p
+		LEFT JOIN vender v ON v.VenderId=p.VenderId
+	</select>
+	
+	<select id="findAll" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM pay_cost_records
+	</select>
+	
+	<select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM pay_cost_records
+		WHERE RecordsId = #{id,jdbcType=VARCHAR}
+	</select>
+	
+	<delete id="removeById" parameterType="java.lang.String">
+		DELETE FROM pay_cost_records
+		WHERE RecordsId = #{id,jdbcType=VARCHAR}
+	</delete>
+	
+	<insert id="save" parameterType="com.chinatour.entity.PayCostRecords">
+		INSERT INTO pay_cost_records
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				RecordsId,
+			</if>
+			<if test="orderId != null">
+				OrderId,
+			</if>
+			<if test="code != null">
+				Code,
+			</if>
+			<if test="sum != null">
+				Sum,
+			</if>
+			<if test="way != null">
+				Way,
+			</if>
+			<if test="item != null">
+				Item,
+			</if>
+			<if test="time != null">
+				Time,
+			</if>
+			<if test="status != null">
+				Status,
+			</if>
+			<if test="confirmRemark != null">
+				ConfirmRemark,
+			</if>
+			<if test="billNo != null">
+				BillNo,
+			</if>
+			<if test="createDate != null">
+				CreateTime,
+			</if>
+			<if test="venderId != null">
+				VenderId,
+			</if>
+			<if test="payOrCost != null">
+				PayOrCost,
+			</if>
+			<if test="type != null">
+				Type,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+			<if test="checkUserId != null">
+				CheckUserId
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="orderId != null">
+				#{orderId,jdbcType=VARCHAR},
+			</if>
+			<if test="code != null">
+				#{code,jdbcType=VARCHAR},
+			</if>
+			<if test="sum != null">
+				#{sum,jdbcType=DECIMAL},
+			</if>
+			<if test="way != null">
+				#{way,jdbcType=VARCHAR},
+			</if>
+			<if test="item != null">
+				#{item,jdbcType=VARCHAR},
+			</if>
+			<if test="time != null">
+				#{time,jdbcType=DATE},
+			</if>
+			<if test="status != null">
+				#{status,jdbcType=TINYINT},
+			</if>
+			<if test="confirmRemark != null">
+				#{confirmRemark,jdbcType=VARCHAR},
+			</if>
+			<if test="billNo != null">
+				#{billNo,jdbcType=VARCHAR},
+			</if>
+			<if test="createDate != null">
+				#{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="venderId != null">
+				#{venderId,jdbcType=VARCHAR},
+			</if>
+			<if test="payOrCost != null">
+				#{payOrCost,jdbcType=TINYINT},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=TINYINT},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="checkUserId != null">
+				#{checkUserId,jdbcType=LONGVARCHAR}
+			</if>
+		</trim>
+	</insert>
+	
+	<update id="update" parameterType="com.chinatour.entity.PayCostRecords">
+		UPDATE pay_cost_records
+		<set>
+			<if test="orderId != null">
+				OrderId = #{orderId,jdbcType=VARCHAR},
+			</if>
+			<if test="code != null">
+				Code = #{code,jdbcType=VARCHAR},
+			</if>
+			<if test="sum != null">
+				Sum = #{sum,jdbcType=DECIMAL},
+			</if>
+			<if test="way != null">
+				Way = #{way,jdbcType=VARCHAR},
+			</if>
+			<if test="item != null">
+				Item = #{item,jdbcType=VARCHAR},
+			</if>
+			<if test="time != null">
+				Time = #{time,jdbcType=DATE},
+			</if>
+			<if test="status != null">
+				Status = #{status,jdbcType=TINYINT},
+			</if>
+			<if test="confirmRemark != null">
+				ConfirmRemark = #{confirmRemark,jdbcType=VARCHAR},
+			</if>
+			<if test="billNo != null">
+				BillNo = #{billNo,jdbcType=VARCHAR},
+			</if>
+			<if test="createDate != null">
+				CreateTime = #{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="venderId != null">
+				VenderId = #{venderId,jdbcType=VARCHAR},
+			</if>
+			<if test="payOrCost != null">
+				PayOrCost = #{payOrCost,jdbcType=TINYINT},
+			</if>
+			<if test="type != null">
+				Type = #{type,jdbcType=TINYINT},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="checkUserId != null">
+				CheckUserId = #{checkUserId,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="isSuccess != null">
+				IsSuccess = #{isSuccess,jdbcType=INTEGER},
+			</if>
+			<if test="approveDate != null">
+				ApproveDate = #{approveDate,jdbcType=TIMESTAMP}
+			</if>
+		</set>
+		WHERE RecordsId = #{id,jdbcType=VARCHAR}
+	</update>
+	
+	<!-- 根据orderId查询输入支出 -->
+	<select id="findSumPayOrCostByOrdersId" resultType="com.chinatour.entity.PayCostRecords" parameterType="java.lang.String">
+		SELECT
+			ROUND(Sum(IF(PayOrCost=1,sum,0)),2) as payTotalSum,
+			ROUND(Sum(IF(PayOrCost=2,sum,0)),2) as costTotalSum
+		FROM pay_cost_records 
+		WHERE orderId = #{orderId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="findPayOrCostByOrders" resultMap="ResultMapForOrd" parameterType="com.chinatour.entity.PayCostRecords">
+	SELECT p.*,v.name as venderString FROM 
+		( SELECT
+			RecordsId, p.OrderId, Code, Sum, Way, Item, DATE_FORMAT(Time,'%Y-%m-%d') as Time, Status, ConfirmRemark,
+			BillNo,p.CreateTime,  p.VenderId, PayOrCost, Type, Remark,CheckUserId,o.userName,o.orderNo,o.tourCode,DATE_FORMAT(tfo.ScheduleOfArriveTime,'%Y-%m-%d') as ScheduleOfArriveTime
+		FROM pay_cost_records p,orders o,tour_info_for_order tfo
+		<where>
+			o.OrderId=p.OrderId
+			AND o.orderId=tfo.orderId
+		    <if test="id != null">
+		      	AND  RecordsId = #{id,jdbcType=VARCHAR}
+		    </if>
+			<if test="orderId != null">
+				AND OrderId = #{orderId,jdbcType=VARCHAR}
+			</if>
+			<if test="code != null">
+				AND Code LIKE CONCAT(CONCAT('%',#{code}),'%')
+			</if>
+			<if test="orderNo!=null">
+				AND o.OrderNo LIKE CONCAT(CONCAT('%',#{orderNo}),'%')
+			</if>
+			<if test="tourCode!=null">
+				AND o.tourCode LIKE CONCAT(CONCAT('%',#{tourCode}),'%')
+			</if>
+			<if test="sum != null">
+				AND Sum LIKE CONCAT(CONCAT('%',#{sum}),'%')
+			</if>
+			<if test="way != null">
+				AND Way = #{way,jdbcType=VARCHAR}
+			</if>
+			<if test="item != null">
+				AND Item = #{item,jdbcType=VARCHAR}
+			</if>
+			<if test="time != null">
+				AND Time = #{time,jdbcType=DATE}
+			</if>
+			<if test="status != null">
+				AND Status LIKE CONCAT('%','${status}','%')
+			</if>
+			<if test="confirmRemark != null">
+				AND ConfirmRemark = #{confirmRemark,jdbcType=VARCHAR}
+			</if>
+			<if test="billNo != null">
+				AND BillNo = #{billNo,jdbcType=VARCHAR}
+			</if>
+			<if test="createDate != null">
+				AND CreateTime = #{createDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="venderId != null">
+				AND VenderId = #{venderId,jdbcType=VARCHAR}
+			</if>
+			<if test="payOrCost != null">
+				AND PayOrCost = #{payOrCost,jdbcType=TINYINT}
+			</if>
+			<if test="type != null">
+				AND Type = #{type,jdbcType=TINYINT}
+			</if>
+			<if test="remark != null">
+				AND Remark LIKE CONCAT('%','${remark}','%')
+			</if>
+			<if test="checkUserId != null">
+				AND CheckUserId = #{checkUserId,jdbcType=LONGVARCHAR}
+			</if>
+			<if test="deptIdString != null">
+				AND o.deptId = #{deptIdString,jdbcType=VARCHAR}
+			</if>
+			<if test="userName != null">
+				AND o.UserName LIKE CONCAT('%','${userName}','%')
+			</if>
+			<if test="beginningDate != null">
+				AND tfo.ScheduleOfArriveTime <![CDATA[>=]]> #{beginningDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="endingDate != null">
+				AND tfo.ScheduleOfArriveTime <![CDATA[<=]]> #{endingDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="beginningTime != null">
+				AND Time <![CDATA[>=]]> #{beginningTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="endingTime != null">
+				AND Time <![CDATA[<=]]> #{endingTime,jdbcType=TIMESTAMP}
+			</if>
+		</where>
+		 )p LEFT JOIN vender v ON v.VenderId= p.VenderId
+		 <where>
+		 	<if test="venderString != null">
+				 v.name LIKE CONCAT('%','${venderString}','%')
+			</if>
+		 </where>
+		ORDER BY p.Status , p.time desc
+	</select>	
+</mapper>

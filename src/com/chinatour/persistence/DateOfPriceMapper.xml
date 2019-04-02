@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.DateOfPriceMapper">
+
+	<sql id="Base_Column_List">
+		DateOfPriceId,DepartureTime,DeparturePrice,UpdateTime,GroupLineId,IsAvailable
+	</sql>
+	<resultMap type="DateOfPrice" id="BaseResultMap">
+		<id property="id" column="DateOfPriceId" jdbcType="VARCHAR" />
+		<result property="DepartureTime" column="DepartureTime" jdbcType="VARCHAR" />
+		<result property="DeparturePrice" column="DeparturePrice" jdbcType="DECIMAL" />
+		<result property="UpdateTime" column="UpdateTime" jdbcType="TIMESTAMP" />
+		<result property="isAvailable" column="IsAvailable" jdbcType="INTEGER" />
+		<result property="groupLineId" column="GroupLineId" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<sql id="findForPage_sql">
+		select
+		<include refid="Base_Column_List" />
+		from date_of_price
+		<where>
+			<if test="record.id != null">
+				DateOfPriceId = #{record.id,jdbcType=VARCHAR}
+			</if>
+			<if test="record.departurePrice != null">
+				DeparturePrice = #{record.departurePrice,jdbcType=VARCHAR}
+			</if>
+			<if test="record.groupLineId != null">
+				GroupLineId = #{record.groupLineId,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</sql>
+	<select id="findByGroupLineId" parameterType="java.lang.String" resultMap="BaseResultMap">
+	    select
+		<include refid="Base_Column_List" />
+		from date_of_price
+		<where>
+			GroupLineId = #{record.groupLineId,jdbcType=VARCHAR}
+			AND isAvailable=0;
+		</where>
+	</select>
+	<select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
+	    select
+		<include refid="Base_Column_List" />
+		from date_of_price
+		where
+		dateOfPriceId = #{id,jdbcType=VARCHAR}
+	</select>
+
+	<select id="findAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from date_of_price
+	</select>
+
+	<select id="findForPage" resultMap="BaseResultMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findForPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+
+	<delete id="removeById" parameterType="java.lang.String">
+		delete from date_of_price
+		where
+		dateOfPriceId = #{id,jdbcType=VARCHAR}
+	</delete>
+
+	<update id="update" parameterType="DateOfPrice">
+		update date_of_price
+		<set>
+			<if test="currencyId != null">
+				DepartureTime = #{DepartureTime,jdbcType=VARCHAR},
+			</if>
+			<if test="adult != null">
+				DeparturePrice = #{DeparturePrice,jdbcType=DECIMAL},
+			</if>
+			<if test="updateTime != null">
+				UpdateTime = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="groupLineId != null">
+				GroupLineId = #{groupLineId,jdbcType=VARCHAR},
+			</if>
+			<if test="isAvailable != null">
+				IsAvailable = #{isAvailable,jdbcType=INTEGER}
+			</if>
+		</set>
+		where DateOfPriceId = #{id,jdbcType=VARCHAR}
+	</update>
+
+	<insert id="save" parameterType="DateOfPrice">
+		insert into date_of_price
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				dateOfPriceId,
+			</if>
+			<if test="departureTime != null">
+				DepartureTime,
+			</if>
+			<if test="departurePrice != null">
+				DeparturePrice,
+			</if>
+			<if test="updateTime != null">
+				UpdateTime,
+			</if>
+			<if test="groupLineId != null">
+				GroupLineId
+			</if>
+		</trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="departureTime != null">
+				#{departureTime,jdbcType=VARCHAR},
+			</if>
+			<if test="departurePrice != null">
+				#{departurePrice,jdbcType=DECIMAL},
+			</if>
+			<if test="updateTime != null">
+				#{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="groupLineId != null">
+				#{groupLineId,jdbcType=VARCHAR},
+			</if>
+				isAvailable =0
+		</trim>
+	</insert>
+</mapper>

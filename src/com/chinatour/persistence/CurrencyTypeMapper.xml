@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.CurrencyTypeMapper">
+
+	<sql id="Base_Column_List">
+		CurrencyTypeId, CurrencyChs, CurrencyEng, Symbol
+	</sql>
+
+	<sql id="findForPage_sql">
+		SELECT
+			<include refid="Base_Column_List" />
+		FROM
+			 currency_type
+		<where>
+			<if test="record.id != null">
+				CurrencyTypeId = #{record.id,jdbcType=VARCHAR}
+			</if>
+			<if test="record.currencyChs != null">
+				AND CurrencyChs LIKE CONCAT('%','${record.currencyChs}','%')
+			</if>
+			<if test="record.currencyEng!= null">
+				AND CurrencyEng = #{record.currencyEng,jdbcType=VARCHAR}
+			</if>
+			<if test="record.symbol != null">
+				AND Symbol = #{record.symbol,jdbcType=INTEGER}
+			</if>
+		</where>
+	</sql>
+
+	<resultMap type="CurrencyType" id="BaseResultMap">
+		<id property="id" column="CurrencyTypeId" jdbcType="VARCHAR" />
+		<result property="currencyChs" column="CurrencyChs" jdbcType="VARCHAR" />
+		<result property="currencyEng" column="CurrencyEng" jdbcType="VARCHAR" />
+		<result property="symbol" column="Symbol" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
+	    SELECT
+			<include refid="Base_Column_List" />
+		FROM 
+			currency_type
+		WHERE
+			CurrencyTypeId = #{id,jdbcType=VARCHAR}
+	</select>
+
+	<select id="findAll" resultMap="BaseResultMap">
+		SELECT
+			<include refid="Base_Column_List" />
+		FROM 
+			currency_type
+		ORDER BY CurrencyTypeId
+	</select>
+
+	<select id="findForPage" resultMap="BaseResultMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findForPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+
+	<delete id="removeById" parameterType="java.lang.String">
+		DELETE FROM 
+			currency_type
+		WHERE
+			CurrencyTypeId = #{id,jdbcType=VARCHAR}
+	</delete>
+
+	<update id="update" parameterType="CurrencyType">
+		UPDATE currency_type
+		<set>
+			<if test="currencyChs != null">
+				CurrencyChs = #{currencyChs,jdbcType=VARCHAR},
+			</if>
+			<if test="currencyEng != null">
+				CurrencyEng = #{currencyEng,jdbcType=VARCHAR},
+			</if>
+			<if test="symbol != null">
+				Symbol = #{symbol,jdbcType=INTEGER}
+			</if>
+		</set>
+		WHERE
+			CurrencyTypeId = #{id,jdbcType=VARCHAR}
+	</update>
+
+	<insert id="save" parameterType="City">
+		INSERT INTO currency_type
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				CurrencyTypeId,
+			</if>
+			<if test="currencyChs != null">
+				CurrencyChs,
+			</if>
+			<if test="currencyEng != null">
+				CurrencyEng,
+			</if>
+			<if test="symbol != null">
+				Symbol
+			</if>
+		</trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="currencyChs != null">
+				#{currencyChs,jdbcType=VARCHAR},
+			</if>
+			<if test="currencyEng != null">
+				#{currencyEng,jdbcType=VARCHAR},
+			</if>
+			<if test="symbol != null">
+				#{symbol,jdbcType=INTEGER}
+			</if>
+		</trim>
+	</insert>
+</mapper>

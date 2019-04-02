@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.NewsMapper">
+	
+    <sql id="Base_Column_List">
+		NewsId,Title,Content,Image,CreateDate,UserId,IsAvailable,IsSystem,Currency
+    </sql>
+    
+	<resultMap type="News" id="BaseResultMap">
+	    <result column="NewsId" property="newsId" jdbcType="VARCHAR" />
+		<result column="Title" property="title" jdbcType="VARCHAR" />
+		<result column="Content" property="content" jdbcType="VARCHAR" />
+		<result column="Image" property="image" jdbcType="VARCHAR" />
+		<result column="UserId" property="userId" jdbcType="VARCHAR" />
+		<result column="IsAvailable" property="isAvailable" jdbcType="TINYINT" />
+		<result column="CreateDate" property="createDate" />
+		<result property="isSystem" column="IsSystem" jdbcType="INTEGER" />
+		<result column="Currency" property="currency" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<update id="update" parameterType="News">
+		UPDATE 
+			news
+			<set>
+                <if test="title != null">
+                    Title = #{title} ,
+                </if>
+                <if test="content != null">
+                    Content = #{content} ,
+                </if>
+                <if test="image != null">
+                    Image = #{image} ,
+                </if>
+                <if test="userId != null">
+                    UserId = #{userId} ,
+                </if>
+                <if test="isAvailable != null">
+                    IsAvailable = #{isAvailable},
+                </if>
+                 <if test="isSystem != null">
+                    isSystem = #{isSystem},
+                </if>
+                 <if test="currency != null">
+                    currency = #{currency}
+                </if>
+			</set>
+		WHERE 
+            NewsId=#{newsId}
+	</update> 
+	
+	<select id="findAll" resultMap="BaseResultMap">
+		SELECT 
+			<include refid="Base_Column_List"/>
+	    FROM
+	    	news
+	    WHERE IsAvailable=0
+	</select>
+	
+	<select id="findById" resultMap="BaseResultMap" parameterType="String">
+		SELECT 
+			<include refid="Base_Column_List"/>
+	    FROM
+	    	news
+	    WHERE 
+	    	NewsId=#{newsId}
+	</select>
+	
+	<delete id="removeById" parameterType="String">
+	    DELETE FROM 
+		    news 
+		WHERE 
+		     NewsId=#{newsId}
+	</delete>
+	
+	 <insert id="save" parameterType="News">
+	     INSERT INTO news
+	     	<trim prefix="(" suffix=")" suffixOverrides=",">
+	     		 <if test="newsId != null">
+                    NewsId,
+                </if>
+                <if test="title != null">
+                    Title,
+                </if>
+                <if test="content != null">
+                    Content,
+                </if>
+                <if test="image != null">
+                    Image,
+                </if>
+                <if test="userId != null">
+                    UserId,
+                </if>
+                <if test="isAvailable != null">
+                    IsAvailable,
+                </if>
+                <if test="isSystem != null">
+                    IsSystem,
+                </if>
+                 <if test="currency != null">
+                    Currency
+                </if>
+	     	</trim> 
+	     		
+	     	<trim prefix="values (" suffix=")" suffixOverrides=",">
+	     		<if test="newsId != null">
+                    #{newsId} ,
+                </if>
+                <if test="title != null">
+                    #{title} ,
+                </if>
+                <if test="content != null">
+                    #{content} ,
+                </if>
+                <if test="image != null">
+                    #{image} ,
+                </if>
+                <if test="userId != null">
+                    #{userId} ,
+                </if>
+                <if test="isAvailable != null">
+                    #{isAvailable},
+                </if>
+                 <if test="isSystem != null">
+                   #{isSystem},
+                </if>
+                <if test="currency != null">
+                   #{currency}
+                </if>
+	     	</trim>
+	</insert>
+	
+    
+    <sql id="findForPage_sql">
+        SELECT
+        	<include refid="Base_Column_List"/>
+        FROM 
+        	news
+        <where>
+        	1=1
+            <if test="record.newsId != null">
+               AND NewsId = #{record.newsId} 
+            </if>
+            <if test="record.title != null">
+               AND Title LIKE CONCAT('%','${record.title}','%')  
+            </if>
+            <if test="record.content != null">
+                AND Content = #{record.content} 
+            </if>
+            <if test="record.image != null">
+                AND Image = #{record.image} 
+            </if>
+            <if test="record.userId != null">
+                AND UserId = #{record.userId} 
+            </if>
+            <if test="record.currency != null">
+                AND Currency = #{record.currency} 
+            </if>
+            <if test="record.isSystem != null">
+                AND IsSystem = #{record.isSystem}
+              </if>
+                ORDER BY CreateDate DESC
+        </where>
+    </sql>
+    
+    <select id="findForPage" resultMap="BaseResultMap">
+        <include refid="Pager.paginationStart"/>
+        <include refid="findForPage_sql"/>
+        <include refid="Pager.paginationEnd"/>
+    </select>
+    
+    <select id="findForPageCount" resultType="int">
+        <include refid="Pager.countStart"/>
+        <include refid="findForPage_sql"/>
+        <include refid="Pager.countEnd"/>
+    </select>
+    
+    <select id="findNewsForPage"  parameterType="com.chinatour.entity.News" resultMap="BaseResultMap">
+    	SELECT
+        	<include refid="Base_Column_List"/>
+        FROM 
+        	news
+        WHERE
+        	IsAvailable = 0
+        	<if test="currency != null">
+                AND Currency = #{currency} 
+            </if>
+			AND instr(IsSystem,2)>0
+            ORDER BY CreateDate DESC
+        LIMIT
+        	#{startPage},4
+    </select>
+    
+    <select id="findNewsForPageCount" resultType="String">
+    	SELECT (COUNT(*)+3)/4 FROM (
+    		SELECT
+        	<include refid="Base_Column_List"/>
+        FROM 
+        	news
+        WHERE
+        	IsAvailable = 0
+        	<if test="currency != null">
+                AND Currency = #{currency} 
+            </if>
+        	AND instr(IsSystem,2)>0
+            ORDER BY CreateDate DESC
+        	)t
+    </select>
+    
+    <select id="findNewsList"  parameterType="com.chinatour.entity.News" resultMap="BaseResultMap">
+    	SELECT
+        	<include refid="Base_Column_List"/>
+        FROM 
+        	news
+        WHERE
+        	IsAvailable = 0
+        	<if test="isSystem != null">
+				AND instr(IsSystem,#{isSystem})>0
+			</if>
+			<if test="currency != null">
+                AND Currency = #{currency} 
+            </if>
+            ORDER BY CreateDate DESC
+        LIMIT 3
+    </select>
+</mapper>

@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.ItineraryInfoMapper">
+	
+    <sql id="Base_Column_List">
+        ItineraryInfoId,TourId,ItineraryInfo,HotelInfo,Contact,IsDel
+    </sql>
+    
+	<resultMap type="ItineraryInfo" id="BaseResultMap">
+	    <result column="itineraryInfoId" property="itineraryInfoId" jdbcType="VARCHAR" />
+		<result column="tourId" property="tourId" jdbcType="VARCHAR" />
+		<result column="itineraryInfo" property="itineraryInfo" jdbcType="VARCHAR" />
+		<result column="hotelInfo" property="hotelInfo" jdbcType="VARCHAR" />
+		<result column="contact" property="contact" jdbcType="VARCHAR" />
+		<result column="isDel" property="isDel" jdbcType="INTEGER" />
+	</resultMap>
+	
+	
+	<select id="findAll" resultMap="BaseResultMap">
+		SELECT 
+			<include refid="Base_Column_List"/>
+	    FROM
+	    	itinerary_info
+	</select>
+
+	 <insert id="save" parameterType="ItineraryInfo">
+	     INSERT INTO itinerary_info
+	     	<trim prefix="(" suffix=")" suffixOverrides=",">
+	     		<if test="itineraryInfoId != null">
+					ItineraryInfoId,    		    
+	     		</if>
+	     		<if test="tourId != null">
+	     		    TourId,
+	     		</if>
+	     		<if test="itineraryInfo != null">
+	     		    ItineraryInfo,
+	     		</if>
+	     		<if test="hotelInfo != null">
+	     		    HotelInfo,
+	     		</if>
+	     		<if test="contact != null">
+	     		    Contact,
+	     		</if>
+	     		<if test="isDel != null">
+	     		    IsDel,
+	     		</if>
+	     	</trim> 
+	     		
+	     	<trim prefix="values (" suffix=")" suffixOverrides=",">
+	     		    <if test="itineraryInfoId != null">
+	     		        #{itineraryInfoId,jdbcType=VARCHAR},
+	     		    </if>
+	     		    <if test="tourId != null">
+	     		        #{tourId,jdbcType=VARCHAR},
+	     		    </if>
+	     		    <if test="itineraryInfo != null">
+	     		        #{itineraryInfo,jdbcType=VARCHAR},
+	     		    </if>
+	     		    <if test="hotelInfo != null">
+	     		        #{hotelInfo,jdbcType=VARCHAR},
+	     		    </if>
+	     		    <if test="contact != null">
+	     		        #{contact,jdbcType=VARCHAR},
+	     		    </if>
+	     		    <if test="isDel != null">
+	     		        #{isDel,jdbcType=INTEGER},
+	     		    </if>
+	     	</trim>
+	</insert>
+	
+	<delete id="removeById" parameterType="String">
+	    DELETE FROM 
+		    itinerary_info 
+		WHERE 
+		     ItineraryInfoId=#{itineraryInfoId}
+	</delete>
+	
+	<select id="findById" resultMap="BaseResultMap" parameterType="String">
+		SELECT 
+			<include refid="Base_Column_List"/>
+	    FROM
+	    	itinerary_info
+	    	where 
+	    	ItineraryInfoId=#{itineraryInfoId}
+	</select>
+	
+	<select id="findByTourId" resultMap="BaseResultMap" parameterType="String">
+		SELECT 
+			<include refid="Base_Column_List"/>
+	    FROM
+	    	itinerary_info
+	    	where 
+	    	TourId=#{tourId}
+	</select>
+	
+	<select id="findByTourWithIsDel" resultMap="BaseResultMap" parameterType="String">
+		SELECT 
+			<include refid="Base_Column_List"/>
+	    FROM
+	    	itinerary_info
+	    	where 
+	    	isDel=0
+	    	AND
+	    	TourId=#{tourId}
+	</select>
+	
+	<select id="findByTourIdWhithDel" resultMap="BaseResultMap" parameterType="String">
+		SELECT 
+			<include refid="Base_Column_List"/>
+	    FROM
+	    	itinerary_info
+	    	where 
+	    	isDel=1
+	    	AND
+	    	TourId=#{tourId}
+	</select>
+	
+	<update id="update" parameterType="ItineraryInfo">
+		UPDATE itinerary_info
+			<set>
+			    <if test="tourId != null">
+			         TourId = #{tourId,jdbcType=VARCHAR},
+			    </if>
+			     <if test="itineraryInfo != null">
+			         ItineraryInfo = #{itineraryInfo,jdbcType=VARCHAR},
+			    </if>
+			    <if test="hotelInfo != null">
+			         HotelInfo = #{hotelInfo,jdbcType=VARCHAR},
+			    </if>
+			     <if test="contact != null">
+			         Contact = #{contact,jdbcType=VARCHAR},
+			    </if>
+			    <if test="isDel != null">
+			         IsDel = #{isDel,jdbcType=INTEGER},
+			    </if>
+			</set>
+		WHERE 
+            ItineraryInfoId=#{itineraryInfoId}
+	</update> 
+	
+	
+	<sql id="findForPage_sql">
+        select
+        	<include refid="Base_Column_List"/>
+        from itinerary_info
+        <where>
+            <trim suffixOverrides="AND">
+                <if test="record.itineraryInfoId != null">
+                    ItineraryInfoId = #{record.itineraryInfoId} AND
+                </if>
+				<if test="record.tourId != null">
+					TourId LIKE CONCAT('%','${record.tourId}','%') AND
+				</if>
+                <if test="record.itineraryInfo != null">
+                    ItineraryInfo = #{record.itineraryInfo} AND
+                </if>
+                <if test="record.hotelInfo != null">
+                    HotelInfo = #{record.hotelInfo} AND
+                </if>
+                <if test="record.contact != null">
+                    Contact = #{record.contact} AND
+                </if>
+                <if test="record.isDel !=null">
+                    <if test="record.isDel !=1">
+	                    IsDel = #{record.isDel} 
+                    </if>
+                </if>
+            </trim>
+        </where>
+    </sql>
+    
+    <select id="findForPage" resultMap="BaseResultMap">
+        <include refid="Pager.paginationStart"/>
+        <include refid="findForPage_sql"/>
+        <include refid="Pager.paginationEnd"/>
+    </select>
+    
+    <select id="findForPageCount" resultType="int">
+        <include refid="Pager.countStart"/>
+        <include refid="findForPage_sql"/>
+        <include refid="Pager.countEnd"/>
+    </select>
+</mapper>

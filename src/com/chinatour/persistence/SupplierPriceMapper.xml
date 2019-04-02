@@ -1,0 +1,1332 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.SupplierPriceMapper">
+	<resultMap id="BaseResultMap" type="com.chinatour.entity.SupplierPrice">
+		<id column="SupplierPriceId" property="supplierPriceId" jdbcType="VARCHAR" />
+		<result column="TourId" property="tourId" jdbcType="VARCHAR" />
+		<result column="TourCode" property="tourCode" jdbcType="VARCHAR" />
+		<result column="Remark" property="remark" jdbcType="VARCHAR" />
+		<result column="CheckRemark" property="checkRemark" jdbcType="VARCHAR" />
+		<result column="CheckUserId" property="checkUserId" jdbcType="VARCHAR" />
+		<result column="AccCheck" property="accCheck" jdbcType="INTEGER" />
+		<result column="CreateTime" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="Accompany" property="accompany" jdbcType="VARCHAR" />
+		<result column="TourDept" property="tourDept" jdbcType="VARCHAR" />
+		<result column="DayNum" property="dayNum" jdbcType="INTEGER" />
+		<result column="Nationality" property="nationality" jdbcType="VARCHAR" />
+		<result column="AllCheck" property="allCheck" jdbcType="INTEGER" />
+		<result column="CompleteState" property="completeState"
+			jdbcType="INTEGER" />
+		<result column="SubRemark" property="subRemark" jdbcType="VARCHAR" />
+		<result column="TotalPeople" property="totalPeople" jdbcType="INTEGER" />
+		<result column="CheckTime" property="checkTime" jdbcType="TIMESTAMP" />
+		<result column="InvoiceState" property="invoiceState" jdbcType="INTEGER" />
+		<result column="SupType" property="supType" jdbcType="VARCHAR" />
+		<result column="FileUrl" property="fileUrl" jdbcType="VARCHAR" />
+		<result column="arriveDateTime" property="arriveDateTime"
+			jdbcType="VARCHAR" />
+		<result column="Type" property="type" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap id="ResultTourMap" type="com.chinatour.entity.Tour">
+		<result column="TourId" property="tourId" jdbcType="VARCHAR" />
+		<result column="TourCode" property="tourCode" jdbcType="VARCHAR" />
+		<result column="ArriveDateTime" property="arriveDateTime" jdbcType="TIMESTAMP" />
+		<result column="LineName" property="lineName" jdbcType="VARCHAR" />
+		<association property="supplierPrice" column="TourId" resultMap="BaseResultMap" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		SupplierPriceId, TourId, TourCode, Remark, CheckRemark,
+		CheckUserId, AccCheck,
+		CreateTime,
+		Accompany, TourDept, DayNum,
+		Nationality, AllCheck, CompleteState, SubRemark,
+		TotalPeople,
+		CheckTime, InvoiceState,SupType,FileUrl
+	</sql>
+
+	<select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		supplierprice
+		WHERE
+		SupplierPriceId=#{supplierPriceId,jdbcType=VARCHAR}
+	</select>
+
+	<select id="findByTourId" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		supplierprice
+		WHERE
+		TourId=#{tourId,jdbcType=VARCHAR}
+	</select>
+	
+	<delete id="removeById" parameterType="java.lang.String">
+		DELETE FROM
+		supplierprice
+		WHERE
+		SupplierPriceId=#{supplierPriceId,jdbcType=VARCHAR}
+	</delete>
+
+	<insert id="save" parameterType="com.chinatour.entity.SupplierPrice">
+		insert into supplierprice
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="supplierPriceId != null">
+				SupplierPriceId,
+			</if>
+			<if test="tourId != null">
+				TourId,
+			</if>
+			<if test="tourCode != null">
+				TourCode,
+			</if>
+			<if test="remark!= null">
+				Remark,
+			</if>
+			<if test="checkRemark!= null">
+				CheckRemark,
+			</if>
+			<if test="checkUserId!= null">
+				CheckUserId,
+			</if>
+			<if test="accCheck!= null">
+				AccCheck,
+			</if>
+			<if test="createTime!= null">
+				CreateTime,
+			</if>
+			<if test="accompany!= null">
+				Accompany,
+			</if>
+			<if test="tourDept!= null">
+				TourDept,
+			</if>
+			<if test="dayNum!= null">
+				DayNum,
+			</if>
+			<if test="nationality!= null">
+				Nationality,
+			</if>
+			<if test="allCheck!= null">
+				AllCheck,
+			</if>
+			<if test="completeState!= null">
+				CompleteState,
+			</if>
+			<if test="subRemark!= null">
+				SubRemark,
+			</if>
+			<if test="totalPeople!= null">
+				TotalPeople,
+			</if>
+			<if test="checkTime!= null">
+				CheckTime,
+			</if>
+			<if test="invoiceState!= null">
+				InvoiceState,
+			</if>
+			<if test="supType!= null">
+				SupType,
+			</if>
+			<if test="fileUrl!= null">
+				FileUrl
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="supplierPriceId != null">
+				#{supplierPriceId,jdbcType=VARCHAR},
+			</if>
+			<if test="tourId != null">
+				#{tourId,jdbcType=VARCHAR},
+			</if>
+			<if test="tourCode != null">
+				#{tourCode,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="checkRemark != null">
+				#{checkRemark,jdbcType=VARCHAR},
+			</if>
+			<if test="checkUserId != null">
+				#{checkUserId,jdbcType=VARCHAR},
+			</if>
+			<if test="accCheck != null">
+				#{accCheck,jdbcType=INTEGER},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="accompany != null">
+				#{accompany,jdbcType=VARCHAR},
+			</if>
+			<if test="tourDept != null">
+				#{tourDept,jdbcType=VARCHAR},
+			</if>
+			<if test="dayNum != null">
+				#{dayNum,jdbcType=INTEGER},
+			</if>
+			<if test="nationality != null">
+				#{nationality,jdbcType=VARCHAR},
+			</if>
+			<if test="allCheck != null">
+				#{allCheck,jdbcType=INTEGER},
+			</if>
+			<if test="completeState != null">
+				#{completeState,jdbcType=INTEGER},
+			</if>
+			<if test="subRemark != null">
+				#{subRemark,jdbcType=VARCHAR},
+			</if>
+			<if test="totalPeople != null">
+				#{totalPeople,jdbcType=INTEGER},
+			</if>
+			<if test="checkTime != null">
+				#{checkTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="invoiceState != null">
+				#{invoiceState,jdbcType=INTEGER},
+			</if>
+			<if test="supType != null">
+				#{supType,jdbcType=INTEGER},
+			</if>
+			<if test="fileUrl != null">
+				#{fileUrl,jdbcType=INTEGER}
+			</if>
+		</trim>
+	</insert>
+	<update id="update" parameterType="com.chinatour.entity.SupplierPrice">
+		update supplierprice
+		<set>
+			<if test="tourId != null">
+				TourId = #{tourId,jdbcType=VARCHAR},
+			</if>
+			<if test="tourCode != null">
+				TourCode = #{tourCode,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="checkRemark != null">
+				CheckRemark = #{checkRemark,jdbcType=VARCHAR},
+			</if>
+			<if test="checkUserId != null">
+				CheckUserId = #{checkUserId,jdbcType=VARCHAR},
+			</if>
+			<if test="accCheck != null">
+				AccCheck = #{accCheck,jdbcType=INTEGER},
+			</if>
+			<if test="createTime != null">
+				CreateTime = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="accompany != null">
+				Accompany = #{accompany,jdbcType=VARCHAR},
+			</if>
+			<if test="tourDept != null">
+				TourDept = #{tourDept,jdbcType=VARCHAR},
+			</if>
+			<if test="dayNum != null">
+				DayNum = #{dayNum,jdbcType=INTEGER},
+			</if>
+			<if test="nationality != null">
+				Nationality = #{nationality,jdbcType=VARCHAR},
+			</if>
+			<if test="allCheck != null">
+				AllCheck = #{allCheck,jdbcType=INTEGER},
+			</if>
+			<if test="completeState != null">
+				CompleteState = #{completeState,jdbcType=INTEGER},
+			</if>
+			<if test="subRemark != null">
+				SubRemark = #{subRemark,jdbcType=VARCHAR},
+			</if>
+			<if test="totalPeople != null">
+				TotalPeople = #{totalPeople,jdbcType=INTEGER},
+			</if>
+			<if test="checkTime != null">
+				CheckTime = #{checkTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="invoiceState != null">
+				InvoiceState = #{invoiceState,jdbcType=INTEGER},
+			</if>
+			<if test="supType!= null">
+				SupType = #{supType,jdbcType=INTEGER},
+			</if>
+			<if test="fileUrl!= null">
+				FileUrl = #{fileUrl,jdbcType=VARCHAR}
+			</if>
+		</set>
+		where SupplierPriceId = #{supplierPriceId,jdbcType=VARCHAR}
+	</update>
+
+	<sql id="findForPage_sql">
+		SELECT
+		t.TourId AS TourId,t.TourCode AS TourCode,ArriveDateTime,lineName,
+		SupplierPriceId, Remark, CheckRemark,
+		CheckUserId, AccCheck,Accompany, TourDept, Nationality, AllCheck, CompleteState,s.TotalPeople,
+		InvoiceState,SupType,FileUrl
+		FROM Tour t
+		LEFT JOIN supplierprice s ON t.TourId=s.TourId
+		WHERE t.IsDel= 0
+		<if test="record.userId != null">
+			AND t.UserId = #{record.userId,jdbcType=VARCHAR}
+		</if>
+		<if test="record.tourCode != null">
+			AND t.TourCode  LIKE CONCAT('%','${record.tourCode}','%')
+		</if>
+		<if test="record.arriveDateTime != null">
+			AND t.ArriveDateTime
+			=#{record.arriveDateTime,jdbcType=VARCHAR}
+		</if>
+		<if test="record.beginningDate != null">
+			AND t.ArriveDateTime <![CDATA[>=]]> #{record.beginningDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="record.endingDate != null">
+			AND t.ArriveDateTime <![CDATA[<=]]> #{record.endingDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="record.allCheck != null">
+			AND s.AllCheck = #{record.allCheck,jdbcType=INTEGER}
+		</if>
+		<if test="record.lineName != null">
+			AND t.LineName LIKE CONCAT('%','${record.lineName}','%')
+		</if>
+		<if test="record.completeState!= null">
+			AND s.completeState = #{record.completeState,jdbcType=INTEGER}
+		</if>
+		ORDER BY t.ArriveDateTime DESC
+	</sql>
+
+	<select id="findForPage" resultMap="ResultTourMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+	
+	<select id="findForPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+	<!-- 小组录账单功能 -->
+	<sql id="findForPage_sqlforGroup">
+		SELECT
+		t.TourId AS TourId,t.TourCode AS TourCode,ArriveDateTime,lineName,
+		SupplierPriceId, Remark, CheckRemark,
+		CheckUserId, AccCheck,Accompany, TourDept, Nationality, AllCheck, CompleteState,s.TotalPeople,
+		InvoiceState,SupType,FileUrl
+		FROM Tour t
+		LEFT JOIN supplierprice s ON t.TourId=s.TourId
+		WHERE t.IsDel= 0
+		<!-- <if test="record.userId != null">
+			AND t.UserId = #{record.userId,jdbcType=VARCHAR}
+		</if> -->
+		<if test="record.tourCode != null">
+			AND t.TourCode  LIKE CONCAT('%','${record.tourCode}','%')
+		</if>
+		<if test="record.arriveDateTime != null">
+			AND t.ArriveDateTime
+			=#{record.arriveDateTime,jdbcType=VARCHAR}
+		</if>
+		<if test="record.beginningDate != null">
+			AND t.ArriveDateTime <![CDATA[>=]]> #{record.beginningDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="record.endingDate != null">
+			AND t.ArriveDateTime <![CDATA[<=]]> #{record.endingDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="record.allCheck != null">
+			AND s.AllCheck = #{record.allCheck,jdbcType=INTEGER}
+		</if>
+		<if test="record.lineName != null">
+			AND t.LineName LIKE CONCAT('%','${record.lineName}','%')
+		</if>
+		<if test="record.completeState!= null">
+			AND s.completeState = #{record.completeState,jdbcType=INTEGER}
+		</if>
+		<if test="record.groupId != null">
+				AND t.UserId IN ( SELECT adminId FROM admin_group WHERE groupId=#{record.groupId,jdbcType=VARCHAR} ) 
+		</if>
+		ORDER BY t.ArriveDateTime DESC
+	</sql>
+	
+	<select id="findForPageforGroup" resultMap="ResultTourMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findForPage_sqlforGroup" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findForPage_sqlforGroupCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findForPage_sqlforGroup" />
+		<include refid="Pager.countEnd" />
+	</select>
+	<select id="findTourByTourId" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		SELECT
+		t.arriveDateTime
+		FROM
+		supplierprice s,
+		tour t
+		WHERE
+		s.TourId=t.TourId
+		AND
+		s.TourId=#{tourId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="findCount" resultType="int" parameterType="com.chinatour.entity.SupplierPrice">
+		SELECT
+		COUNT(sp.SupplierPriceId)
+		FROM supplierprice sp,tour t
+		WHERE sp.TourId=t.TourId
+		AND sp.AllCheck=#{allCheck,jdbcType=INTEGER}
+		AND t.UserId=#{userId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="findSumSupplierOfTourOfAcc" parameterType="supplierPrice" resultType="supplierPrice">
+		SELECT 
+			SUM(expm.TotalPeople) AS TotalPeople,
+			SUM(expm.SupplierPrice) AS SupplierPrice,
+			SUM(expm.SupplierCost) AS SupplierCost
+		FROM(
+			SELECT 
+				 tt.*,SUM(sc.TotalPeople) AS TotalPeople
+			FROM 
+				(
+				SELECT 
+					pp.*,
+					SUM(pp.SupplierCostS) AS SupplierCost,
+					SUM(pp.SupplierPriceS) AS SupplierPrice
+				FROM
+					(
+					SELECT s.SupplierPriceId, 
+						expm.* 
+					FROM 
+					( 
+						SELECT 
+							t.TourId, 
+							t.userId,
+							SUM(sa.Sum) AS SupplierPriceS, 
+							ss.SupplierCost as SupplierCostS 
+						FROM Tour t, suppriceinforel ss, supplierofagent sa, zs_admin a, Dept d 
+						WHERE t.tourid=ss.TourId 
+						AND ss.supPriceInfoRelId=sa.supPriceInfoRelId 
+						AND sa.UserId=a.id 
+						AND a.DeptId=d.DeptId 
+						<if test="tourId!= null">
+							AND t.TourId=#{tourId}
+						</if>
+						<if test="userId!=null">
+							AND t.userId=#{userId}
+						</if>
+						<if test="tourCode!=null">
+							AND t.TourCode LIKE CONCAT(CONCAT('%',#{tourCode}),'%' ) 
+						</if>
+						<if test="arriveDateTime!= null">
+							AND DATE_FORMAT(t.arriveDateTime,'%Y-%m')=DATE_FORMAT(#{arriveDateTime},'%Y-%m')
+						</if>	
+						<if test="deptName!=null">
+							AND d.DeptName LIKE CONCAT(CONCAT('%',#{deptName}),'%' ) 
+						</if> 
+						<if test="supplierName!=null">
+							AND ss.supplierName LIKE CONCAT(CONCAT('%',#{supplierName}),'%' ) 
+						</if>
+						GROUP by ss.suppriceinforelId				
+					)   expm,
+						SupplierPrice s,
+						zs_admin a
+					WHERE s.TourId=expm.TourId
+					AND expm.UserId=a.id
+					AND s.CompleteState=1
+					<if test="accCheck!=null">
+						AND s.AccCheck=#{accCheck}
+					</if>
+					<if test="allCheck!=null">
+						AND s.AllCheck=#{allCheck}
+					</if>
+					<if test="invoiceState!=null">
+						AND s.InvoiceState=#{invoiceState}
+					</if>
+					<if test="supplierPriceId!= null">
+						AND s.SupplierPriceId=#{supplierPriceId}
+					</if>
+					<if test="userName!= null">
+						AND a.userName LIKE CONCAT(CONCAT('%',#{userName}),'%' ) 
+					</if>
+					<if test="deptId!=null">
+						AND a.deptId=#{deptId}
+					</if>
+					ORDER BY s.CreateTime DESC
+				) pp GROUP by pp.TourId
+			) tt,
+			suppliercheck sc 
+			WHERE tt.SupplierPriceId=sc.SupplierPriceId
+			GROUP by tt.TourId
+		) expm
+	</select>
+	<select id="findBillChangeSumSupplierOfTourOfAcc" parameterType="supplierPrice" resultType="supplierPrice">
+		SELECT 
+			pp.TourId, 
+			pp.TourCode,
+			SUM(IF(spr.Type='1',spr.Differencesum,0)) AS supplierDifPrice,
+			SUM(IF(spr.Type='2',spr.Differencesum,0)) AS supplierDifCost
+		FROM 
+		(	
+			SELECT 
+			    t.TourId,
+				t.TourCode
+			FROM Tour t,
+				SupplierPrice s,
+				SupplierPriceRemark sr,
+				SupplierCheck sc,
+				zs_admin a ,
+				Dept d 
+			WHERE s.TourId=t.TourId
+			AND t.UserId=a.id
+			AND s.CompleteState=1
+		    AND t.tourid=sr.TourId 
+			AND sr.SupplierCheckId=sc.SupplierCheckId
+			AND sc.SupplierPriceId=s.SupplierPriceId
+			AND sc.UserIdOfAgent=a.id
+			AND a.DeptId=d.DeptId
+			<if test="tourId!= null">
+				AND t.TourId=#{tourId}
+			</if>
+			<if test="userId!=null">
+				AND t.userId=#{userId}
+			</if>
+			<if test="tourCode!=null">
+				AND t.TourCode LIKE CONCAT(CONCAT('%',#{tourCode}),'%' ) 
+			</if>
+			<if test="arriveDateTime!= null">
+				AND DATE_FORMAT(t.arriveDateTime,'%Y-%m')=DATE_FORMAT(#{arriveDateTime},'%Y-%m')
+			</if>	
+			<if test="accCheck!=null">
+				AND s.AccCheck=#{accCheck}
+			</if>
+			<if test="allCheck!=null">
+				AND s.AllCheck=#{allCheck}
+			</if>
+			<if test="invoiceState!=null">
+				AND s.InvoiceState=#{invoiceState}
+			</if>
+			<if test="supplierPriceId!= null">
+				AND s.SupplierPriceId=#{supplierPriceId}
+			</if>
+			<if test="userName!= null">
+				AND a.userName LIKE CONCAT(CONCAT('%',#{userName}),'%' ) 
+			</if>
+			<if test="deptId!=null">
+				AND a.deptId=#{deptId}
+			</if>
+			<if test="supplierName!=null">
+				AND sr.supplierName LIKE CONCAT(CONCAT('%',#{supplierName}),'%' ) 
+			</if>
+			<if test="deptName!=null">
+				AND d.DeptName LIKE CONCAT(CONCAT('%',#{deptName}),'%' ) 
+			</if> 
+			GROUP BY t.TourId
+			ORDER BY s.CreateTime DESC
+       ) pp 
+       LEFT JOIN SupplierPriceRemark spr
+			ON spr.TourId=pp.TourId
+		WHERE (spr.sprCheck=1 OR spr.sprCheck=3)
+	</select>
+	
+	<sql id="findSupplierOfTourOfAcc">
+		SELECT exmp.*,group_concat( DISTINCT sm.SprCheck ORDER BY sm.SprCheck ASC SEPARATOR '') AS SprCheck from (
+			SELECT		
+				t.TourId,
+				t.TourCode,
+				t.arriveDateTime,
+				t.TotalPeople,
+				sp.AccCheck,
+				sp.AllCheck,
+				sp.InvoiceState,
+				t.userId,
+				a.username,
+				sp.fileUrl,
+				sp.SupplierPriceId,
+				group_concat( DISTINCT o.tax ORDER BY o.tax ASC SEPARATOR '') AS tax
+				FROM 
+					Tour t,
+					supplierprice sp,
+					zs_admin a,
+					Dept d,
+					orders o 
+				WHERE t.tourid=sp.TourId
+					AND t.UserId=a.id 
+					AND a.deptId=d.DeptId
+					AND o.TourId=t.TourId
+					<if test="record.tourId!= null">
+						AND t.TourId=#{record.tourId}
+					</if>
+					<if test="record.userId!=null">
+						AND t.userId=#{record.userId}
+					</if>
+					<if test="record.lineName!=null">
+						AND t.lineName LIKE CONCAT('%','${record.lineName}','%')
+					</if>
+					<if test="record.tourCode!=null">
+						AND t.TourCode LIKE CONCAT(CONCAT('%',#{record.tourCode}),'%' ) 
+					</if>
+					<if test="record.arriveDateTime!= null">
+						AND DATE_FORMAT(t.arriveDateTime,'%Y-%m')=DATE_FORMAT(#{record.arriveDateTime},'%Y-%m')
+					</if>	
+					<if test="record.deptName!=null">
+						AND d.DeptName LIKE CONCAT(CONCAT('%',#{record.deptName}),'%' ) 
+					</if> 
+					<if test="record.beginningDate != null">
+						AND t.ArriveDateTime <![CDATA[>=]]> #{record.beginningDate,jdbcType=TIMESTAMP}
+					</if>
+					<if test="record.endingDate != null">
+						AND t.ArriveDateTime <![CDATA[<=]]> #{record.endingDate,jdbcType=TIMESTAMP}
+					</if>
+					<if test="record.accCheck!=null">
+						AND sp.AccCheck=#{record.accCheck}
+					</if>
+					<if test="record.allCheck!=null">
+						AND sp.AllCheck=#{record.allCheck}
+					</if>
+					<if test="record.invoiceState!=null">
+						AND sp.InvoiceState=#{record.invoiceState}
+					</if>
+					<if test="record.supplierPriceId!= null">
+						AND sp.SupplierPriceId=#{record.supplierPriceId}
+					</if>
+					<if test="record.completeState" >
+						AND sp.CompleteState=#{record.completeState}
+					</if>
+					<if test="record.userName!= null">
+						AND a.userName LIKE CONCAT(CONCAT('%',#{record.userName}),'%' ) 
+					</if>
+					<if test="record.deptId!=null">
+						AND a.deptId=#{record.deptId}
+					</if>
+					<if test="record.tax==1" >
+						AND (o.Tax=0 OR o.Tax=3 )
+					</if>
+					<if test="record.tax!=null and record.tax!=1" >
+						AND (o.Tax=4 OR o.Tax=2)
+					</if>
+				GROUP BY t.TourId
+				ORDER BY sp.CreateTime DESC
+			)exmp
+			LEFT JOIN supplierpriceremark sm 
+			ON exmp.TourId=sm.TourId
+			<where>
+				<if test="record.sprCheck!=null">
+						sm.IsDel=0
+					AND sm.sprCheck=#{record.sprCheck}
+				</if>
+			</where>
+			GROUP BY exmp.TourId 
+			ORDER BY exmp.ArriveDateTime DESC
+	</sql>
+	
+	<select id="findForAccPage" resultMap="BaseResultMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findSupplierOfTourOfAcc" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findForAccPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findSupplierOfTourOfAcc" />
+		<include refid="Pager.countEnd" />
+	</select>
+	
+	<sql id="findSupplierOfTourOfAcc_Group">
+		SELECT exmp.*,group_concat( DISTINCT sm.SprCheck ORDER BY sm.SprCheck ASC SEPARATOR '') AS SprCheck from (
+			SELECT		
+				t.TourId,
+				t.TourCode,
+				t.arriveDateTime,
+				t.TotalPeople,
+				sp.AccCheck,
+				sp.AllCheck,
+				sp.InvoiceState,
+				t.userId,
+				a.username,
+				group_concat( DISTINCT o.tax ORDER BY o.tax ASC SEPARATOR '') AS tax
+				FROM 
+					Tour t,
+					supplierprice sp,
+					zs_admin a,
+					Dept d,
+					orders o,
+					admin_group ag 
+				WHERE t.tourid=sp.TourId
+					AND t.UserId=a.id 
+					AND a.deptId=d.DeptId
+					AND o.TourId=t.TourId
+					AND a.id=ag.AdminId
+					<if test="record.groupId != null">
+						AND ag.GroupId = #{record.groupId,jdbcType=VARCHAR}
+					</if>
+					<if test="record.tourId!= null">
+						AND t.TourId=#{record.tourId}
+					</if>
+					<if test="record.userId!=null">
+						AND t.userId=#{record.userId}
+					</if>
+					<if test="record.lineName!=null">
+						AND t.lineName LIKE CONCAT('%','${record.lineName}','%')
+					</if>
+					<if test="record.tourCode!=null">
+						AND t.TourCode LIKE CONCAT(CONCAT('%',#{record.tourCode}),'%' ) 
+					</if>
+					<if test="record.arriveDateTime!= null">
+						AND DATE_FORMAT(t.arriveDateTime,'%Y-%m')=DATE_FORMAT(#{record.arriveDateTime},'%Y-%m')
+					</if>	
+					<if test="record.deptName!=null">
+						AND d.DeptName LIKE CONCAT(CONCAT('%',#{record.deptName}),'%' ) 
+					</if> 
+					<if test="record.beginningDate != null">
+						AND t.ArriveDateTime <![CDATA[>=]]> #{record.beginningDate,jdbcType=TIMESTAMP}
+					</if>
+					<if test="record.endingDate != null">
+						AND t.ArriveDateTime <![CDATA[<=]]> #{record.endingDate,jdbcType=TIMESTAMP}
+					</if>
+					<if test="record.accCheck!=null">
+						AND sp.AccCheck=#{record.accCheck}
+					</if>
+					<if test="record.allCheck!=null">
+						AND sp.AllCheck=#{record.allCheck}
+					</if>
+					<if test="record.invoiceState!=null">
+						AND sp.InvoiceState=#{record.invoiceState}
+					</if>
+					<if test="record.supplierPriceId!= null">
+						AND sp.SupplierPriceId=#{record.supplierPriceId}
+					</if>
+					<if test="record.completeState" >
+						AND sp.CompleteState=#{record.completeState}
+					</if>
+					<if test="record.userName!= null">
+						AND a.userName LIKE CONCAT(CONCAT('%',#{record.userName}),'%' ) 
+					</if>
+					<if test="record.deptId!=null">
+						AND a.deptId=#{record.deptId}
+					</if>
+					<if test="record.tax==1" >
+						AND (o.Tax=0 OR o.Tax=3 )
+					</if>
+					<if test="record.tax!=null and record.tax!=1" >
+						AND (o.Tax=4 OR o.Tax=2)
+					</if>
+				GROUP BY t.TourId
+				ORDER BY sp.CreateTime DESC
+			)exmp
+			LEFT JOIN supplierpriceremark sm 
+			ON exmp.TourId=sm.TourId
+			WHERE 1=1
+			<if test="record.sprCheck!=null">
+				AND sm.sprCheck=#{record.sprCheck}
+			</if>
+			GROUP BY exmp.TourId 
+			ORDER BY exmp.ArriveDateTime DESC
+	</sql>
+	
+	<select id="findForAccGroupPage" resultMap="BaseResultMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findSupplierOfTourOfAcc_Group" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findForAccGroupPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findSupplierOfTourOfAcc_Group" />
+		<include refid="Pager.countEnd" />
+	</select>
+	<sql id="findSupplierOfTourOfAgent_Group">
+		SELECT
+	    	expm.*,
+	    	sp.SprCheck
+	    FROM
+	    (
+    		SELECT 
+				 s.SupplierPriceId,
+				 s.TourId,
+				 s.TourCode,
+				 s.CheckUserId,
+				 s.CheckRemark,
+				 s.AccCheck,
+				 s.AllCheck,
+				 s.CompleteState,
+				 s.CreateTime,
+				 s.Remark,
+				 s.TourDept,
+				 s.Accompany,
+				 s.DayNum,
+				 s.Nationality,
+				 s.SubRemark,
+				 s.TotalPeople,
+				 s.CheckTime,
+				 t.lineName,
+				 t.lineCode,
+				 tp.typeName, 
+				 t.userId,
+				 t.arriveDateTime,
+				 a.userName,
+				 sc.checkOfAgent,
+				 sc.SupplierCheckId
+			FROM 
+				Tour t,
+				Tour_type tp,
+				SupplierPrice s,
+				zs_admin a,
+				admin_group ag, 
+				SupplierCheck sc
+			WHERE
+			    t.UserId=a.id
+			 AND t.type=tp.TourTypeId
+			 AND s.TourId=t.TourId
+			 AND s.SupplierPriceId=sc.SupplierPriceId
+			 AND s.CompleteState=1
+			 AND sc.UserIdOfAgent=ag.AdminId
+			<if test="record.groupId != null">
+				AND ag.GroupId = #{record.groupId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.supplierPriceId!=null">
+				AND s.SupplierPriceId=#{record.supplierPriceId}
+			</if>
+			<if test="record.tourId!=null">
+				AND s.TourId=#{record.tourId}
+			</if>
+			<if test="record.tourCode!=null">
+				AND t.TourCode LIKE CONCAT('%','${record.tourCode}','%')
+			</if>
+			<if test="record.lineName!=null">
+				AND t.lineName LIKE CONCAT('%','${record.lineName}','%')
+			</if>
+			<if test="record.checkUserId!=null">
+				AND s.CheckUserId=#{record.checkUserId}
+			</if>
+			<if test="record.accCheck!=null">
+				AND s.AccCheck=#{record.accCheck}
+			</if>
+			<if test="record.allCheck!=null">
+				AND s.AllCheck=#{record.allCheck}
+			</if>
+			<if test="record.completeState!=null">
+				AND s.CompleteState=#{record.completeState}
+			</if>
+			<if test="record.createTime!= null">
+				AND DATE_FORMAT(s.CreateTime,'%Y-%m')=DATE_FORMAT(#{record.createTime},'%Y-%m')
+			</if>
+			<if test="record.checkTime!= null">
+				AND DATE_FORMAT(s.CheckTime,'%Y-%m-%d')=DATE_FORMAT(#{record.checkTime},'%Y-%m-%d')
+			</if>
+			<if test="record.userIdOfAgent!= null">
+				 AND sc.userIdOfAgent=#{record.userIdOfAgent}
+			</if>
+			<if test="record.userName!= null">
+				AND a.userName LIKE CONCAT(CONCAT('%',#{record.userName}),'%' ) 
+			</if>
+			<if test="record.checkOfAgent!= null">
+				AND sc.checkOfAgent=#{record.checkOfAgent}
+			</if>
+			<if test="record.beginningDate != null">
+				AND t.ArriveDateTime <![CDATA[>=]]> #{record.beginningDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.endingDate != null">
+				AND t.ArriveDateTime <![CDATA[<=]]> #{record.endingDate,jdbcType=TIMESTAMP}
+			</if>
+			GROUP BY sc.supplierCheckId
+			ORDER BY sc.checkOfAgent ASC ,t.arriveDateTime DESC
+		) expm 
+			LEFT JOIN SupplierPriceRemark sp
+			ON expm.TourId=sp.TourId
+			AND sp.supplierCheckId=expm.supplierCheckId
+			AND sp.Type=1
+			<!--  WHERE ( sp.isDel=0 OR sp.IsDel IS NULL)-->
+			WHERE 1=1
+			<if test="record.sprCheck!=null">
+				AND sp.sprCheck=#{record.sprCheck}
+			</if>
+			GROUP BY expm.TourId
+			ORDER BY expm.checkOfAgent ASC ,expm.arriveDateTime DESC
+	</sql>
+	<select id="findForAgentGroupPage" resultMap="BaseResultMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findSupplierOfTourOfAgent_Group" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findForAgentGroupPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findSupplierOfTourOfAgent_Group" />
+		<include refid="Pager.countEnd" />
+	</select>
+	
+	<sql id="findSupplierOfTourOfAgent">
+		SELECT
+	    	expm.*,
+	    	sp.SprCheck
+	    FROM
+	    (
+    		SELECT 
+				 s.SupplierPriceId,
+				 s.TourId,
+				 s.TourCode,
+				 s.CheckUserId,
+				 s.CheckRemark,
+				 s.AccCheck,
+				 s.AllCheck,
+				 s.CompleteState,
+				 s.CreateTime,
+				 s.Remark,
+				 s.TourDept,
+				 s.Accompany,
+				 s.DayNum,
+				 s.Nationality,
+				 s.SubRemark,
+				 s.TotalPeople,
+				 s.CheckTime,
+				 t.lineName,
+				 t.lineCode,
+				 tp.typeName, 
+				 t.userId,
+				 t.arriveDateTime,
+				 a.userName,
+				 sc.checkOfAgent,
+				 sc.SupplierCheckId
+			FROM 
+				Tour t,
+				Tour_type tp,
+				SupplierPrice s,
+				zs_admin a,
+				SupplierCheck sc
+			WHERE
+			    t.UserId=a.id
+			 AND t.type=tp.TourTypeId
+			 AND s.TourId=t.TourId
+			 AND s.SupplierPriceId=sc.SupplierPriceId
+			 AND s.CompleteState=1
+			<if test="record.supplierPriceId!=null">
+				AND s.SupplierPriceId=#{record.supplierPriceId}
+			</if>
+			<if test="record.tourId!=null">
+				AND s.TourId=#{record.tourId}
+			</if>
+			<if test="record.tourCode!=null">
+				AND t.TourCode LIKE CONCAT('%','${record.tourCode}','%')
+			</if>
+			<if test="record.lineName!=null">
+				AND t.lineName LIKE CONCAT('%','${record.lineName}','%')
+			</if>
+			<if test="record.checkUserId!=null">
+				AND s.CheckUserId=#{record.checkUserId}
+			</if>
+			<if test="record.accCheck!=null">
+				AND s.AccCheck=#{record.accCheck}
+			</if>
+			<if test="record.allCheck!=null">
+				AND s.AllCheck=#{record.allCheck}
+			</if>
+			<if test="record.completeState!=null">
+				AND s.CompleteState=#{record.completeState}
+			</if>
+			<if test="record.createTime!= null">
+				AND DATE_FORMAT(s.CreateTime,'%Y-%m')=DATE_FORMAT(#{record.createTime},'%Y-%m')
+			</if>
+			<if test="record.checkTime!= null">
+				AND DATE_FORMAT(s.CheckTime,'%Y-%m-%d')=DATE_FORMAT(#{record.checkTime},'%Y-%m-%d')
+			</if>
+			<if test="record.userIdOfAgent!= null">
+				 AND sc.userIdOfAgent=#{record.userIdOfAgent}
+			</if>
+			<if test="record.userName!= null">
+				AND a.userName LIKE CONCAT(CONCAT('%',#{record.userName}),'%' ) 
+			</if>
+			<if test="record.checkOfAgent!= null">
+				AND sc.checkOfAgent=#{record.checkOfAgent}
+			</if>
+			<if test="record.beginningDate != null">
+				AND t.ArriveDateTime <![CDATA[>=]]> #{record.beginningDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.endingDate != null">
+				AND t.ArriveDateTime <![CDATA[<=]]> #{record.endingDate,jdbcType=TIMESTAMP}
+			</if>
+			GROUP BY sc.supplierCheckId
+			ORDER BY sc.checkOfAgent ASC ,t.arriveDateTime DESC
+		) expm 
+			LEFT JOIN SupplierPriceRemark sp
+			ON expm.TourId=sp.TourId
+			AND sp.supplierCheckId=expm.supplierCheckId
+			AND sp.Type=1
+			<!--  WHERE ( sp.isDel=0 OR sp.IsDel IS NULL)-->
+			WHERE 1=1
+			<if test="record.sprCheck!=null">
+				AND sp.sprCheck=#{record.sprCheck}
+			</if>
+			GROUP BY expm.TourId
+			ORDER BY expm.checkOfAgent ASC ,expm.arriveDateTime DESC
+	</sql>
+	<select id="findForAgentPage" resultMap="BaseResultMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findSupplierOfTourOfAgent" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findForAgentPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findSupplierOfTourOfAgent" />
+		<include refid="Pager.countEnd" />
+	</select>
+	<select id="findUnCheckTour" parameterType="supplierPrice" resultType="supplierPrice">
+		SELECT 
+			 s.SupplierPriceId,
+			 s.TourId,
+			 s.TourCode,
+			 s.CheckUserId,
+			 s.AccCheck,
+			 s.AllCheck,
+			 s.CompleteState,
+			 s.CreateTime,
+			 s.Remark,
+			 s.CheckTime,
+			 t.userId
+		FROM 
+			Tour t,
+			SupplierPrice s
+		WHERE
+			s.TourId=t.TourId
+		 AND s.CompleteState=1
+		<if test="supplierPriceId!=null">
+			AND s.SupplierPriceId=#{supplierPriceId}
+		</if>
+		<if test="allCheck!=null">
+			AND s.AllCheck=#{allCheck}
+		</if>
+		<if test="accCheck!=null">
+			AND s.AccCheck=#{accCheck}
+		</if>
+		<if test="checkTime!= null">
+			AND #{checkTime}>s.CheckTime
+		</if>
+		<if test="invoiceState!=null">
+			AND s.InvoiceState=#{invoiceState}
+		</if>
+		GROUP BY s.SupplierPriceId
+	</select>
+	
+	<select id="queryOrderBillOfExplorAndDept" parameterType="supplierPrice" resultType="supplierPrice">
+		SELECT 
+		 expm.SupplierPriceId,
+		 expm.TourId,
+		 expm.TourCode,
+		 expm.userName,
+		 SUM(expm.supplierUSAPrice) AS supplierUSAPrice,
+		 SUM(expm.supplierDifCost) AS supplierDifCost,
+		 SUM(expm.SupplierPrice) AS SupplierPrice,
+		 expm.SupplierCost,
+		 expm.SupplierName,
+		 expm.deptId,
+		 expm.DeptName,
+ 		 expm.RateUp AS RateUp,
+		 expm.RateDown AS RateDown	
+	   FROM ( 
+			SELECT 
+				 s.SupplierPriceId,
+				 t.TourId,
+				 t.TourCode,
+				 u.userName,
+				 ROUND(SUM(so.Sum)/rc.UsRate,2) AS supplierUSAPrice,
+				 ROUND(SUM(so.Sum)*rc.RateUP/rc.RateDown,2) AS supplierDifCost,
+				 SUM(ROUND(so.Sum, 2)) AS supplierPrice,
+				 ss.SupplierCost,
+				 ss.SupplierName,
+				 d.deptId,
+				 d.DeptName,
+				 rc.RateUp AS RateUp,
+				 rc.RateDown AS RateDown
+			FROM 
+				Tour t,
+				SupplierPrice s,
+				zs_admin u,
+				suppriceinforel ss,
+				supplierofagent sa,
+				zs_admin uu,
+	   			Dept d,
+	   			Suppliercheck sck ,
+	   			RateOfCurrency rc,
+	   			SupplierOfOrder so
+			WHERE s.TourId=t.TourId
+				AND t.UserId=u.id
+				AND t.tourId=ss.TourId
+				AND ss.supPriceInfoRelId=sa.supPriceInfoRelId
+				AND sa.UserId=uu.id
+				AND uu.DeptId=d.DeptId
+				AND sck.UserIdOfAgent=sa.UserId
+				AND sck.SupplierPriceId=s.SupplierPriceId
+				AND rc.Id=sck.RateOfCurrencyId
+				AND so.supplierofagentId=sa.supplierofagentId
+		<if test="deptId!=null">
+			AND u.deptId=#{deptId}
+		</if>
+		<if test="completeState!= null">
+			AND s.CompleteState=#{completeState}
+		</if>
+		<if test="toDeptId!=null">
+			AND uu.DeptId=#{toDeptId}
+		</if>
+		<if test="arriveDateTime!= null">
+			AND DATE_FORMAT(t.arriveDateTime,'%Y-%m')=DATE_FORMAT(#{arriveDateTime},'%Y-%m')
+		</if>
+		<if test="beginningDate != null">
+			AND t.ArriveDateTime <![CDATA[>=]]> #{beginningDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="endingDate != null">
+			AND t.ArriveDateTime <![CDATA[<=]]> #{endingDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="tourId!=null">
+			AND t.TourId=#{tourId}
+		</if>
+		<if test="userName!=null">
+			AND u.userName LIKE CONCAT(CONCAT('%',#{userName}),'%' ) 
+		</if>
+		GROUP by t.TourId,uu.id
+		) expm 
+		GROUP by expm.DeptId,expm.TourId Order BY expm.TourCode ASC
+	</select>
+	
+	<select id="findBillOfExplor" parameterType="supplierPrice" resultType="supplierPrice">
+		SELECT 
+			 ss.SupplierName,
+			 t.TourCode,
+			 ss.SupplierCost,
+			 ss.SupplierPrice,
+			 ss.Type,
+			 za.userName,
+			 t.arriveDateTime,
+		 	 s.SupplierPriceId,
+		 	 s.TotalPeople,
+		 	 s.DayNum,
+			 t.TourId,
+			 t.userId
+		FROM 
+			Tour t,
+			SupplierPrice s,
+			zs_admin za,
+			suppriceinforel ss
+		WHERE s.TourId=t.TourId
+			AND t.UserId=za.id
+			AND t.tourid=ss.TourId
+		<if test="deptId!=null">
+			AND za.deptId=#{deptId}
+		</if>
+		<if test="completeState!= null">
+			AND s.CompleteState=#{completeState}
+		</if>
+		<if test="beginningDate != null">
+			AND t.ArriveDateTime <![CDATA[>=]]> #{beginningDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="endingDate != null">
+			AND t.ArriveDateTime <![CDATA[<=]]> #{endingDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="userName!=null">
+			AND za.userName LIKE CONCAT(CONCAT('%',#{userName}),'%' ) 
+		</if>
+		Order by  ss.Type ASC, IF (ss.Type!=3,ss.SupplierName ,t.TourCode)  ASC 
+	</select>
+	
+	<select id="findBillOfExplorFlight" parameterType="supplierPrice" resultType="supplierPrice">
+		SELECT 
+			 '机票' AS SupplierName,
+			 t.TourCode,
+			 SUM(ss.SupplierCost) AS SupplierCost,
+			 SUM(ss.SupplierPrice) AS SupplierPrice, 
+			 ss.Type,
+			 za.userName,
+			 t.arriveDateTime,
+		 	 s.SupplierPriceId,
+		 	 s.TotalPeople,
+		 	 s.DayNum,
+			 t.TourId,
+			 t.userId
+		FROM 
+			Tour t,
+			SupplierPrice s,
+			zs_admin za,
+			suppriceinforel ss
+		WHERE s.TourId=t.TourId
+			AND t.UserId=za.id
+			AND t.tourid=ss.TourId
+			AND ss.type=3
+		<if test="deptId!=null">
+			AND za.deptId=#{deptId}
+		</if>
+		<if test="completeState!= null">
+			AND s.CompleteState=#{completeState}
+		</if>
+		<if test="beginningDate != null">
+			AND t.ArriveDateTime <![CDATA[>=]]> #{beginningDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="endingDate != null">
+			AND t.ArriveDateTime <![CDATA[<=]]> #{endingDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="userName!=null">
+			AND za.userName LIKE CONCAT(CONCAT('%',#{userName}),'%' ) 
+		</if>
+		GROUP BY tourId Order by t.TourCode ASC
+	</select>
+	
+	<select id="findBillOfTourAndAgent" parameterType="supplierPrice" resultType="supplierPrice">
+		SELECT 
+			 s.SupplierPriceId,
+			 t.TourId,
+			 t.TourCode,
+			 za.userName,
+			 SUM(sa.Sum) AS SupplierPrice,
+			 ss.SupplierCost,
+			 ss.SupplierName,
+			 za.deptId,
+			 d.DeptName,
+			 uu.userName AS UserIdOfAgent
+		FROM 
+			Tour t,
+			SupplierPrice s,
+			zs_admin za,
+			suppriceinforel ss,
+			supplierofagent sa,
+			zs_admin uu,
+   			Dept d 
+		WHERE s.TourId=t.TourId
+			AND t.UserId=za.id
+			AND t.tourid=ss.TourId
+			AND ss.supPriceInfoRelId=sa.supPriceInfoRelId
+			AND sa.UserId=uu.id
+			AND uu.DeptId=d.DeptId
+		<if test="deptId!=null">
+			AND uu.deptId=#{deptId}
+		</if>
+		<if test="tourId!=null">
+			AND t.TourId=#{tourId}
+		</if>
+		GROUP by sa.UserId ORDER BY t.TourCode ASC 
+	</select>
+	
+	<select id="findSupplierOfTourOfOp" parameterType="supplierPrice" resultType="supplierPrice">
+		SELECT 
+			 s.SupplierPriceId,
+			 t.TourCode,
+			 s.TotalPeople,
+			 za.userName,
+			 SUM(ss.supplierPrice) AS SupplierPrice,
+			 SUM(ss.SupplierCost) AS SupplierCost
+		FROM 
+			Tour t,
+			SupplierPrice s,
+			zs_admin za,
+			suppriceinforel ss
+		WHERE s.TourId=t.TourId
+			AND t.UserId=za.id
+			AND t.tourid=ss.TourId
+		<if test="deptId!=null">
+			AND za.deptId=#{deptId}
+		</if>
+		<if test="completeState!= null">
+			AND s.CompleteState=#{completeState}
+		</if>
+		<if test="beginningDate != null">
+			AND t.ArriveDateTime <![CDATA[>=]]> #{beginningDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="endingDate != null">
+			AND t.ArriveDateTime <![CDATA[<=]]> #{endingDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="userName!=null">
+			AND za.userName LIKE CONCAT(CONCAT('%',#{userName}),'%' ) 
+		</if>
+		GROUP by t.TourId ORDER BY t.TourCode ASC  
+	</select>
+	
+	<select id="findSupplierPriceRemarkDept" parameterType="supplierPrice" resultType="supplierPrice">
+		SELECT 
+			t.TourId,
+			t.TourCode,
+			d.DeptName,
+			spr.SupplierName,
+			Sum(spr.differencesum) AS supplierPrice,
+			Sum(ROUND(spr.differencesum*rc.RateUp/rc.RateDown,2)) AS supplierUSAPrice
+		FROM 
+			Tour t,
+			SupplierPrice s,
+			zs_admin uu,
+			SupplierPriceRemark spr,
+			SupplierCheck sc ,
+			zs_admin za,
+			Dept d,
+			RateOfCurrency rc
+		WHERE s.TourId=t.TourId
+			AND t.UserId=za.id
+			AND spr.TourId=t.TourId
+			AND spr.SupplierCheckId=sc.SupplierCheckId
+			AND sc.UserIdOfAgent=uu.id
+			AND uu.DeptId=d.DeptId
+			AND rc.Id=sc.RateOfCurrencyId
+			AND spr.Type=1
+			AND (spr.sprCheck=1 OR spr.sprCheck=3)
+		<if test="deptId!=null">
+			AND za.deptId=#{deptId}
+		</if>
+		<if test="completeState!= null">
+			AND s.CompleteState=#{completeState}
+		</if>
+		<if test="beginningDate != null">
+			AND t.ArriveDateTime <![CDATA[>=]]> #{beginningDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="endingDate != null">
+			AND t.ArriveDateTime <![CDATA[<=]]> #{endingDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="userName!=null">
+			AND za.userName LIKE CONCAT(CONCAT('%',#{userName}),'%' ) 
+		</if>
+		GROUP BY t.TourId,d.DeptId
+		ORDER BY t.TourCode ASC  
+	</select>
+	
+	<select id="findSupplierPriceRemarkSupplierName" parameterType="supplierPrice" resultType="supplierPrice">
+		SELECT 
+			t.TourId,
+			t.TourCode,
+			spr.SupplierName,
+			spr.differencesum AS SupplierCost
+		FROM 
+			Tour t,
+			SupplierPrice s,
+			zs_admin za,
+			SupplierPriceRemark spr
+		WHERE s.TourId=t.TourId
+			AND t.UserId=za.id
+			AND spr.TourId=t.TourId
+			AND spr.Type=2
+			AND (spr.sprCheck=1 OR spr.sprCheck=3)
+		<if test="deptId!=null">
+			AND za.deptId=#{deptId}
+		</if>
+		<if test="completeState!= null">
+			AND s.CompleteState=#{completeState}
+		</if>
+		<if test="beginningDate != null">
+			AND t.ArriveDateTime <![CDATA[>=]]> #{beginningDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="endingDate != null">
+			AND t.ArriveDateTime <![CDATA[<=]]> #{endingDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="userName!=null">
+			AND za.userName LIKE CONCAT(CONCAT('%',#{userName}),'%' ) 
+		</if>
+		ORDER BY t.TourCode ASC  
+	</select>
+	<!-- 查出联谊anget未审核订单 -->
+	<select id="findCheckSupplierPriceTour" parameterType="supplierPrice" resultType="supplierPrice">
+		select sp.*,o.userId as userId from orders o,dept d,tour t,supplierprice sp,suppliercheck sk
+		 where o.deptId=d.deptId  and t.tourid=o.tourId and sp.tourId=t.tourId and sp.supplierPriceId=sk.supplierPriceId and o.userId=sk.userIdOfAgent
+		and sp.accCheck=1 and sk.checkOfAgent!=1
+		 and (d.deptName='Toronto' OR d.deptName='London' OR d.deptName='Sydney' OR d.deptName='Vancouver-NH' OR d.deptName='Washington' OR d.deptName='ShangHai' OR d.deptName='WuXi')
+		 GROUP BY sp.supplierpriceId
+	</select>
+</mapper>

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.StateMapper">
+
+	<sql id="Base_Column_List">
+		StateId, StateName, c.CountryId as CountryId, 
+		c.CountryName as CountryName 
+	</sql>
+    
+    <sql id="FROM_TABLES">
+     	from state s, country c
+		where s.CountryId = c.CountryId
+    </sql>
+    
+	<sql id="findForPage_sql">
+		select
+		<include refid="Base_Column_List" />
+        <include refid="FROM_TABLES" />
+		<if test="record.id != null">
+			AND StateId = #{record.id,jdbcType=VARCHAR}
+		</if>
+		<if test="record.stateName != null">
+			AND StateName LIKE CONCAT('%','${record.stateName}','%')
+		</if>
+		<if test="record.country != null">
+		    <if test="record.country.countryName != null">
+			  AND CountryName LIKE CONCAT('%','${record.country.countryName}','%')
+		    </if>
+		</if>
+	</sql>
+
+	<resultMap type="State" id="BaseResultMap">
+		<id property="id" column="StateId" jdbcType="VARCHAR" />
+		<result property="stateName" column="StateName" jdbcType="VARCHAR" />
+		<association property="country" javaType="Country"
+			resultMap="com.chinatour.persistence.CountryMapper.BaseResultMap" />
+	</resultMap>
+
+	<select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		<include refid="FROM_TABLES" />
+		AND s.StateId = #{id,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="findByCountryId" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		<include refid="FROM_TABLES" />
+		AND s.CountryId = #{countryId,jdbcType=VARCHAR}
+	</select>
+
+	<select id="findAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+        <include refid="FROM_TABLES" />
+	</select>
+
+	<select id="findForPage" resultMap="BaseResultMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findForPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+
+	<delete id="removeById" parameterType="java.lang.String">
+		delete from state
+		where
+		StateId = #{id,jdbcType=VARCHAR}
+	</delete>
+
+	<update id="update" parameterType="State">
+		update state
+		<set>
+			<if test="stateName != null">
+				StateName = #{stateName,jdbcType=VARCHAR},
+			</if>
+			<if test="country != null">
+			    <if test="country.id != null">
+				   CountryId = #{country.id,jdbcType=VARCHAR},
+			    </if>
+			</if>
+		</set>
+		where StateId = #{id,jdbcType=VARCHAR}
+	</update>
+
+	<insert id="save" parameterType="State">
+		insert into State
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				StateId,
+			</if>
+			<if test="stateName != null">
+				StateName,
+			</if>
+			<if test="country != null">
+			    <if test="country.id != null">
+				    CountryId
+			    </if>
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="stateName != null">
+				#{stateName,jdbcType=VARCHAR},
+			</if>
+			<if test="country != null">
+			    <if test="country.id != null">
+				   #{country.id,jdbcType=VARCHAR}
+			    </if>
+			</if>
+		</trim>
+	</insert>
+</mapper>

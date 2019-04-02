@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.ContactsMapper">
+	<resultMap type="Contacts" id="BaseResultMap">
+		<id column="id" property="contactsId" jdbcType="VARCHAR"/>
+		<result column="ContactsName" property="contactsName" jdbcType="VARCHAR"/>
+		<result column="PeerUserId" property="peerUserId" jdbcType="VARCHAR"/>
+	</resultMap>
+	<sql id="Base_Column_List">
+		ContactsId,ContactsName,PeerUserId,CreateDate,IsDel
+	</sql>
+	<insert id="save" parameterType="Contacts">
+		INSERT INTO contacts
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ContactsId,
+			</if>
+			<if test="contactsName != null">
+				ContactsName,
+			</if>
+			<if test="peerUserId != null">
+				PeerUserId
+			</if>
+		</trim>
+		<trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="contactsName != null">
+			 	#{contactsName,jdbcType=VARCHAR},
+			</if>
+			<if test="peerUserId != null">
+				#{peerUserId,jdbcType=VARCHAR}
+			</if>
+		</trim>
+	</insert>
+	<select id="findByPeerUserId" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT 
+		<include refid="Base_Column_List"/>
+		FROM contacts
+		WHERE
+		 PeerUserId=#{peerUserId,jdbcType=VARCHAR}
+		 ORDER BY CreateDate DESC
+	</select>
+	<delete id="removeById" parameterType="java.lang.String">
+		DELETE FROM contacts WHERE ContactsId=#{id,jdbcType=VARCHAR}
+	</delete>
+</mapper>

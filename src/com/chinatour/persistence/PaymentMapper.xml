@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.PaymentMapper" >
+  <resultMap id="BaseResultMap" type="com.chinatour.entity.Payment" >
+    <id column="PaymentId" property="paymentId" jdbcType="VARCHAR" />
+    <result column="OrderId" property="orderId" jdbcType="VARCHAR" />
+    <result column="OrderNo" property="orderNo" jdbcType="VARCHAR" />
+    <result column="Payment" property="payment" jdbcType="DECIMAL" />
+    <result column="Balance" property="balance" jdbcType="DECIMAL" />
+    <result column="PayType" property="payType" jdbcType="VARCHAR" />
+    <result column="PayInfo" property="payInfo" jdbcType="VARCHAR" />
+    <result column="Amount" property="amount" jdbcType="DECIMAL" />
+    <result column="CreateDate" property="createDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    PaymentId, OrderId, OrderNo, Payment, Balance, PayType, PayInfo, Amount,CreateDate
+  </sql>
+ 
+  <select id="findById" resultMap="BaseResultMap" parameterType="com.chinatour.entity.Payment" >
+   	SELECT
+   		<include refid="Base_Column_List" />
+   	FROM
+   		payment
+   	WHERE
+   		PaymentId = #{paymentId,jdbcType=VARCHAR})
+  </select>
+  
+  <select id="findByOrder" resultMap="BaseResultMap" parameterType="com.chinatour.entity.Payment" >
+   	SELECT
+   		<include refid="Base_Column_List" />
+   	FROM
+   		payment
+   	WHERE
+   		OrderId = #{orderId,jdbcType=VARCHAR})
+  </select>
+  
+  <delete id="delete" parameterType="com.chinatour.entity.Payment" >
+    DELETE FROM 
+    	payment
+   WHERE
+   		PaymentId = #{PaymentId,jdbcType=VARCHAR})
+  </delete>
+  
+  <update id="update" parameterType="com.chinatour.entity.Payment" >
+    UPDATE 
+    	payment
+    <set >
+      <if test="paymentId != null" >
+        PaymentId = #{paymentId,jdbcType=VARCHAR},
+      </if>
+      <if test="orderId != null" >
+        OrderId = #{orderId,jdbcType=VARCHAR},
+      </if>
+      <if test="orderNo != null" >
+        OrderNo = #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="payment != null" >
+        Payment = #{payment,jdbcType=DECIMAL},
+      </if>
+      <if test="balance != null" >
+        Balance = #{balance,jdbcType=DECIMAL},
+      </if>
+      <if test="payType != null" >
+        PayType = #{payType,jdbcType=VARCHAR},
+      </if>
+      <if test="payInfo != null" >
+        PayInfo = #{payInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null" >
+        Amount = #{amount,jdbcType=DECIMAL}
+      </if>
+    </set>
+   WHERE
+   		PaymentId = #{PaymentId,jdbcType=VARCHAR})
+  </update>
+ 	
+ 	<insert id="save" parameterType="com.chinatour.entity.Payment">
+	     INSERT INTO Payment
+	     	<trim prefix="(" suffix=")" suffixOverrides=",">
+	     		 <if test="paymentId != null">
+                    PaymentId,
+                </if>
+                <if test="orderId != null">
+                    OrderId,
+                </if>
+                <if test="orderNo != null">
+                    OrderNo,
+                </if>
+                <if test="payment != null">
+                    Payment,
+                </if>
+                <if test="balance != null">
+                    Balance,
+                </if>
+                <if test="payType != null">
+                    PayType,
+                </if>
+                <if test="payInfo != null" >
+			        PayInfo,
+			    </if>
+			    <if test="amount != null" >
+			        Amount
+			    </if>
+	     	</trim> 
+	     	<trim prefix="values (" suffix=")" suffixOverrides=",">
+	     		  <if test="paymentId != null" >
+			         #{paymentId,jdbcType=VARCHAR},
+			      </if>
+			      <if test="orderId != null" >
+			         #{orderId,jdbcType=VARCHAR},
+			      </if>
+			      <if test="orderNo != null" >
+			        #{orderNo,jdbcType=VARCHAR},
+			      </if>
+			      <if test="payment != null" >
+			        #{payment,jdbcType=DECIMAL},
+			      </if>
+			      <if test="balance != null" >
+			         #{balance,jdbcType=DECIMAL},
+			      </if>
+			      <if test="payType != null" >
+			        #{payType,jdbcType=VARCHAR},
+			      </if>
+			      <if test="payInfo != null" >
+			        #{payInfo,jdbcType=VARCHAR},
+			      </if>
+			      <if test="amount != null" >
+			       #{amount,jdbcType=DECIMAL}
+			      </if>
+	   		</trim>
+	</insert>
+	
+	 <sql id="findForPage_sql">
+        SELECT
+        	<include refid="Base_Column_List"/>
+        FROM 
+        	payment
+        <where>
+            <trim suffixOverrides="AND">
+                <if test="record.paymentId != null">
+                    PaymentId = #{record.paymentId} AND
+                </if>
+                <if test="record.orderId!= null">
+                    OrderId = #{record.orderId} AND 
+                </if>
+                <if test="record.orderNo != null">
+                    OrderNo = #{record.orderNo} AND
+                </if>
+                <if test="record.payment != null">
+                    Payment = #{record.payment} AND
+                </if>
+                <if test="record.balance != null">
+                    Balance = #{record.balance} AND
+                </if>
+                <if test="record.payType != null">
+                    PayType = #{record.payType}
+                </if>
+                <if test="record.payInfo != null">
+                    PayInfo = #{record.payInfo} AND
+                </if>
+                <if test="record.amount != null">
+                    Amount = #{record.amount}
+                </if>
+                <if test="record.createDate != null">
+                    CreateDate = #{record.createDate}
+                </if>
+            </trim>
+        </where>
+    </sql>
+    
+    <select id="findForPage" resultMap="BaseResultMap">
+        <include refid="Pager.paginationStart"/>
+        <include refid="findForPage_sql"/>
+        <include refid="Pager.paginationEnd"/>
+    </select>
+    
+    <select id="findForPageCount" resultType="int">
+        <include refid="Pager.countStart"/>
+        <include refid="findForPage_sql"/>
+        <include refid="Pager.countEnd"/>
+    </select>
+    
+    <select id="find"  resultMap="BaseResultMap" parameterType="com.chinatour.entity.Payment" >
+    	SELECT
+    		<include refid="Base_Column_List" />
+	   	FROM
+	   		payment
+	   	<where>
+            <trim suffixOverrides="AND">
+                <if test="paymentId != null">
+                    PaymentId = #{paymentId} AND
+                </if>
+                <if test="orderId!= null">
+                    OrderId = #{orderId} AND 
+                </if>
+                <if test="orderNo != null">
+                    OrderNo = #{orderNo} AND
+                </if>
+                <if test="payment != null">
+                    Payment = #{payment} AND
+                </if>
+                <if test="balance != null">
+                    Balance = #{balance} AND
+                </if>
+                <if test="payType != null">
+                    PayType = #{payType}
+                </if>
+                <if test="payInfo != null">
+                    PayInfo = #{payInfo} AND
+                </if>
+                <if test="amount != null">
+                    Amount = #{amount}
+                </if>
+                <if test="createDate != null">
+                    CreateDate = #{createDate}
+                </if>
+            </trim>
+        </where>
+        ORDER BY
+        	CreateDate
+    </select>
+</mapper>

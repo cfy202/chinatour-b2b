@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.SupplierOfAgentMapper">
+	<resultMap id="BaseResultMap" type="com.chinatour.entity.SupplierOfAgent">
+		<id column="SupplierOfAgentId" property="supplierOfAgentId"
+			jdbcType="VARCHAR" />
+		<result column="Sum" property="sum" jdbcType="DECIMAL" />
+		<result column="SupPriceInfoRelId" property="supPriceInfoRelId"
+			jdbcType="VARCHAR" />
+		<result column="UserId" property="userId" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		SupplierOfAgentId, `Sum`, SupPriceInfoRelId, UserId
+	</sql>
+	<select id="findById" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from supplierofagent
+		where SupplierOfAgentId = #{supplierOfAgentId,jdbcType=VARCHAR}
+	</select>
+	<select id="findBySupPriceInfoRelId" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from supplierofagent
+		where SupPriceInfoRelId = #{supPriceInfoRelId,jdbcType=VARCHAR}
+	</select>
+	<delete id="removeById" parameterType="java.lang.String">
+		delete from supplierofagent
+		where SupplierOfAgentId = #{supplierOfAgentId,jdbcType=VARCHAR}
+	</delete>
+	<insert id="save" parameterType="com.chinatour.entity.SupplierOfAgent">
+		insert into supplierofagent
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="supplierOfAgentId != null">
+				SupplierOfAgentId,
+			</if>
+			<if test="sum != null">
+				`Sum`,
+			</if>
+			<if test="supPriceInfoRelId != null">
+				SupPriceInfoRelId,
+			</if>
+			<if test="userId != null">
+				UserId,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="supplierOfAgentId != null">
+				#{supplierOfAgentId,jdbcType=VARCHAR},
+			</if>
+			<if test="sum != null">
+				#{sum,jdbcType=DECIMAL},
+			</if>
+			<if test="supPriceInfoRelId != null">
+				#{supPriceInfoRelId,jdbcType=VARCHAR},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	
+	<insert id="batchSave" parameterType="java.util.List">
+		INSERT INTO supplierofagent
+			(<include refid="Base_Column_List"/>)
+		values 
+			<foreach collection="list" item="item" index="index" separator="," >
+				(
+					#{item.supplierOfAgentId,jdbcType=VARCHAR},
+					#{item.sum,jdbcType=DECIMAL},
+					#{item.supPriceInfoRelId,jdbcType=VARCHAR},
+					#{item.userId,jdbcType=VARCHAR}
+				)
+			</foreach>
+	</insert>
+	
+	<update id="update" parameterType="com.chinatour.entity.SupplierOfAgent">
+		update supplierofagent
+		<set>
+			<if test="sum != null">
+				`Sum` = #{sum,jdbcType=DECIMAL},
+			</if>
+			<if test="supPriceInfoRelId != null">
+				SupPriceInfoRelId = #{supPriceInfoRelId,jdbcType=VARCHAR},
+			</if>
+			<if test="userId != null">
+				UserId = #{userId,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where SupplierOfAgentId = #{supplierOfAgentId,jdbcType=VARCHAR}
+	</update>
+	<select id="find" resultMap="BaseResultMap" parameterType="com.chinatour.entity.SupplierOfAgent">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM supplierofagent
+		<where>
+			<if test="supplierOfAgentId != null">
+				AND SupplierOfAgentId = #{supplierOfAgentId,jdbcType=VARCHAR}
+			</if>
+			<if test="sum != null">
+				AND Sum = #{sum,jdbcType=DECIMAL}
+			</if>
+			<if test="supPriceInfoRelId != null">
+				AND SupPriceInfoRelId = #{supPriceInfoRelId,jdbcType=VARCHAR}
+			</if>
+			<if test="userId != null">
+				AND UserId = #{userId,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+	<select id="findAgentByOrderId" resultMap="BaseResultMap"
+		parameterType="com.chinatour.entity.SupplierOfAgent">
+		select
+			s.SupplierOfAgentId, s.`Sum`, s.SupPriceInfoRelId, s.UserId
+		from supplierofagent s,
+			 orders o
+		 where 
+		 o.UserId=s.UserId 
+		AND s.SupPriceInfoRelId = #{supPriceInfoRelId}
+	</select>
+	<select id="findSumOfAgentAndTour" parameterType="supplierOfAgent" resultType="DECIMAL">
+		SELECT 
+		    SUM(so.Sum)
+		FROM 
+			SupplierOfAgent so,
+			SupPriceInfoRel sp
+		WHERE
+			so.SupPriceInfoRelId=sp.SupPriceInfoRelId
+		<if test="supplierOfAgentId!=null">
+			AND so.SupplierOfAgentId=#{supplierOfAgentId}
+		</if>
+		<if test="tourId!=null">
+			AND sp.TourId=#{tourId}
+		</if>
+		<if test="supPriceInfoRelId!=null">
+			AND so.SupPriceInfoRelId=#{supPriceInfoRelId}
+		</if>
+		<if test="userId!=null">
+			AND so.UserId=#{userId}
+		</if>
+		GROUP BY so.UserId
+	</select>
+	
+	<select id="findSumRateOfAgentAndTour" parameterType="supplierOfAgent" resultType="DECIMAL">
+		SELECT 
+		    ROUND(SUM(so.Sum)*rc.RateUp/rc.RateDown,2) AS Sum
+		FROM 
+			SupPriceInfoRel sp,
+			SupplierOfAgent so,
+			SupplierPrice spr,
+			SupplierCheck sc,
+			RateOfCurrency rc
+		WHERE
+			so.SupPriceInfoRelId=sp.SupPriceInfoRelId
+		AND spr.TourId=sp.TourId
+		AND sc.SupplierPriceId=spr.SupplierPriceId
+		AND sc.UserIdOfAgent=so.UserId
+		AND rc.Id=sc.RateOfCurrencyId
+		<if test="supplierOfAgentId!=null">
+			AND so.SupplierOfAgentId=#{supplierOfAgentId}
+		</if>
+		<if test="tourId!=null">
+			AND sp.TourId=#{tourId}
+		</if>
+		<if test="supPriceInfoRelId!=null">
+			AND so.SupPriceInfoRelId=#{supPriceInfoRelId}
+		</if>
+		<if test="userId!=null">
+			AND so.UserId=#{userId}
+		</if>
+		GROUP BY so.UserId
+	</select>
+	
+	<select id="findSumUSARateOfAgentAndTour" parameterType="supplierOfAgent" resultType="supplierOfAgent">
+		SELECT 
+			ROUND(SUM(so.Sum)*rc.RateUp/rc.RateDown,2) AS Sum,
+		    ROUND(SUM(so.Sum)/rc.UsRate,2) AS UsaSum
+		FROM 
+			SupPriceInfoRel sp,
+			SupplierOfAgent so,
+			SupplierPrice spr,
+			SupplierCheck sc,
+			RateOfCurrency rc
+		WHERE
+			so.SupPriceInfoRelId=sp.SupPriceInfoRelId
+		AND spr.TourId=sp.TourId
+		AND sc.SupplierPriceId=spr.SupplierPriceId
+		AND sc.UserIdOfAgent=so.UserId
+		AND rc.Id=sc.RateOfCurrencyId
+		<if test="supplierOfAgentId!=null">
+			AND so.SupplierOfAgentId=#{supplierOfAgentId}
+		</if>
+		<if test="tourId!=null">
+			AND sp.TourId=#{tourId}
+		</if>
+		<if test="supPriceInfoRelId!=null">
+			AND so.SupPriceInfoRelId=#{supPriceInfoRelId}
+		</if>
+		<if test="userId!=null">
+			AND so.UserId=#{userId}
+		</if>
+		GROUP BY so.UserId
+	</select>
+	
+	<select id="findOrderSumUSARateOfAgentAndTour" parameterType="supplierOfAgent" resultType="supplierOfAgent">
+		SELECT
+			SUM(ROUND(soo.Sum*rc.RateUp/rc.RateDown,2)) AS Sum, 
+			SUM(ROUND(soo.Sum/rc.UsRate,2)) AS UsaSum
+		FROM 
+			SupPriceInfoRel sp,
+			SupplierOfAgent so,
+			SupplierOfOrder soo,
+			SupplierPrice spr,
+			SupplierCheck sc,
+			RateOfCurrency rc
+		WHERE
+			so.SupPriceInfoRelId=sp.SupPriceInfoRelId
+		AND soo.SupplierOfAgentId=so.SupplierOfAgentId
+		AND spr.TourId=sp.TourId
+		AND sc.SupplierPriceId=spr.SupplierPriceId
+		AND sc.UserIdOfAgent=so.UserId
+		AND rc.Id=sc.RateOfCurrencyId
+		<if test="supplierOfAgentId!=null">
+			AND so.SupplierOfAgentId=#{supplierOfAgentId}
+		</if>
+		<if test="tourId!=null">
+			AND sp.TourId=#{tourId}
+		</if>
+		<if test="supPriceInfoRelId!=null">
+			AND so.SupPriceInfoRelId=#{supPriceInfoRelId}
+		</if>
+		<if test="userId!=null">
+			AND so.UserId=#{userId}
+		</if>
+		GROUP BY so.UserId
+	</select>
+	
+	<select id="findOrderSumRateOfAgentAndTour" parameterType="supplierOfAgent" resultType="DECIMAL">
+		SELECT 
+		     SUM(ROUND(soo.Sum*rc.RateUp/rc.RateDown,2)) AS Sum
+		FROM 
+			SupPriceInfoRel sp,
+			SupplierOfAgent so,
+			SupplierOfOrder soo,
+			SupplierPrice spr,
+			SupplierCheck sc,
+			RateOfCurrency rc
+		WHERE
+			so.SupPriceInfoRelId=sp.SupPriceInfoRelId
+		AND soo.SupplierOfAgentId=so.SupplierOfAgentId
+		AND spr.TourId=sp.TourId
+		AND sc.SupplierPriceId=spr.SupplierPriceId
+		AND sc.UserIdOfAgent=so.UserId
+		AND rc.Id=sc.RateOfCurrencyId
+		<if test="supplierOfAgentId!=null">
+			AND so.SupplierOfAgentId=#{supplierOfAgentId}
+		</if>
+		<if test="tourId!=null">
+			AND sp.TourId=#{tourId}
+		</if>
+		<if test="supPriceInfoRelId!=null">
+			AND so.SupPriceInfoRelId=#{supPriceInfoRelId}
+		</if>
+		<if test="userId!=null">
+			AND so.UserId=#{userId}
+		</if>
+		GROUP BY so.UserId
+	</select>
+
+	<select id="findSumAndRateOfAgentAndTour" parameterType="supplierOfAgent" resultType="supplierOfAgent">
+		SELECT 
+		     SUM(ROUND(soo.Sum/rc.UsRate,2)) AS Sum,
+		     SUM(soo.Sum) Total
+		FROM 
+			SupPriceInfoRel sp,
+			SupplierOfAgent so,
+			SupplierOfOrder soo,
+			SupplierPrice spr,
+			SupplierCheck sc,
+			RateOfCurrency rc
+		WHERE
+			so.SupPriceInfoRelId=sp.SupPriceInfoRelId
+		AND soo.SupplierOfAgentId=so.SupplierOfAgentId
+		AND spr.TourId=sp.TourId
+		AND sc.SupplierPriceId=spr.SupplierPriceId
+		AND sc.UserIdOfAgent=so.UserId
+		AND rc.Id=sc.RateOfCurrencyId
+		<if test="supplierOfAgentId!=null">
+			AND so.SupplierOfAgentId=#{supplierOfAgentId}
+		</if>
+		<if test="tourId!=null">
+			AND sp.TourId=#{tourId}
+		</if>
+		<if test="supPriceInfoRelId!=null">
+			AND so.SupPriceInfoRelId=#{supPriceInfoRelId}
+		</if>
+		<if test="userId!=null">
+			AND so.UserId=#{userId}
+		</if>
+		GROUP BY so.UserId
+	</select>
+	
+	<select id="findSumOfDeptAndTour" parameterType="supplierOfAgent" resultType="DECIMAL">
+		SELECT 
+		    SUM(so.Sum)
+		FROM 
+			SupplierOfAgent so,
+			SupPriceInfoRel sp,
+			User u,
+			Dept d
+		WHERE
+			so.SupPriceInfoRelId=sp.SupPriceInfoRelId
+			AND so.UserId=u.id
+			AND u.DeptId=d.DeptId
+		<if test="tourId!=null">
+			AND sp.TourId=#{tourId}
+		</if>
+		<if test="supPriceInfoRelId!=null">
+			AND so.SupPriceInfoRelId=#{supPriceInfoRelId}
+		</if>
+		<if test="deptId!=null">
+			AND d.DeptId=#{deptId}
+		</if>
+		GROUP BY d.DeptId
+	</select>
+	
+	<select id="findSumOfAgentAndTourExceptInsurance" parameterType="supplierOfAgent" resultType="DECIMAL">
+		SELECT 
+		    SUM(so.Sum)
+		FROM 
+			SupplierOfAgent so,
+			SupPriceInfoRel sp
+		WHERE
+			so.SupPriceInfoRelId=sp.SupPriceInfoRelId
+		AND sp.type!=4
+		<if test="supplierOfAgentId!=null">
+			AND so.SupplierOfAgentId=#{supplierOfAgentId}
+		</if>
+		<if test="tourId!=null">
+			AND sp.TourId=#{tourId}
+		</if>
+		<if test="supPriceInfoRelId!=null">
+			AND so.SupPriceInfoRelId=#{supPriceInfoRelId}
+		</if>
+		<if test="userId!=null">
+			AND so.UserId=#{userId}
+		</if>
+		GROUP BY so.UserId
+	</select>
+	
+	<select id="findInsuranceTotalFeeOfAgentAndTour" parameterType="supplierOfAgent" resultType="DECIMAL">
+		SELECT 
+		    SUM(so.Sum)
+		FROM 
+			SupplierOfAgent so,
+			SupPriceInfoRel sp
+		WHERE
+			so.SupPriceInfoRelId=sp.SupPriceInfoRelId
+		AND sp.type=4
+		<if test="supplierOfAgentId!=null">
+			AND so.SupplierOfAgentId=#{supplierOfAgentId}
+		</if>
+		<if test="tourId!=null">
+			AND sp.TourId=#{tourId}
+		</if>
+		<if test="supPriceInfoRelId!=null">
+			AND so.SupPriceInfoRelId=#{supPriceInfoRelId}
+		</if>
+		<if test="userId!=null">
+			AND so.UserId=#{userId}
+		</if>
+			GROUP BY sp.type
+	</select>
+	
+	<select id="querySumAndRateOfAgentAndTour" parameterType="supplierOfAgent" resultType="supplierOfAgent">
+		SELECT 
+		     ROUND(SUM(soo.Sum)/rc.UsRate,2) AS Sum,
+		     SUM(soo.Sum) Total
+		FROM 
+			SupPriceInfoRel sp,
+			SupplierOfAgent so,
+			SupplierOfOrder soo,
+			SupplierPrice spr,
+			SupplierCheck sc,
+			RateOfCurrency rc
+		WHERE
+			so.SupPriceInfoRelId=sp.SupPriceInfoRelId
+		AND soo.SupplierOfAgentId=so.SupplierOfAgentId
+		AND spr.TourId=sp.TourId
+		AND sc.SupplierPriceId=spr.SupplierPriceId
+		AND sc.UserIdOfAgent=so.UserId
+		AND rc.Id=sc.RateOfCurrencyId
+		<if test="supplierOfAgentId!=null">
+			AND so.SupplierOfAgentId=#{supplierOfAgentId}
+		</if>
+		<if test="tourId!=null">
+			AND sp.TourId=#{tourId}
+		</if>
+		<if test="supPriceInfoRelId!=null">
+			AND so.SupPriceInfoRelId=#{supPriceInfoRelId}
+		</if>
+		<if test="userId!=null">
+			AND so.UserId=#{userId}
+		</if>
+		GROUP BY so.UserId
+	</select>
+</mapper>

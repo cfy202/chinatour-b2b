@@ -1,0 +1,1379 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.TourMapper">
+	<resultMap id="BaseResultMap" type="com.chinatour.entity.Tour">
+		<id column="TourId" property="tourId" jdbcType="VARCHAR" />
+		<result column="DeptId" property="deptId" jdbcType="VARCHAR" />
+		<result column="UserId" property="userId" jdbcType="VARCHAR" />
+		<result column="Type" property="type" jdbcType="VARCHAR" />
+		<result column="TourCode" property="tourCode" jdbcType="VARCHAR" />
+		<result column="State" property="state" jdbcType="INTEGER" />
+		<result column="EnterpriseName" property="enterpriseName"
+			jdbcType="VARCHAR" />
+		<result column="LineName" property="lineName" jdbcType="VARCHAR" />
+		<result column="LineCode" property="lineCode" jdbcType="VARCHAR" />
+		<result column="TourQuoteUrl" property="tourQuoteUrl" jdbcType="VARCHAR" />
+		<result column="CreateDate" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="ModifyDate" property="modifyDate" jdbcType="TIMESTAMP" />
+		<result column="NewState" property="newState" jdbcType="INTEGER" />
+		<result column="ArriveDateTime" property="arriveDateTime"
+			jdbcType="TIMESTAMP" />
+		<result column="StatisticalArriveTime" property="statisticalArriveTime"
+			jdbcType="TIMESTAMP" />
+		<result column="IsDel" property="isDel" jdbcType="INTEGER" />
+		<result column="TotalNumState" property="totalNumState"
+			jdbcType="INTEGER" />
+		<result column="TotalPeople" property="totalPeople" jdbcType="INTEGER" />
+		<result column="TourType" property="tourType" jdbcType="TINYINT" />
+		<result column="userName" property="userName" jdbcType="VARCHAR" />
+		<result column="IsChanged" property="isChanged" jdbcType="TINYINT" />
+		<result column="IsDeparture" property="isDeparture" jdbcType="TINYINT" />
+	</resultMap>
+	
+	<resultMap id="ResultForCustomerSourceMap" type="com.chinatour.entity.Tour" extends="BaseResultMap">
+		<association property="sourceName" column="tourId" select="com.chinatour.persistence.OrderMapper.findSourceNameByTourId" />
+		<association property="tourTypeName" column="tourId" select="com.chinatour.persistence.OrderMapper.findTourTypeNameByTourId" />
+	</resultMap>
+	
+	<sql id="Base_Column_List">
+		TourId, DeptId, UserId, Type, TourCode,
+		State,
+		EnterpriseName, LineName, LineCode,
+		TourQuoteUrl, CreateDate,
+		ModifyDate, NewState, ArriveDateTime,
+		StatisticalArriveTime,
+		IsDel,
+		TotalNumState, TotalPeople,TourType,userName,IsChanged,IsDeparture
+	</sql>
+
+	<sql id="findForPage_sql">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM tour
+		WHERE IsDel = 0
+		<if test="record.tourId != null">
+			AND TourId = #{record.tourId,jdbcType=VARCHAR}
+		</if>
+		<if test="record.deptId != null">
+			AND DeptId = #{record.deptId,jdbcType=VARCHAR}
+		</if>
+		<if test="record.userId != null">
+			AND UserId = #{record.userId,jdbcType=VARCHAR}
+		</if>
+		<if test="record.type != null">
+			AND Type = #{record.type,jdbcType=VARCHAR}
+		</if>
+		<if test="record.tourCode != null">
+			AND TourCode LIKE CONCAT('%','${record.tourCode}','%')
+		</if>
+		<if test="record.state != null">
+			AND State = #{record.state,jdbcType=INTEGER}
+		</if>
+		<if test="record.enterpriseName != null">
+			AND EnterpriseName =
+			#{record.enterpriseName,jdbcType=VARCHAR}
+		</if>
+		<if test="record.lineName != null">
+			AND LineName LIKE CONCAT('%','${record.lineName}','%')
+		</if>
+		<if test="record.lineCode != null">
+			AND LineCode = #{record.lineCode,jdbcType=VARCHAR}
+		</if>
+		<if test="record.tourQuoteUrl != null">
+			AND TourQuoteUrl = #{record.tourQuoteUrl,jdbcType=VARCHAR}
+		</if>
+		<if test="record.createDate != null">
+			AND CreateDate = #{record.createDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="record.modifyDate != null">
+			AND ModifyDate = #{record.modifyDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="record.newState != null">
+			AND NewState = #{record.newState,jdbcType=INTEGER}
+		</if>
+		<if test="record.arriveDateTime != null">
+			AND ArriveDateTime =
+			#{record.arriveDateTime,jdbcType=TIMESTAMP}
+		</if>
+		<if test="record.statisticalArriveTime != null">
+			AND StatisticalArriveTime =
+			#{record.statisticalArriveTime,jdbcType=TIMESTAMP}
+		</if>
+		<if test="record.isDel != null">
+			AND IsDel = #{record.isDel,jdbcType=INTEGER}
+		</if>
+		<if test="record.totalNumState != null">
+			AND TotalNumState =
+			#{record.totalNumState,jdbcType=INTEGER}
+		</if>
+		<if test="record.totalPeople != null">
+			AND TotalPeople = #{record.totalPeople,jdbcType=INTEGER}
+		</if>
+		<if test="record.tourType != null">
+			AND TourType = #{record.tourType,jdbcType=TINYINT}
+		</if>
+		<if test="record.userName != null">
+			AND userName = #{record.userName,jdbcType=VARCHAR}
+		</if>
+		<if test="record.isDeparture != null">
+			AND IsDeparture = #{record.isDeparture,jdbcType=TINYINT}
+		</if>
+		ORDER BY ArriveDateTime DESC
+	</sql>
+
+	<select id="findForPage" resultMap="ResultForCustomerSourceMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findForPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+
+	<select id="findAll" resultMap="BaseResultMap" parameterType="java.lang.String">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM tour
+		WHERE IsDel = 0
+	</select>
+
+	<select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM tour
+		WHERE TourId = #{tourId,jdbcType=VARCHAR}
+	</select>
+
+	<select id="findByTourCode" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM tour
+		WHERE TourCode = #{tourCode,jdbcType=VARCHAR}
+		AND IsDel = 0
+	</select>
+
+	<select id="find" resultMap="BaseResultMap" parameterType="com.chinatour.entity.Tour">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM tour
+		WHERE IsDel = 0
+		<if test="tourId != null">
+			AND TourId = #{tourId,jdbcType=VARCHAR}
+		</if>
+		<if test="deptId != null">
+			AND DeptId = #{deptId,jdbcType=VARCHAR}
+		</if>
+		<if test="userId != null">
+			AND UserId = #{userId,jdbcType=VARCHAR}
+		</if>
+		<if test="type != null">
+			AND Type = #{type,jdbcType=VARCHAR}
+		</if>
+		<if test="tourCode != null">
+			AND TourCode = #{tourCode,jdbcType=VARCHAR}
+		</if>
+		<if test="state != null">
+			AND State = #{state,jdbcType=INTEGER}
+		</if>
+		<if test="enterpriseName != null">
+			AND EnterpriseName = #{enterpriseName,jdbcType=VARCHAR}
+		</if>
+		<if test="lineName != null">
+			AND LineName = #{lineName,jdbcType=VARCHAR}
+		</if>
+		<if test="lineCode != null">
+			AND LineCode = #{lineCode,jdbcType=VARCHAR}
+		</if>
+		<if test="tourQuoteUrl != null">
+			AND TourQuoteUrl = #{tourQuoteUrl,jdbcType=VARCHAR}
+		</if>
+		<if test="createDate != null">
+			AND CreateDate = #{createDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="modifyDate != null">
+			AND ModifyDate = #{modifyDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="newState != null">
+			AND NewState = #{newState,jdbcType=INTEGER}
+		</if>
+		<if test="arriveDateTime != null">
+			AND ArriveDateTime = #{arriveDateTime,jdbcType=TIMESTAMP}
+		</if>
+		<if test="statisticalArriveTime != null">
+			AND StatisticalArriveTime =
+			#{statisticalArriveTime,jdbcType=TIMESTAMP}
+		</if>
+		<if test="isDel != null">
+			AND IsDel = #{isDel,jdbcType=INTEGER}
+		</if>
+		<if test="totalNumState != null">
+			AND TotalNumState = #{totalNumState,jdbcType=INTEGER}
+		</if>
+		<if test="totalPeople != null">
+			AND TotalPeople = #{totalPeople,jdbcType=INTEGER}
+		</if>
+		<if test="tourType != null">
+			AND TourType = #{tourType,jdbcType=TINYINT}
+		</if>
+		<if test="userName != null">
+			AND userName = #{userName,jdbcType=VARCHAR}
+		</if>
+		<if test="isDeparture != null">
+			AND IsDeparture = #{isDeparture,jdbcType=TINYINT}
+		</if>
+	</select>
+
+	<delete id="removeById" parameterType="java.lang.String">
+		UPDATE
+		tour
+		SET IsDel = 1
+		WHERE TourId = #{tourId,jdbcType=VARCHAR}
+	</delete>
+
+	<insert id="save" parameterType="com.chinatour.entity.Tour">
+		INSERT INTO tour
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="tourId != null">
+				TourId,
+			</if>
+			<if test="deptId != null">
+				DeptId,
+			</if>
+			<if test="userId != null">
+				UserId,
+			</if>
+			<if test="type != null">
+				Type,
+			</if>
+			<if test="tourCode != null">
+				TourCode,
+			</if>
+			<if test="state != null">
+				State,
+			</if>
+			<if test="enterpriseName != null">
+				EnterpriseName,
+			</if>
+			<if test="lineName != null">
+				LineName,
+			</if>
+			<if test="lineCode != null">
+				LineCode,
+			</if>
+			<if test="tourQuoteUrl != null">
+				TourQuoteUrl,
+			</if>
+			<if test="createDate != null">
+				CreateDate,
+			</if>
+			<if test="modifyDate != null">
+				ModifyDate,
+			</if>
+			<if test="newState != null">
+				NewState,
+			</if>
+			<if test="arriveDateTime != null">
+				ArriveDateTime,
+			</if>
+			<if test="statisticalArriveTime != null">
+				StatisticalArriveTime,
+			</if>
+			<if test="isDel != null">
+				IsDel,
+			</if>
+			<if test="totalNumState != null">
+				TotalNumState,
+			</if>
+			<if test="totalPeople != null">
+				TotalPeople,
+			</if>
+			<if test="tourType != null">
+				tourType,
+			</if>
+			<if test="isChanged != null">
+				IsChanged,
+			</if>
+			<if test="userName != null">
+				userName,
+			</if>
+			<if test="isDeparture != null">
+				IsDeparture
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="tourId != null">
+				#{tourId,jdbcType=VARCHAR},
+			</if>
+			<if test="deptId != null">
+				#{deptId,jdbcType=VARCHAR},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=VARCHAR},
+			</if>
+			<if test="tourCode != null">
+				#{tourCode,jdbcType=VARCHAR},
+			</if>
+			<if test="state != null">
+				#{state,jdbcType=INTEGER},
+			</if>
+			<if test="enterpriseName != null">
+				#{enterpriseName,jdbcType=VARCHAR},
+			</if>
+			<if test="lineName != null">
+				#{lineName,jdbcType=VARCHAR},
+			</if>
+			<if test="lineCode != null">
+				#{lineCode,jdbcType=VARCHAR},
+			</if>
+			<if test="tourQuoteUrl != null">
+				#{tourQuoteUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="createDate != null">
+				#{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifyDate != null">
+				#{modifyDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="newState != null">
+				#{newState,jdbcType=INTEGER},
+			</if>
+			<if test="arriveDateTime != null">
+				#{arriveDateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="statisticalArriveTime != null">
+				#{statisticalArriveTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="isDel != null">
+				#{isDel,jdbcType=INTEGER},
+			</if>
+			<if test="totalNumState != null">
+				#{totalNumState,jdbcType=INTEGER},
+			</if>
+			<if test="totalPeople != null">
+				#{totalPeople,jdbcType=INTEGER},
+			</if>
+			<if test="tourType != null">
+				#{tourType,jdbcType=TINYINT},
+			</if>
+			<if test="isChanged != null">
+				#{IsChanged,jdbcType=TINYINT},
+			</if>
+			<if test="userName != null">
+				#{userName,jdbcType=VARCHAR},
+			</if>
+			<if test="isDeparture != null">
+				#{isDeparture,jdbcType=TINYINT}
+			</if>
+		</trim>
+	</insert>
+
+	<update id="update" parameterType="com.chinatour.entity.Tour">
+		UPDATE tour
+		<set>
+			<if test="deptId != null">
+				DeptId = #{deptId,jdbcType=VARCHAR},
+			</if>
+			<if test="userId != null">
+				UserId = #{userId,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				Type = #{type,jdbcType=VARCHAR},
+			</if>
+			<if test="tourCode != null">
+				TourCode = #{tourCode,jdbcType=VARCHAR},
+			</if>
+			<if test="state != null">
+				State = #{state,jdbcType=INTEGER},
+			</if>
+			<if test="enterpriseName != null">
+				EnterpriseName = #{enterpriseName,jdbcType=VARCHAR},
+			</if>
+			<if test="lineName != null">
+				LineName = #{lineName,jdbcType=VARCHAR},
+			</if>
+			<if test="lineCode != null">
+				LineCode = #{lineCode,jdbcType=VARCHAR},
+			</if>
+			<if test="tourQuoteUrl != null">
+				TourQuoteUrl = #{tourQuoteUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="createDate != null">
+				CreateDate = #{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifyDate != null">
+				ModifyDate = #{modifyDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="newState != null">
+				NewState = #{newState,jdbcType=INTEGER},
+			</if>
+			<if test="arriveDateTime != null">
+				ArriveDateTime = #{arriveDateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="statisticalArriveTime != null">
+				StatisticalArriveTime =
+				#{statisticalArriveTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="isDel != null">
+				IsDel = #{isDel,jdbcType=INTEGER},
+			</if>
+			<if test="totalNumState != null">
+				TotalNumState = #{totalNumState,jdbcType=INTEGER},
+			</if>
+			<if test="totalPeople != null">
+				TotalPeople = #{totalPeople,jdbcType=INTEGER},
+			</if>
+			<if test="tourType != null">
+				TourType = #{tourType,jdbcType=TINYINT},
+			</if>
+			<if test="isChanged != null">
+				IsChanged = #{isChanged,jdbcType=TINYINT},
+			</if>
+			<if test="userName != null">
+				userName = #{userName,jdbcType=VARCHAR},
+			</if>
+			<if test="isDeparture != null">
+				isDeparture = #{isDeparture,jdbcType=TINYINT}
+			</if>
+		</set>
+		WHERE TourId = #{tourId,jdbcType=VARCHAR}
+	</update>
+
+	<update id="changeTotalPeople">
+	    UPDATE tour SET TotalPeople = TotalPeople + #{change,jdbcType=INTEGER},
+	    ModifyDate = NOW()
+	    WHERE TourId = #{tourId,jdbcType=VARCHAR};
+	</update>
+
+
+	<select id="findMaxCutomerTourNo" resultType="java.lang.Integer"
+		parameterType="java.lang.String">
+		SELECT IFNULL(MAX(CustomerTourNo),0)
+		FROM
+		customer_order_rel
+		WHERE OrderId in (SELECT OrderId FROM orders
+		WHERE
+		TourId = #{tourId,jdbcType=VARCHAR});
+	</select>
+
+	<sql id="findForPagesql">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM tour t ,admin_group a
+		WHERE t.IsDel = 0 and t.UserId=a.AdminId
+		<if test="record.tourId != null">
+			AND TourId = #{record.tourId,jdbcType=VARCHAR}
+		</if>
+		<if test="record.deptId != null">
+			AND DeptId = #{record.deptId,jdbcType=VARCHAR}
+		</if>
+		<if test="record.userId != null">
+			AND UserId = #{record.userId,jdbcType=VARCHAR}
+		</if>
+		<if test="record.type != null">
+			AND Type = #{record.type,jdbcType=VARCHAR}
+		</if>
+		<if test="record.tourCode != null">
+			AND TourCode = #{record.tourCode,jdbcType=VARCHAR}
+		</if>
+		<if test="record.state != null">
+			AND State = #{record.state,jdbcType=INTEGER}
+		</if>
+		<if test="record.enterpriseName != null">
+			AND EnterpriseName =
+			#{record.enterpriseName,jdbcType=VARCHAR}
+		</if>
+		<if test="record.lineName != null">
+			AND LineName = #{record.lineName,jdbcType=VARCHAR}
+		</if>
+		<if test="record.lineCode != null">
+			AND LineCode = #{record.lineCode,jdbcType=VARCHAR}
+		</if>
+		<if test="record.tourQuoteUrl != null">
+			AND TourQuoteUrl = #{record.tourQuoteUrl,jdbcType=VARCHAR}
+		</if>
+		<if test="record.createDate != null">
+			AND CreateDate = #{record.createDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="record.modifyDate != null">
+			AND ModifyDate = #{record.modifyDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="record.newState != null">
+			AND NewState = #{record.newState,jdbcType=INTEGER}
+		</if>
+		<if test="record.arriveDateTime != null">
+			AND ArriveDateTime =
+			#{record.arriveDateTime,jdbcType=TIMESTAMP}
+		</if>
+		<if test="record.statisticalArriveTime != null">
+			AND StatisticalArriveTime =
+			#{record.statisticalArriveTime,jdbcType=TIMESTAMP}
+		</if>
+		<if test="record.isDel != null">
+			AND IsDel = #{record.isDel,jdbcType=INTEGER}
+		</if>
+		<if test="record.totalNumState != null">
+			AND TotalNumState =
+			#{record.totalNumState,jdbcType=INTEGER}
+		</if>
+		<if test="record.totalPeople != null">
+			AND TotalPeople = #{record.totalPeople,jdbcType=INTEGER}
+		</if>
+		<if test="record.groupId != null">
+			AND a.GroupId = #{record.groupId,jdbcType=VARCHAR}
+		</if>
+		<if test="record.userName != null">
+			AND userName = #{record.userName,jdbcType=VARCHAR}
+		</if>
+		ORDER BY ArriveDateTime DESC
+	</sql>
+
+	<select id="findForGroupPage" resultMap="BaseResultMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findForPagesql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findForGroupPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findForPagesql" />
+		<include refid="Pager.countEnd" />
+	</select>
+	
+	<select id="findAllCheckByTourId" resultMap="BaseResultMap" parameterType="java.lang.String">
+		SELECT 
+			t.TourId,
+			t.UserId,
+			t.Type,
+			t.TourCode,
+			t.State,
+			t.EnterpriseName,
+			t.LineName,
+			t.LineCode,
+			t.TourQuoteUrl,
+			t.CreateDate,
+			t.NewState,
+			t.ArriveDateTime,
+			t.StatisticalArriveTime,
+			t.TotalNumState,
+			t.IsDel,
+			t.TourCode,
+			t.TourId,
+			sp.SupplierPriceId,
+			sp.AllCheck,
+			sp.accCheck
+		FROM 
+			Tour t,
+			SupplierPrice sp
+		WHERE t.TourId=sp.TourId
+			AND t.TourId=#{tourId}
+	</select>
+	
+	<!-- region 团订单查看 -->
+	<sql id="findTourOfRegionList">
+		SELECT
+			t.tourId,t.TourCode,t.LineName,t.ArriveDateTime,t.TotalPeople,t.IsChanged,
+			tp.Type,t.username,t.TourQuoteUrl
+		FROM 
+		orders o,tour t,tour_type tp,
+			(
+			SELECT
+				d.DeptId
+			FROM
+				zs_admin za,admin_region ar,region r,dept d,region_dept_rel rd
+			<where>
+				za.id=ar.AdminId
+			AND r.RegionId=ar.RegionId
+			AND rd.RegionId=r.RegionId
+			AND rd.DeptId=d.DeptId
+			<if test="record.userId!= null">
+				AND ar.AdminId=#{record.userId}
+			</if>
+			GROUP BY d.DeptId
+			</where>
+			)exmp 
+		where exmp.DeptId=o.DeptId
+		 and o.tourId=t.tourId and o.tourCode=t.tourCode 
+		 and t.Type=tp.TourTypeId and t.IsDel = 0
+			<if test="record.tourId != null">
+				AND t.TourId = #{record.tourId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.deptId != null">
+				AND t.DeptId = #{record.deptId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tourCode != null">
+				AND t.TourCode LIKE CONCAT('%','${record.tourCode}','%')
+			</if>
+			<if test="record.state != null">
+				AND t.State = #{record.state,jdbcType=INTEGER}
+			</if>
+			<if test="record.enterpriseName != null">
+				AND t.EnterpriseName =
+				#{record.enterpriseName,jdbcType=VARCHAR}
+			</if>
+			<if test="record.lineName != null">
+				AND t.LineName LIKE CONCAT('%','${record.lineName}','%')
+			</if>
+			<if test="record.lineCode != null">
+				AND t.LineCode = #{record.lineCode,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tourQuoteUrl != null">
+				AND t.TourQuoteUrl = #{record.tourQuoteUrl,jdbcType=VARCHAR}
+			</if>
+			<if test="record.createDate != null">
+				AND t.CreateDate = #{record.createDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.modifyDate != null">
+				AND t.ModifyDate = #{record.modifyDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.newState != null">
+				AND NewState = #{record.newState,jdbcType=INTEGER}
+			</if>
+			<if test="record.arriveDateTime != null">
+				AND t.ArriveDateTime =
+				#{record.arriveDateTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.statisticalArriveTime != null">
+				AND t.StatisticalArriveTime =
+				#{record.statisticalArriveTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.isDel != null">
+				AND t.IsDel = #{record.isDel,jdbcType=INTEGER}
+			</if>
+			<if test="record.totalNumState != null">
+				AND t.TotalNumState =
+				#{record.totalNumState,jdbcType=INTEGER}
+			</if>
+			<if test="record.totalPeople != null">
+				AND t.TotalPeople = #{record.totalPeople,jdbcType=INTEGER}
+			</if>
+			<if test="record.userName != null">
+				AND t.userName LIKE CONCAT('%','${record.userName}','%')
+			</if>
+			<if test="record.code != null">
+				AND tp.Code = #{record.code}
+			</if>
+			<if test="record.beginningDate != null">
+				AND t.ArriveDateTime <![CDATA[>=]]> #{record.beginningDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.endingDate != null">
+				AND t.ArriveDateTime <![CDATA[<=]]> #{record.endingDate,jdbcType=TIMESTAMP}
+			</if>
+		GROUP BY t.tourId
+		ORDER BY t.ArriveDateTime DESC
+	</sql>
+
+	<select id="findTourOfRegionPage" resultMap="BaseResultMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findTourOfRegionList" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findTourOfRegionPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findTourOfRegionList" />
+		<include refid="Pager.countEnd" />
+	</select>
+	
+	<!-- Region团队订单查看  显示总人数 -->
+	<select id="findTourOfRegionSumPepole" resultType="com.chinatour.entity.Tour" parameterType="com.chinatour.entity.Tour">
+		SELECT
+			SUM(tt.TotalPeople) as TotalPeople
+		FROM (
+			SELECT
+				t.TotalPeople
+			FROM 
+			orders o,tour t,tour_type tp,
+				(
+				SELECT
+					d.DeptId
+				FROM
+					zs_admin za,admin_region ar,region r,dept d,region_dept_rel rd
+				<where>
+					za.id=ar.AdminId
+				AND r.RegionId=ar.RegionId
+				AND rd.RegionId=r.RegionId
+				AND rd.DeptId=d.DeptId
+				<if test="userId!= null">
+					AND ar.AdminId=#{userId}
+				</if>
+				GROUP BY d.DeptId
+				</where>
+				)exmp 
+			where exmp.DeptId=o.DeptId
+			 and o.tourId=t.tourId and o.tourCode=t.tourCode 
+			 and t.Type=tp.TourTypeId and t.IsDel = 0
+				<if test="tourId != null">
+					AND t.TourId = #{tourId,jdbcType=VARCHAR}
+				</if>
+				<if test="deptId != null">
+					AND t.DeptId = #{deptId,jdbcType=VARCHAR}
+				</if>
+				<if test="tourCode != null">
+					AND t.TourCode LIKE CONCAT('%','${tourCode}','%')
+				</if>
+				<if test="state != null">
+					AND t.State = #{state,jdbcType=INTEGER}
+				</if>
+				<if test="enterpriseName != null">
+					AND t.EnterpriseName =
+					#{enterpriseName,jdbcType=VARCHAR}
+				</if>
+				<if test="lineName != null">
+					AND t.LineName LIKE CONCAT('%','${lineName}','%')
+				</if>
+				<if test="lineCode != null">
+					AND t.LineCode = #{lineCode,jdbcType=VARCHAR}
+				</if>
+				<if test="tourQuoteUrl != null">
+					AND t.TourQuoteUrl = #{tourQuoteUrl,jdbcType=VARCHAR}
+				</if>
+				<if test="createDate != null">
+					AND t.CreateDate = #{createDate,jdbcType=TIMESTAMP}
+				</if>
+				<if test="modifyDate != null">
+					AND t.ModifyDate = #{modifyDate,jdbcType=TIMESTAMP}
+				</if>
+				<if test="newState != null">
+					AND NewState = #{newState,jdbcType=INTEGER}
+				</if>
+				<if test="arriveDateTime != null">
+					AND t.ArriveDateTime =
+					#{arriveDateTime,jdbcType=TIMESTAMP}
+				</if>
+				<if test="statisticalArriveTime != null">
+					AND t.StatisticalArriveTime =
+					#{statisticalArriveTime,jdbcType=TIMESTAMP}
+				</if>
+				<if test="isDel != null">
+					AND t.IsDel = #{isDel,jdbcType=INTEGER}
+				</if>
+				<if test="totalNumState != null">
+					AND t.TotalNumState =
+					#{totalNumState,jdbcType=INTEGER}
+				</if>
+				<if test="totalPeople != null">
+					AND t.TotalPeople = #{totalPeople,jdbcType=INTEGER}
+				</if>
+				<if test="userName != null">
+					AND t.userName LIKE CONCAT('%','${userName}','%')
+				</if>
+				<if test="code != null">
+					AND tp.Code = #{code}
+				</if>
+				<if test="beginningDate != null">
+					AND t.ArriveDateTime <![CDATA[>=]]> #{beginningDate,jdbcType=TIMESTAMP}
+				</if>
+				<if test="endingDate != null">
+					AND t.ArriveDateTime <![CDATA[<=]]> #{endingDate,jdbcType=TIMESTAMP}
+				</if>
+			GROUP BY t.tourId
+			)tt
+	</select>
+	
+	<!-- office 团订单查看 -->
+	<!-- tour order 关联查询 -->
+	<sql id="findTourOfOrderList">
+		SELECT
+			t.tourId,t.TourCode,t.LineName,t.ArriveDateTime,t.TotalPeople,t.IsChanged,
+			tp.TypeName as Type,t.username,t.TourQuoteUrl,d.deptName,t.IsDeparture
+		FROM 
+		orders o,tour t,tour_type tp,dept d
+		WHERE  o.tourId=t.tourId AND o.tourCode=t.tourCode AND d.deptId=t.deptId
+		 AND t.Type=tp.TourTypeId AND t.IsDel = 0
+			<if test="record.tourId != null">
+				AND t.TourId = #{record.tourId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.deptId != null">
+				AND o.DeptId = #{record.deptId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.deptName != null">
+				AND d.DeptName LIKE CONCAT('%','${record.deptName}','%')
+			</if>
+			<if test="record.userId != null">
+				AND o.UserId = #{record.userId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tourCode != null">
+				AND t.TourCode LIKE CONCAT('%','${record.tourCode}','%')
+			</if>
+			<if test="record.state != null">
+				AND t.State = #{record.state,jdbcType=INTEGER}
+			</if>
+			<if test="record.enterpriseName != null">
+				AND t.EnterpriseName =
+				#{record.enterpriseName,jdbcType=VARCHAR}
+			</if>
+			<if test="record.lineName != null">
+				AND t.LineName LIKE CONCAT('%','${record.lineName}','%')
+			</if>
+			<if test="record.lineCode != null">
+				AND t.LineCode = #{record.lineCode,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tourQuoteUrl != null">
+				AND t.TourQuoteUrl = #{record.tourQuoteUrl,jdbcType=VARCHAR}
+			</if>
+			<if test="record.createDate != null">
+				AND t.CreateDate = #{record.createDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.modifyDate != null">
+				AND t.ModifyDate = #{record.modifyDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.newState != null">
+				AND NewState = #{record.newState,jdbcType=INTEGER}
+			</if>
+			<if test="record.arriveDateTime != null">
+				AND t.ArriveDateTime =
+				#{record.arriveDateTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.statisticalArriveTime != null">
+				AND t.StatisticalArriveTime =
+				#{record.statisticalArriveTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.totalNumState != null">
+				AND t.TotalNumState =
+				#{record.totalNumState,jdbcType=INTEGER}
+			</if>
+			<if test="record.totalPeople != null">
+				AND t.TotalPeople = #{record.totalPeople,jdbcType=INTEGER}
+			</if>
+			<if test="record.userName != null">
+				AND t.userName LIKE CONCAT('%','${record.userName}','%')
+			</if>
+			<if test="record.code != null">
+				AND tp.Code = #{record.code}
+			</if>
+			<if test="record.isDeparture != null">
+				AND t.IsDeparture = #{record.isDeparture,jdbcType=TINYINT}
+			</if>
+			<if test="record.beginningDate != null">
+				AND t.ArriveDateTime <![CDATA[>=]]> #{record.beginningDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.endingDate != null">
+				AND t.ArriveDateTime <![CDATA[<=]]> #{record.endingDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.isChanged == 1">
+				AND t.ArriveDateTime <![CDATA[<]]> CURRENT_DATE()
+			</if>
+			<if test="record.isChanged == 2">
+				AND t.ArriveDateTime <![CDATA[>=]]> CURRENT_DATE()
+			</if>
+		GROUP BY t.tourId
+		<if test="record.isChanged == null">
+			ORDER BY t.ArriveDateTime DESC
+		</if>
+		<if test="record.isChanged == 1">
+			ORDER BY t.ArriveDateTime DESC
+		</if>
+		<if test="record.isChanged == 2">
+			ORDER BY t.ArriveDateTime ASC
+		</if>
+	</sql>
+
+	<select id="findTourOfOrderPage" resultMap="BaseResultMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findTourOfOrderList" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findTourOfOrderPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findTourOfOrderList" />
+		<include refid="Pager.countEnd" />
+	</select>
+	<!-- agent团队订单查看  显示总人数 -->
+	<select id="findTourOfOrderSumPepole" resultType="com.chinatour.entity.Tour" parameterType="com.chinatour.entity.Tour">
+		SELECT
+			SUM(tt.TotalPeople) as TotalPeople
+		FROM (
+			SELECT
+				t.TotalPeople
+			FROM 
+			orders o,tour t,tour_type tp
+			WHERE  o.tourId=t.tourId AND o.tourCode=t.tourCode 
+			 AND t.Type=tp.TourTypeId AND t.IsDel = 0
+				<if test="tourId != null">
+					AND t.TourId = #{tourId,jdbcType=VARCHAR}
+				</if>
+				<if test="deptId != null">
+					AND o.DeptId = #{deptId,jdbcType=VARCHAR}
+				</if>
+				<if test="userId != null">
+					AND o.UserId = #{userId,jdbcType=VARCHAR}
+				</if>
+				<if test="tourCode != null">
+					AND t.TourCode LIKE CONCAT('%','${tourCode}','%')
+				</if>
+				<if test="state != null">
+					AND t.State = #{state,jdbcType=INTEGER}
+				</if>
+				<if test="enterpriseName != null">
+					AND t.EnterpriseName =
+					#{enterpriseName,jdbcType=VARCHAR}
+				</if>
+				<if test="lineName != null">
+					AND t.LineName LIKE CONCAT('%','${lineName}','%')
+				</if>
+				<if test="lineCode != null">
+					AND t.LineCode = #{lineCode,jdbcType=VARCHAR}
+				</if>
+				<if test="tourQuoteUrl != null">
+					AND t.TourQuoteUrl = #{tourQuoteUrl,jdbcType=VARCHAR}
+				</if>
+				<if test="createDate != null">
+					AND t.CreateDate = #{createDate,jdbcType=TIMESTAMP}
+				</if>
+				<if test="modifyDate != null">
+					AND t.ModifyDate = #{modifyDate,jdbcType=TIMESTAMP}
+				</if>
+				<if test="newState != null">
+					AND NewState = #{newState,jdbcType=INTEGER}
+				</if>
+				<if test="arriveDateTime != null">
+					AND t.ArriveDateTime =
+					#{arriveDateTime,jdbcType=TIMESTAMP}
+				</if>
+				<if test="statisticalArriveTime != null">
+					AND t.StatisticalArriveTime =
+					#{statisticalArriveTime,jdbcType=TIMESTAMP}
+				</if>
+				<if test="totalNumState != null">
+					AND t.TotalNumState =
+					#{totalNumState,jdbcType=INTEGER}
+				</if>
+				<if test="totalPeople != null">
+					AND t.TotalPeople = #{totalPeople,jdbcType=INTEGER}
+				</if>
+				<if test="userName != null">
+					AND t.userName LIKE CONCAT('%','${userName}','%')
+				</if>
+				<if test="code != null">
+					AND tp.Code = #{code}
+				</if>
+				<if test="beginningDate != null">
+					AND t.ArriveDateTime <![CDATA[>=]]> #{beginningDate,jdbcType=TIMESTAMP}
+				</if>
+				<if test="endingDate != null">
+					AND t.ArriveDateTime <![CDATA[<=]]> #{endingDate,jdbcType=TIMESTAMP}
+				</if>
+			GROUP BY t.tourId
+			)tt
+	</select>
+	<!-- group 团订单查看 -->
+	<!-- tour order 关联查询 -->
+	<sql id="findTourOfGroupList">
+		SELECT
+			t.tourId,t.TourCode,t.LineName,t.ArriveDateTime,t.TotalPeople,t.IsChanged,
+			tp.Type,t.username,t.TourQuoteUrl
+		FROM 
+		orders o,tour t,tour_type tp,admin_group ag
+		WHERE o.tourId=t.tourId AND o.tourCode=t.tourCode 
+		 AND t.Type=tp.TourTypeId AND t.IsDel = 0 AND ag.AdminId=o.userId
+			<if test="record.tourId != null">
+				AND t.TourId = #{record.tourId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.deptId != null">
+				AND o.DeptId = #{record.deptId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.userId != null">
+				AND o.UserId = #{record.userId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tourCode != null">
+				AND t.TourCode LIKE CONCAT('%','${record.tourCode}','%')
+			</if>
+			<if test="record.state != null">
+				AND t.State = #{record.state,jdbcType=INTEGER}
+			</if>
+			<if test="record.enterpriseName != null">
+				AND t.EnterpriseName =
+				#{record.enterpriseName,jdbcType=VARCHAR}
+			</if>
+			<if test="record.lineName != null">
+				AND t.LineName LIKE CONCAT('%','${record.lineName}','%')
+			</if>
+			<if test="record.lineCode != null">
+				AND t.LineCode = #{record.lineCode,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tourQuoteUrl != null">
+				AND t.TourQuoteUrl = #{record.tourQuoteUrl,jdbcType=VARCHAR}
+			</if>
+			<if test="record.createDate != null">
+				AND t.CreateDate = #{record.createDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.modifyDate != null">
+				AND t.ModifyDate = #{record.modifyDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.newState != null">
+				AND NewState = #{record.newState,jdbcType=INTEGER}
+			</if>
+			<if test="record.arriveDateTime != null">
+				AND t.ArriveDateTime =
+				#{record.arriveDateTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.statisticalArriveTime != null">
+				AND t.StatisticalArriveTime =
+				#{record.statisticalArriveTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.totalNumState != null">
+				AND t.TotalNumState =
+				#{record.totalNumState,jdbcType=INTEGER}
+			</if>
+			<if test="record.totalPeople != null">
+				AND t.TotalPeople = #{record.totalPeople,jdbcType=INTEGER}
+			</if>
+			<if test="record.userName != null">
+				AND t.userName LIKE CONCAT('%','${record.userName}','%')
+			</if>
+			<if test="record.code != null">
+				AND tp.Code = #{record.code}
+			</if>
+			<if test="record.groupId != null">
+				AND ag.groupId = #{record.groupId}
+			</if>
+			<if test="record.beginningDate != null">
+				AND t.ArriveDateTime <![CDATA[>=]]> #{record.beginningDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.endingDate != null">
+				AND t.ArriveDateTime <![CDATA[<=]]> #{record.endingDate,jdbcType=TIMESTAMP}
+			</if>
+		GROUP BY t.tourId 
+		ORDER BY t.ArriveDateTime DESC
+	</sql>
+	<!-- Group团队订单查看  显示总人数 -->
+	<select id="findTourOfGroupSumPepole" resultType="com.chinatour.entity.Tour" parameterType="com.chinatour.entity.Tour">
+		SELECT
+			SUM(tt.TotalPeople) as TotalPeople
+		FROM (
+			SELECT
+				t.TotalPeople
+			FROM 
+			orders o,tour t,tour_type tp,admin_group ag
+			WHERE o.tourId=t.tourId AND o.tourCode=t.tourCode 
+			 AND t.Type=tp.TourTypeId AND t.IsDel = 0 AND ag.AdminId=o.userId
+				<if test="tourId != null">
+					AND t.TourId = #{tourId,jdbcType=VARCHAR}
+				</if>
+				<if test="deptId != null">
+					AND o.DeptId = #{deptId,jdbcType=VARCHAR}
+				</if>
+				<if test="userId != null">
+					AND o.UserId = #{userId,jdbcType=VARCHAR}
+				</if>
+				<if test="tourCode != null">
+					AND t.TourCode LIKE CONCAT('%','${tourCode}','%')
+				</if>
+				<if test="state != null">
+					AND t.State = #{state,jdbcType=INTEGER}
+				</if>
+				<if test="enterpriseName != null">
+					AND t.EnterpriseName =
+					#{enterpriseName,jdbcType=VARCHAR}
+				</if>
+				<if test="lineName != null">
+					AND t.LineName LIKE CONCAT('%','${lineName}','%')
+				</if>
+				<if test="lineCode != null">
+					AND t.LineCode = #{lineCode,jdbcType=VARCHAR}
+				</if>
+				<if test="tourQuoteUrl != null">
+					AND t.TourQuoteUrl = #{tourQuoteUrl,jdbcType=VARCHAR}
+				</if>
+				<if test="createDate != null">
+					AND t.CreateDate = #{createDate,jdbcType=TIMESTAMP}
+				</if>
+				<if test="modifyDate != null">
+					AND t.ModifyDate = #{modifyDate,jdbcType=TIMESTAMP}
+				</if>
+				<if test="newState != null">
+					AND NewState = #{newState,jdbcType=INTEGER}
+				</if>
+				<if test="arriveDateTime != null">
+					AND t.ArriveDateTime =
+					#{arriveDateTime,jdbcType=TIMESTAMP}
+				</if>
+				<if test="statisticalArriveTime != null">
+					AND t.StatisticalArriveTime =
+					#{statisticalArriveTime,jdbcType=TIMESTAMP}
+				</if>
+				<if test="totalNumState != null">
+					AND t.TotalNumState =
+					#{totalNumState,jdbcType=INTEGER}
+				</if>
+				<if test="totalPeople != null">
+					AND t.TotalPeople = #{totalPeople,jdbcType=INTEGER}
+				</if>
+				<if test="userName != null">
+					AND t.userName LIKE CONCAT('%','${userName}','%')
+				</if>
+				<if test="code != null">
+					AND tp.Code = #{code}
+				</if>
+				<if test="groupId != null">
+					AND ag.groupId = #{groupId}
+				</if>
+				<if test="beginningDate != null">
+					AND t.ArriveDateTime <![CDATA[>=]]> #{beginningDate,jdbcType=TIMESTAMP}
+				</if>
+				<if test="endingDate != null">
+					AND t.ArriveDateTime <![CDATA[<=]]> #{endingDate,jdbcType=TIMESTAMP}
+				</if>
+			GROUP BY t.tourId 
+			)tt
+	</select>
+	<select id="findTourOfGroupPage" resultMap="BaseResultMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findTourOfGroupList" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findTourOfGroupPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findTourOfGroupList" />
+		<include refid="Pager.countEnd" />
+	</select>
+	
+	<sql id="findTourOfUserForPage_sql">
+		SELECT
+			t.tourId,t.TourCode,t.LineName,t.ArriveDateTime,t.IsChanged,
+			t.TotalPeople,tp.TypeName,t.userName,t.NewState,t.tourQuoteUrl,t.isDeparture
+		FROM tour t, tour_type tp
+		WHERE
+		t.Type=tp.TourTypeId
+		AND t.IsDel = 0
+		<if test="record.tourId != null">
+			AND t.TourId = #{record.tourId,jdbcType=VARCHAR}
+		</if>
+		<if test="record.deptId != null">
+			AND t.DeptId = #{record.deptId,jdbcType=VARCHAR}
+		</if>
+		<if test="record.userId != null">
+			AND t.UserId = #{record.userId,jdbcType=VARCHAR}
+		</if>
+		<if test="record.type != null">
+			AND t.Type = #{record.type,jdbcType=VARCHAR}
+		</if>
+		<if test="record.tourCode != null">
+			AND t.TourCode LIKE CONCAT('%','${record.tourCode}','%')
+		</if>
+		<if test="record.state != null">
+			AND t.State = #{record.state,jdbcType=INTEGER}
+		</if>
+		<!-- 
+		<if test="record.enterpriseName != null">
+			AND t.EnterpriseName =
+			#{record.enterpriseName,jdbcType=VARCHAR}
+		</if>
+		 -->
+		<if test="record.lineName != null">
+			AND t.LineName LIKE CONCAT('%','${record.lineName}','%')
+		</if>
+		<if test="record.lineCode != null">
+			AND t.LineCode = #{record.lineCode,jdbcType=VARCHAR}
+		</if>
+		<if test="record.tourQuoteUrl != null">
+			AND t.TourQuoteUrl = #{record.tourQuoteUrl,jdbcType=VARCHAR}
+		</if>
+		<if test="record.createDate != null">
+			AND t.CreateDate = #{record.createDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="record.modifyDate != null">
+			AND t.ModifyDate = #{record.modifyDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="record.newState != null">
+			AND t.NewState = #{record.newState,jdbcType=INTEGER}
+		</if>
+		<if test="record.arriveDateTime != null">
+			AND t.ArriveDateTime =
+			#{record.arriveDateTime,jdbcType=TIMESTAMP}
+		</if>
+		<if test="record.statisticalArriveTime != null">
+			AND t.StatisticalArriveTime =
+			#{record.statisticalArriveTime,jdbcType=TIMESTAMP}
+		</if>
+		<if test="record.totalNumState != null">
+			AND t.TotalNumState =
+			#{record.totalNumState,jdbcType=INTEGER}
+		</if>
+		<if test="record.totalPeople != null">
+			AND t.TotalPeople = #{record.totalPeople,jdbcType=INTEGER}
+		</if>
+		<if test="record.userName != null">
+			AND t.UserName LIKE CONCAT('%','${record.userName}','%')
+		</if>
+		<if test="record.beginningDate != null">
+			AND t.ArriveDateTime <![CDATA[>=]]> #{record.beginningDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="record.endingDate != null">
+			AND t.ArriveDateTime <![CDATA[<=]]> #{record.endingDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="record.code != null">
+			AND tp.Code = #{record.code}
+		</if>
+		<if test="record.tourType != null">
+			AND t.TourType = #{record.tourType,jdbcType=VARCHAR}
+		</if>
+		<if test="record.isDeparture != null">
+			AND t.IsDeparture = #{record.isDeparture,jdbcType=TINYINT}
+		</if>
+		ORDER BY t.ArriveDateTime DESC
+	</sql>
+
+	<select id="findTourOfUserForPage" resultMap="BaseResultMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findTourOfUserForPage_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findTourOfUserForPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findTourOfUserForPage_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+	
+	<!-- op tourList  显示总人数 -->
+	<select id="findTourOfUserSumPepole" resultType="com.chinatour.entity.Tour" parameterType="com.chinatour.entity.Tour">
+		SELECT
+			SUM(t.TotalPeople) as TotalPeople
+		FROM tour t, tour_type tp
+		WHERE
+		t.Type=tp.TourTypeId
+		AND t.IsDel = 0
+		<if test="tourId != null">
+			AND t.TourId = #{tourId,jdbcType=VARCHAR}
+		</if>
+		<if test="deptId != null">
+			AND t.DeptId = #{deptId,jdbcType=VARCHAR}
+		</if>
+		<if test="userId != null">
+			AND t.UserId = #{userId,jdbcType=VARCHAR}
+		</if>
+		<if test="type != null">
+			AND t.Type = #{type,jdbcType=VARCHAR}
+		</if>
+		<if test="tourCode != null">
+			AND t.TourCode LIKE CONCAT('%','${tourCode}','%')
+		</if>
+		<if test="state != null">
+			AND t.State = #{state,jdbcType=INTEGER}
+		</if>
+		<if test="enterpriseName != null">
+			AND t.EnterpriseName =
+			#{enterpriseName,jdbcType=VARCHAR}
+		</if>
+		<if test="lineName != null">
+			AND t.LineName LIKE CONCAT('%','${lineName}','%')
+		</if>
+		<if test="lineCode != null">
+			AND t.LineCode = #{lineCode,jdbcType=VARCHAR}
+		</if>
+		<if test="tourQuoteUrl != null">
+			AND t.TourQuoteUrl = #{tourQuoteUrl,jdbcType=VARCHAR}
+		</if>
+		<if test="createDate != null">
+			AND t.CreateDate = #{createDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="modifyDate != null">
+			AND t.ModifyDate = #{modifyDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="newState != null">
+			AND t.NewState = #{newState,jdbcType=INTEGER}
+		</if>
+		<if test="arriveDateTime != null">
+			AND t.ArriveDateTime =
+			#{arriveDateTime,jdbcType=TIMESTAMP}
+		</if>
+		<if test="statisticalArriveTime != null">
+			AND t.StatisticalArriveTime =
+			#{statisticalArriveTime,jdbcType=TIMESTAMP}
+		</if>
+		<if test="totalNumState != null">
+			AND t.TotalNumState =
+			#{totalNumState,jdbcType=INTEGER}
+		</if>
+		<if test="totalPeople != null">
+			AND t.TotalPeople = #{totalPeople,jdbcType=INTEGER}
+		</if>
+		<if test="userName != null">
+			AND t.UserName LIKE CONCAT('%','${userName}','%')
+		</if>
+		<if test="beginningDate != null">
+			AND t.ArriveDateTime <![CDATA[>=]]> #{beginningDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="endingDate != null">
+			AND t.ArriveDateTime <![CDATA[<=]]> #{endingDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="code != null">
+			AND tp.Code = #{code}
+		</if>
+		<if test="tourType != null">
+			AND t.TourType = #{tourType,jdbcType=VARCHAR}
+		</if>
+	</select>
+	
+	<select id="findList" resultMap="BaseResultMap">
+		SELECT 
+			<include refid="Base_Column_List" />
+		FROM
+			Tour
+		<where>
+			<trim suffixOverrides="AND">
+				<if test="id != null">
+					TourId = #{id} AND
+				</if>
+				<if test="tourCode != null">
+					TourCode LIKE CONCAT('%','${tourCode}','%') AND
+				</if>
+				IsDel=0
+			</trim>
+		</where>
+		LIMIT 10
+	</select>
+	
+	<select id="findListForSingle" resultMap="BaseResultMap">
+		SELECT 
+			<include refid="Base_Column_List" />
+		FROM
+			Tour
+		<where>
+			<trim suffixOverrides="AND">
+				<if test="id != null">
+					TourId = #{id} AND
+				</if>
+				<if test="tourCode != null">
+					TourCode LIKE CONCAT('%','${tourCode}','%') AND
+				</if>
+				TourType = 2
+					AND
+				IsDel=0
+			</trim>
+		</where>
+		LIMIT 10
+	</select>
+	
+	<select id="findListForTour" resultMap="BaseResultMap">
+		SELECT 
+			<include refid="Base_Column_List" />
+		FROM
+			Tour
+		<where>
+			<trim suffixOverrides="AND">
+				<if test="id != null">
+					TourId = #{id} AND
+				</if>
+				<if test="tourCode != null">
+					TourCode LIKE CONCAT('%','${tourCode}','%') AND
+				</if>
+				TourType = 1
+					AND
+				IsDel=1
+			</trim>
+		</where>
+		LIMIT 10
+	</select>
+	
+</mapper>

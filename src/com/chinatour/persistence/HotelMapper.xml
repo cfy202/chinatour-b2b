@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.HotelMapper">
+
+	<sql id="Base_Column_List">
+		HotelId, HotelName, Standard, h.CityId as CityId,
+		c.CityName as CityName, Address,IsDel,Tel
+	</sql>
+
+	<sql id="FROM_TABLES">
+		from hotel h, city c
+		where h.CityId = c.CityId
+	</sql>
+
+	<sql id="findForPage_sql">
+		select
+		<include refid="Base_Column_List" />
+		<include refid="FROM_TABLES" />
+		<if test="record.id != null">
+			AND HotelId = #{record.id, jdbcType=VARCHAR}
+		</if>
+		<if test="record.hotelName != null">
+			AND HotelName LIKE CONCAT('%','${record.hotelName}','%')
+		</if>
+		<if test="record.standard != null">
+			AND Standard LIKE CONCAT('%','${record.standard}','%')
+		</if>
+		<if test="record.cityName != null">
+			AND CityName LIKE CONCAT('%','${record.cityName}','%')
+		</if>
+		<if test="record.address != null">
+			AND Address LIKE CONCAT('%','${record.address}','%')
+		</if>
+		<if test="record.tel != null">
+			AND Tel LIKE CONCAT('%','${record.tel}','%')
+		</if>
+		AND IsDel = 0 
+		<!-- <if test="record.isDel !=null">
+             <if test="record.isDel !=1">
+              IsDel = #{record.isDel} 
+             </if>
+         </if> -->
+	</sql>
+
+	<resultMap type="hotel" id="BaseResultMap">
+		<id property="id" column="HotelId" jdbcType="VARCHAR" />
+		<result property="hotelName" column="HotelName" jdbcType="VARCHAR" />
+		<result property="standard" column="Standard" jdbcType="VARCHAR" />
+		<result property="cityId" column="CityId" jdbcType="VARCHAR" />
+		<result property="cityName" column="CityName" jdbcType="VARCHAR" />
+		<result property="address" column="Address" jdbcType="VARCHAR" />
+		<result property="tel" column="Tel" jdbcType="VARCHAR" />
+		<result property="isDel" column="IsDel" jdbcType="INTEGER" />
+	</resultMap>
+
+	<select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		<include refid="FROM_TABLES" />
+		AND HotelId = #{id,jdbcType=VARCHAR}
+	</select>
+
+	<select id="findAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		<include refid="FROM_TABLES" />
+	</select>
+
+	<select id="findForPage" resultMap="BaseResultMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findForPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+
+	<delete id="removeById" parameterType="java.lang.String">
+		delete from hotel
+		where
+		HotelId = #{id,jdbcType=VARCHAR}
+	</delete>
+
+	<update id="update" parameterType="hotel">
+		update hotel
+		<set>
+			<if test="hotelName != null">
+				HotelName = #{hotelName,jdbcType=VARCHAR},
+			</if>
+			<if test="standard != null">
+				Standard = #{standard,jdbcType=VARCHAR},
+			</if>
+			<if test="cityId != null">
+				CityId = #{cityId,jdbcType=VARCHAR},
+			</if>
+			<if test="address != null">
+				Address = #{address,jdbcType=VARCHAR},
+			</if>
+			<if test="tel != null">
+				Tel = #{tel,jdbcType=VARCHAR},
+			</if>
+			<if test="isDel != null">
+				IsDel = #{isDel,jdbcType=INTEGER}
+			</if>
+		</set>
+		where HotelId = #{id,jdbcType=VARCHAR}
+	</update>
+
+	<insert id="save" parameterType="hotel">
+		insert into hotel
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				HotelId,
+			</if>
+			<if test="hotelName != null">
+				HotelName,
+			</if>
+			<if test="standard != null">
+				Standard,
+			</if>
+			<if test="cityId != null">
+				CityId,
+			</if>
+			<if test="address != null">
+				Address,
+			</if>
+			<if test="tel != null">
+				Tel,
+			</if>
+			<if test="isDel !=null">
+	            IsDel
+            </if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				 #{id, jdbcType=VARCHAR},
+			</if>
+			<if test="hotelName != null">
+				#{hotelName, jdbcType=VARCHAR},
+			</if>
+			<if test="standard != null">
+				#{standard, jdbcType=VARCHAR},
+			</if>
+			<if test="cityId != null">
+				#{cityId, jdbcType=VARCHAR},
+			</if>
+			<if test="address != null">
+				#{address, jdbcType=VARCHAR},
+			</if>
+			<if test="tel != null">
+				#{tel, jdbcType=VARCHAR},
+			</if>
+			<if test="isDel != null">
+				#{isDel, jdbcType=INTEGER}
+			</if>
+		</trim>
+	</insert>
+	<select id="findSelect" resultMap="BaseResultMap" parameterType="Vender">
+		SELECT 
+			HotelId,HotelName
+		FROM
+			Hotel
+		<where>
+			<trim suffixOverrides="AND">
+				<if test="id != null">
+					HotelId = #{id} AND
+				</if>
+				<if test="hotelName != null">
+					HotelName LIKE CONCAT('%','${hotelName}','%') AND
+				</if>
+				<if test="standard != null">
+					Standard = #{standard} AND
+				</if>
+				<if test="cityId != null">
+					CityId = #{cityId} AND
+				</if>
+				<if test="address != null">
+					Address = #{address} AND
+				</if>
+				<if test="tel != null">
+					Tel = #{tel} AND
+				</if>
+				<if test="isDel !=null">
+					<if test="isDel !=1">
+						IsDel = #{isDel}  AND
+					</if>
+				</if>
+			</trim>
+		</where>
+		LIMIT 10
+	</select>
+	
+	<select id="find" resultMap="BaseResultMap" parameterType="hotel">
+		SELECT 
+			HotelId,HotelName
+		FROM
+			Hotel
+		<where>
+			<trim suffixOverrides="AND">
+				<if test="id != null">
+					HotelId = #{id} AND
+				</if>
+				<if test="hotelName != null">
+					HotelName LIKE CONCAT('%',"${hotelName}",'%') AND
+				</if>
+				<if test="standard != null">
+					Standard = #{standard} AND
+				</if>
+				<if test="cityId != null">
+					CityId = #{cityId} AND
+				</if>
+				<if test="address != null">
+					Address = #{address} AND
+				</if>
+				<if test="tel != null">
+					Tel = #{tel} AND
+				</if>
+				<if test="isDel !=null">
+					<if test="isDel !=1">
+						IsDel = #{isDel}  AND
+					</if>
+				</if>
+			</trim>
+		</where>
+		LIMIT 10
+	</select>
+</mapper>

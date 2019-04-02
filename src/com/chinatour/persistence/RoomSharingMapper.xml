@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.RoomSharingMapper">
+	<resultMap id="BaseResultMap" type="com.chinatour.entity.RoomSharing">
+		<id column="RoomSharingId" property="roomSharingId" jdbcType="VARCHAR" />
+		<result column="ProductCode" property="productCode" jdbcType="VARCHAR" />
+		<result column="ProductName" property="productName" jdbcType="VARCHAR" />
+		<result column="ArrivalDate" property="arrivalDate" jdbcType="TIMESTAMP" />
+		<result column="TourType" property="tourType" jdbcType="VARCHAR" />
+		<result column="Sex" property="sex" jdbcType="TINYINT" />
+		<result column="RoomType" property="roomType" jdbcType="VARCHAR" />
+		<result column="UserId" property="userId" jdbcType="VARCHAR" />
+		<result column="UserName" property="userName" jdbcType="VARCHAR" />
+		<result column="CreateDate" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="ModifyDate" property="modifyDate" jdbcType="TIMESTAMP" />
+		<result column="Status" property="status" jdbcType="TINYINT" />
+		<result column="TotalPeople" property="totalPeople" jdbcType="INTEGER" />
+		<result column="RoomOrTour" property="roomOrTour" jdbcType="TINYINT" />
+		<result column="Remark" property="remark" jdbcType="VARCHAR" />
+		<result column="Description" property="description" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		RoomSharingId, ProductCode, ProductName, ArrivalDate,
+		TourType, Sex, RoomType,
+		UserName,UserId,TotalPeople,RoomOrTour,
+		CreateDate, ModifyDate, `Status`,
+		Remark,Description
+	</sql>
+	<select id="findById" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from roomsharing
+		where RoomSharingId =
+		#{roomSharingId,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteById" parameterType="java.lang.String">
+		delete from roomsharing
+		where RoomSharing = #{roomSharingId,jdbcType=VARCHAR}
+	</delete>
+
+	<insert id="save" parameterType="com.chinatour.entity.RoomSharing">
+		insert into roomsharing
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="roomSharingId != null">
+				RoomSharingId,
+			</if>
+			<if test="productCode != null">
+				ProductCode,
+			</if>
+			<if test="productName != null">
+				ProductName,
+			</if>
+			<if test="arrivalDate != null">
+				ArrivalDate,
+			</if>
+			<if test="tourType != null">
+				TourType,
+			</if>
+			<if test="sex != null">
+				Sex,
+			</if>
+			<if test="roomType != null">
+				RoomType,
+			</if>
+			<if test="userName != null">
+				UserName,
+			</if>
+			<if test="userId != null">
+				UserId,
+			</if>
+			<if test="createDate != null">
+				CreateDate,
+			</if>
+			<if test="modifyDate != null">
+				ModifyDate,
+			</if>
+			<if test="status != null">
+				`Status`,
+			</if>
+			<if test="totalPeople != null">
+				TotalPeople,
+			</if>
+			<if test="roomOrTour != null">
+				RoomOrTour,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+			<if test="description != null">
+				Description
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="roomSharingId != null">
+				#{roomSharingId,jdbcType=VARCHAR},
+			</if>
+			<if test="productCode != null">
+				#{productCode,jdbcType=VARCHAR},
+			</if>
+			<if test="productName != null">
+				#{productName,jdbcType=VARCHAR},
+			</if>
+			<if test="arrivalDate != null">
+				#{arrivalDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="tourType != null">
+				#{tourType,jdbcType=VARCHAR},
+			</if>
+			<if test="sex != null">
+				#{sex,jdbcType=INTEGER},
+			</if>
+			<if test="roomType != null">
+				#{roomType,jdbcType=VARCHAR},
+			</if>
+			<if test="userName != null">
+				#{userName,jdbcType=VARCHAR},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=VARCHAR},
+			</if>
+			<if test="createDate != null">
+				#{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifyDate != null">
+				#{modifyDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="status != null">
+				#{status,jdbcType=INTEGER},
+			</if>
+			<if test="totalPeople != null">
+				#{totalPeople,jdbcType=INTEGER},
+			</if>
+			<if test="roomOrTour != null">
+				#{roomOrTour,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="description != null">
+				#{description,jdbcType=VARCHAR}
+			</if>
+		</trim>
+	</insert>
+	<update id="update" parameterType="com.chinatour.entity.RoomSharing">
+		update roomsharing
+		<set>
+			<if test="productCode != null">
+				ProductCode=#{productCode,jdbcType=VARCHAR},
+			</if>
+			<if test="productName != null">
+				ProductName=#{productName,jdbcType=VARCHAR},
+			</if>
+			<if test="arrivalDate != null">
+				ArrivalDate=#{arrivalDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="tourType != null">
+				TourType=#{tourType,jdbcType=VARCHAR},
+			</if>
+			<if test="sex != null">
+				Sex=#{sex,jdbcType=INTEGER},
+			</if>
+			<if test="roomType != null">
+				RoomType=#{roomType,jdbcType=VARCHAR},
+			</if>
+			<if test="userName != null">
+				UserName=#{userName,jdbcType=VARCHAR},
+			</if>
+			<if test="userId != null">
+				UserId=#{userId,jdbcType=VARCHAR},
+			</if>
+			<if test="createDate != null">
+				CreateDate=#{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifyDate != null">
+				ModifyDate=#{modifyDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="status != null">
+				Status=#{status,jdbcType=INTEGER},
+			</if>
+			<if test="totalPeople != null">
+				TotalPeople=#{totalPeople,jdbcType=INTEGER},
+			</if>
+			<if test="roomOrTour != null">
+				RoomOrTour=#{roomOrTour,jdbcType=INTEGER},
+			</if>
+			<if test="remark != null">
+				Remark=#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="description != null">
+				Description=#{description,jdbcType=VARCHAR}
+			</if>
+		</set>
+		where RoomSharingId = #{roomSharingId,jdbcType=VARCHAR}
+	</update>
+	
+	<sql id="findForPage_sql">
+		select
+			r.RoomSharingId, r.ProductCode, r.ProductName, r.ArrivalDate,
+			tp.TypeName as tourType, r.Sex, r.RoomType,r.roomOrTour,r.TotalPeople,
+			r.UserName,r.UserId,r.CreateDate, r.ModifyDate, r.`Status`,
+			r.Remark,r.Description
+		from roomsharing r,tour_type tp
+		<where>
+			<trim suffixOverrides="AND">
+				r.tourType=tp.tourtypeId and
+				<if test="record.roomSharingId != null">
+					r.RoomSharingId=#{record.roomSharingId,jdbcType=VARCHAR} AND
+				</if>
+				<if test="record.productCode != null">
+					r.ProductCode LIKE CONCAT('%','${record.productCode}','%') AND
+				</if>
+				<if test="record.productName != null">
+					r.ProductName LIKE CONCAT('%','${record.productName}','%') AND
+				</if>
+				<if test="record.arrivalDate != null">
+					r.ArrivalDate=#{record.arrivalDate,jdbcType=TIMESTAMP} AND
+				</if>
+				<if test="record.beginningDate != null">
+					r.ArrivalDate <![CDATA[>=]]> #{record.beginningDate,jdbcType=TIMESTAMP} AND
+				</if>
+				<if test="record.endingDate != null">
+					r.ArrivalDate <![CDATA[<=]]> #{record.endingDate,jdbcType=TIMESTAMP} AND
+				</if>
+				<if test="record.tourType != null">
+					tp.TypeName LIKE CONCAT('%','${record.tourType}','%') AND
+				</if>
+				<if test="record.sex != null">
+					r.Sex=#{record.sex,jdbcType=INTEGER} AND
+				</if>
+				<if test="record.roomType != null">
+					r.RoomType LIKE CONCAT('%','${record.roomType}','%') AND
+				</if>
+				<if test="record.userName != null">
+					r.UserName LIKE CONCAT('%','${record.userName}','%') AND
+				</if>
+				<if test="record.userId != null">
+					r.UserId=#{record.userId,jdbcType=VARCHAR} AND
+				</if>
+				<if test="record.createDate != null">
+					r.CreateDate=#{record.createDate,jdbcType=TIMESTAMP} AND
+				</if>
+				<if test="record.modifyDate != null">
+					r.ModifyDate=#{record.modifyDate,jdbcType=TIMESTAMP} AND
+				</if>
+				<if test="record.status != null">
+					r.Status=#{record.status,jdbcType=INTEGER} AND
+				</if>
+				<if test="record.totalPeople != null">
+					r.TotalPeople=#{record.totalPeople,jdbcType=INTEGER} AND
+				</if>
+				<if test="record.roomOrTour != null">
+					r.RoomOrTour=#{record.roomOrTour} AND
+				</if>
+				<if test="record.remark != null">
+					r.Remark=#{record.remark,jdbcType=VARCHAR} AND
+				</if>
+				<if test="record.description != null">
+					r.Description=#{record.description,jdbcType=VARCHAR}
+				</if>
+			</trim>
+		</where>
+		ORDER BY r.Status,r.CreateDate DESC
+	</sql>
+
+	<select id="findForPage" resultMap="BaseResultMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findForPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+	<select id="findRoomList" resultMap="BaseResultMap">
+		SELECT*from roomsharing where DATE_FORMAT(ArrivalDate,'%Y-%m-%d')>date_sub(curdate(),interval -14 day) and status=0 and RoomOrTour=2 ORDER BY ArrivalDate ASC LIMIT 8
+	</select>
+</mapper>

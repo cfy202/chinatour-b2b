@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.GlobalAccountMapper">
+
+	<sql id="Base_Column_List">
+		GlobalAccountId, SubjectCode, SubjectName, SubjectType,DirectionOfBalance,HasChild,Level,Pid
+	</sql>
+
+	<resultMap type="GlobalAccount" id="BaseResultMap">
+		<id property="id" column="GlobalAccountId" jdbcType="VARCHAR" />
+		<result property="subjectCode" column="SubjectCode" jdbcType="VARCHAR" />
+		<result property="subjectName" column="SubjectName" jdbcType="VARCHAR" />
+		<result property="subjectType" column="SubjectType" jdbcType="INTEGER" />
+		<result property="directionOfBalance" column="DirectionOfBalance" jdbcType="INTEGER" />
+		<result property="hasChild" column="HasChild" jdbcType="INTEGER" />
+		<result property="level" column="Level" jdbcType="VARCHAR" />
+		<result property="pid" column="Pid" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
+	    select
+		<include refid="Base_Column_List" />
+		from global_account
+		where
+		GlobalAccountId = #{id,jdbcType=VARCHAR}
+	</select>
+
+	<select id="findAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from global_account
+	</select>
+
+	<delete id="removeById" parameterType="java.lang.String">
+		delete from global_account
+		where
+		CityId = #{id,jdbcType=VARCHAR}
+	</delete>
+
+	<update id="update" parameterType="City">
+		update global_account
+		<set>
+			<if test="subjectCode != null">
+				SubjectCode = #{subjectCode,jdbcType=VARCHAR},
+			</if>
+			<if test="subjectName != null">
+				SubjectName = #{subjectName,jdbcType=VARCHAR},
+			</if>
+			<if test="subjectType != null">
+				SubjectType = #{SubjectType,jdbcType=INTEGER}
+			</if>
+			<if test="subjectCode != null">
+				SubjectCode = #{subjectCode,jdbcType=VARCHAR},
+			</if>
+			<if test="directionOfBalance != null">
+				DirectionOfBalance = #{directionOfBalance,jdbcType=INTEGER},
+			</if>
+			<if test="hasChild != null">
+				HasChild = #{hasChild,jdbcType=INTEGER}
+			</if>
+			<if test="level != null">
+				Level = #{Level,jdbcType=VARCHAR},
+			</if>
+			<if test="pid != null">
+				Pid = #{Pid,jdbcType=VARCHAR}
+			</if>
+		</set>
+		where GlobalAccountId = #{id,jdbcType=VARCHAR}
+	</update>
+
+	<insert id="save" parameterType="GlobalAccount">
+		insert into global_account
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				GlobalAccountId,
+			</if>
+			<if test="subjectCode != null">
+				SubjectCode,
+			</if>
+			<if test="subjectName != null">
+				SubjectName,
+			</if>
+			<if test="subjectType != null">
+				SubjectType
+			</if>
+			<if test="directionOfBalance != null">
+				DirectionOfBalance,
+			</if>
+			<if test="hasChild != null">
+				HasChild,
+			</if>
+			<if test="level != null">
+				Level
+			</if>
+			<if test="pid != null">
+				Pid
+			</if>
+		</trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="subjectCode != null">
+				#{subjectCode,jdbcType=VARCHAR},
+			</if>
+			<if test="subjectName != null">
+				#{subjectName,jdbcType=VARCHAR},
+			</if>
+			<if test="subjectType != null">
+				#{subjectType,jdbcType=INTEGER}
+			</if>
+			<if test="directionOfBalance != null">
+				#{directionOfBalance,jdbcType=INTEGER},
+			</if>
+			<if test="hasChild != null">
+				#{hasChild,jdbcType=VARCHAR},
+			</if>
+			<if test="level != null">
+				#{level,jdbcType=INTEGER}
+			</if>
+			<if test="pid != null">
+				#{pid,jdbcType=VARCHAR}
+			</if>
+		</trim>
+	</insert>
+	<select id="find" resultMap="BaseResultMap" parameterType="com.chinatour.entity.GlobalAccount">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM global_account
+		WHERE
+		<trim suffixOverrides="AND">
+			<if test="globalAccountId != null">
+				GlobalAccountId = #{globalAccountId,jdbcType=VARCHAR} AND 
+			</if>
+			<if test="subjectCode != null">
+				SubjectCode = #{subjectCode,jdbcType=VARCHAR} AND 
+			</if>
+			<if test="subjectName != null">
+				SubjectName = #{subjectName,jdbcType=VARCHAR} AND 
+			</if>
+			<if test="subjectType != null">
+				SubjectType = #{subjectType,jdbcType=INTEGER} AND 
+			</if>
+			<if test="directionOfBalance != null">
+				 DirectionOfBalance = #{directionOfBalance,jdbcType=INTEGER} AND 
+			</if>
+			<if test="hasChild != null">
+				HasChild = #{hasChild,jdbcType=INTEGER} AND 
+			</if>
+			<if test="level != null">
+				Level = #{level,jdbcType=VARCHAR} AND 
+			</if>
+			<if test="pid != null">
+				Pid = #{pid,jdbcType=VARCHAR}
+			</if>
+		</trim>
+	</select>
+	
+	<select id="queryNoChooseglobalAccount" parameterType="com.chinatour.entity.GlobalAccount" resultType="com.chinatour.entity.GlobalAccount">
+		SELECT 	
+			g.GlobalAccountId,
+			g.SubjectCode,
+			g.SubjectName,
+			g.SubjectType,
+			g.HasChild,
+			g.Level,
+			g.Pid
+		FROM 
+			global_account g
+ 		WHERE NOT EXISTS(
+ 				SELECT 		
+ 					a.AccountSubjectId 
+ 				FROM	
+ 					account_subject a
+ 				WHERE 		
+ 					a.GlobalAccountId=g.GlobalAccountId
+ 					AND a.IsDel=0
+				<if test="deptId!= null">
+					AND a.DeptId=#{deptId}
+				</if>
+				)
+				<if test="subjectType!= null">
+					AND g.SubjectType=#{subjectType}
+				</if>
+		ORDER BY g.SubjectCode
+	</select>
+</mapper>

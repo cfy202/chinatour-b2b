@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.TourInfoForOrderMapper">
+
+	<resultMap id="BaseResultMap" type="com.chinatour.entity.TourInfoForOrder">
+		<id column="TourInfoForOrderId" property="id" jdbcType="VARCHAR" />
+		<result column="ScheduleOfArriveTime" property="scheduleOfArriveTime"
+			jdbcType="TIMESTAMP" />
+		<result column="GroupLineId" property="groupLineId" jdbcType="VARCHAR" />
+		<result column="TourType" property="tourType" jdbcType="VARCHAR" />
+		<result column="ScheduleLineCode" property="scheduleLineCode"
+			jdbcType="VARCHAR" />
+		<result column="LineName" property="lineName" jdbcType="VARCHAR" />
+		<result column="OrderId" property="orderId" jdbcType="VARCHAR" />
+		<result column="DepartureDate" property="departureDate"
+			jdbcType="DATE" />
+		<result column="DayNum" property="dayNum" jdbcType="TINYINT" />
+		<result column="SpecialRequirements" property="specialRequirements"
+			jdbcType="LONGVARCHAR" />
+		<result column="TourInfo" property="tourInfo" jdbcType="LONGVARCHAR" />
+		<result column="PersonalRoute" property="personalRoute"
+			jdbcType="LONGVARCHAR" />
+		<result column="VoucherRemarks" property="voucherRemarks"
+			jdbcType="LONGVARCHAR" />
+		<result column="TrackingNo" property="trackingNo" jdbcType="VARCHAR" />
+		<result column="invoiceRemarks" property="invoiceRemarks"
+			jdbcType="LONGVARCHAR" />
+		<result column="DueDate" property="dueDate"
+			jdbcType="DATE" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		TourInfoForOrderId, ScheduleOfArriveTime, GroupLineId,
+		TourType, ScheduleLineCode,
+		LineName, OrderId, DepartureDate, DayNum,
+		SpecialRequirements,
+		TourInfo, PersonalRoute,VoucherRemarks,TrackingNo,invoiceRemarks,DueDate
+	</sql>
+
+	<sql id="findForPage_sql">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM tour_info_for_order
+		<where>
+			<if test="record.id != null">
+				TourInfoForOrderId = #{record.id,jdbcType=VARCHAR}
+			</if>
+			<if test="record.scheduleOfArriveTime != null">
+				AND ScheduleOfArriveTime =
+				#{record.scheduleOfArriveTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.groupLineId != null">
+				AND GroupLineId = #{record.groupLineId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tourType != null">
+				AND TourType = #{record.tourType,jdbcType=VARCHAR}
+			</if>
+			<if test="record.scheduleLineCode != null">
+				AND ScheduleLineCode =
+				#{record.scheduleLineCode,jdbcType=VARCHAR}
+			</if>
+			<if test="record.lineName != null">
+				AND LineName = #{record.lineName,jdbcType=VARCHAR}
+			</if>
+			<if test="record.orderId != null">
+				AND OrderId = #{record.orderId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.departureDate != null">
+				AND DepartureDate = #{record.departureDate,jdbcType=DATE}
+			</if>
+			<if test="record.dueDate != null">
+				AND DueDate = #{record.dueDate,jdbcType=DATE}
+			</if>
+			<if test="record.dayNum != null">
+				AND DayNum = #{record.dayNum,jdbcType=TINYINT}
+			</if>
+			<if test="record.specialRequirements != null">
+				AND SpecialRequirements =
+				#{record.specialRequirements,jdbcType=LONGVARCHAR}
+			</if>
+			<if test="record.tourInfo != null">
+				AND TourInfo = #{record.tourInfo,jdbcType=LONGVARCHAR}
+			</if>
+			<if test="record.personalRoute != null">
+				AND PersonalRoute =
+				#{record.personalRoute,jdbcType=LONGVARCHAR}
+			</if>
+			<if test="record.trackingNo != null">
+				AND TrackingNo =
+				#{record.trackingNo,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</sql>
+
+	<select id="findForPage" resultMap="BaseResultMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findForPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+
+	<select id="findAll" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM tour_info_for_order
+	</select>
+	
+	<select id="findByOrderId" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM tour_info_for_order
+		WHERE OrderId = #{orderId,jdbcType=VARCHAR}
+	</select>
+
+	<select id="find" resultMap="BaseResultMap"
+		parameterType="com.chinatour.entity.TourInfoForOrder">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM tour_info_for_order
+		<where>
+			<if test="id != null">
+				TourInfoForOrderId = #{id,jdbcType=VARCHAR}
+			</if>
+			<if test="scheduleOfArriveTime != null">
+				AND ScheduleOfArriveTime =
+				#{scheduleOfArriveTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="groupLineId != null">
+				AND GroupLineId = #{groupLineId,jdbcType=VARCHAR}
+			</if>
+			<if test="tourType != null">
+				AND TourType = #{tourType,jdbcType=VARCHAR}
+			</if>
+			<if test="scheduleLineCode != null">
+				AND ScheduleLineCode =
+				#{scheduleLineCode,jdbcType=VARCHAR}
+			</if>
+			<if test="lineName != null">
+				AND LineName = #{lineName,jdbcType=VARCHAR}
+			</if>
+			<if test="orderId != null">
+				AND OrderId = #{orderId,jdbcType=VARCHAR}
+			</if>
+			<if test="departureDate != null">
+				AND DepartureDate = #{departureDate,jdbcType=DATE}
+			</if>
+			<if test="dueDate != null">
+				AND DueDate = #{dueDate,jdbcType=DATE}
+			</if>
+			<if test="dayNum != null">
+				AND DayNum = #{dayNum,jdbcType=TINYINT}
+			</if>
+			<if test="specialRequirements != null">
+				AND SpecialRequirements =
+				#{specialRequirements,jdbcType=LONGVARCHAR}
+			</if>
+			<if test="tourInfo != null">
+				AND TourInfo = #{tourInfo,jdbcType=LONGVARCHAR}
+			</if>
+			<if test="personalRoute != null">
+				AND PersonalRoute =
+				#{personalRoute,jdbcType=LONGVARCHAR}
+			</if>
+			<if test="trackingNo != null">
+				AND TrackingNo =
+				#{record.trackingNo,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+
+	<select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM tour_info_for_order
+		WHERE TourInfoForOrderId =
+		#{id,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="findArriveTimeByOrderId" resultType="String" parameterType="java.lang.String">
+		SELECT
+			DATE_FORMAT(t.ScheduleOfArriveTime,'%Y-%m-%d') as ScheduleOfArriveTime
+		FROM  tour_info_for_order t,orders o
+		WHERE t.OrderId=o.OrderId
+		And  o.OrderId= #{id,jdbcType=VARCHAR}
+	</select>
+	
+	<delete id="removeById" parameterType="java.lang.String">
+		DELETE FROM
+		tour_info_for_order
+		WHERE TourInfoForOrderId = #{id,jdbcType=VARCHAR}
+	</delete>
+
+	<insert id="save" parameterType="com.chinatour.entity.TourInfoForOrder">
+		INSERT INTO tour_info_for_order
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				TourInfoForOrderId,
+			</if>
+			<if test="scheduleOfArriveTime != null">
+				ScheduleOfArriveTime,
+			</if>
+			<if test="groupLineId != null">
+				GroupLineId,
+			</if>
+			<if test="tourType != null">
+				TourType,
+			</if>
+			<if test="scheduleLineCode != null">
+				ScheduleLineCode,
+			</if>
+			<if test="lineName != null">
+				LineName,
+			</if>
+			<if test="orderId != null">
+				OrderId,
+			</if>
+			<if test="departureDate != null">
+				DepartureDate,
+			</if>
+			<if test="dueDate != null">
+				DueDate,
+			</if>
+			<if test="dayNum != null">
+				DayNum,
+			</if>
+			<if test="specialRequirements != null">
+				SpecialRequirements,
+			</if>
+			<if test="tourInfo != null">
+				TourInfo,
+			</if>
+			<if test="personalRoute != null">
+				PersonalRoute,
+			</if>
+			<if test="voucherRemarks != null">
+				VoucherRemarks,
+			</if>
+			<if test="invoiceRemarks != null">
+				invoiceRemarks,
+			</if>
+			<if test="trackingNo != null">
+				TrackingNo,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="scheduleOfArriveTime != null">
+				#{scheduleOfArriveTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="groupLineId != null">
+				#{groupLineId,jdbcType=VARCHAR},
+			</if>
+			<if test="tourType != null">
+				#{tourType,jdbcType=VARCHAR},
+			</if>
+			<if test="scheduleLineCode != null">
+				#{scheduleLineCode,jdbcType=VARCHAR},
+			</if>
+			<if test="lineName != null">
+				#{lineName,jdbcType=VARCHAR},
+			</if>
+			<if test="orderId != null">
+				#{orderId,jdbcType=VARCHAR},
+			</if>
+			<if test="departureDate != null">
+				#{departureDate,jdbcType=DATE},
+			</if>
+			<if test="dueDate != null">
+				#{dueDate,jdbcType=DATE},
+			</if>
+			<if test="dayNum != null">
+				#{dayNum,jdbcType=TINYINT},
+			</if>
+			<if test="specialRequirements != null">
+				#{specialRequirements,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="tourInfo != null">
+				#{tourInfo,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="personalRoute != null">
+				#{personalRoute,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="voucherRemarks != null">
+				#{voucherRemarks,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="invoiceRemarks != null">
+				#{invoiceRemarks,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="trackingNo != null">
+				#{trackingNo,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="update" parameterType="com.chinatour.entity.TourInfoForOrder">
+		UPDATE tour_info_for_order
+		<set>
+			<if test="scheduleOfArriveTime != null">
+				ScheduleOfArriveTime =
+				#{scheduleOfArriveTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="groupLineId != null">
+				GroupLineId = #{groupLineId,jdbcType=VARCHAR},
+			</if>
+			<if test="tourType != null">
+				TourType = #{tourType,jdbcType=VARCHAR},
+			</if>
+			<if test="scheduleLineCode != null">
+				ScheduleLineCode = #{scheduleLineCode,jdbcType=VARCHAR},
+			</if>
+			<if test="lineName != null">
+				LineName = #{lineName,jdbcType=VARCHAR},
+			</if>
+			<if test="orderId != null">
+				OrderId = #{orderId,jdbcType=VARCHAR},
+			</if>
+			DepartureDate = #{departureDate,jdbcType=DATE},
+			DueDate = #{dueDate,jdbcType=DATE},
+			<if test="dayNum != null">
+				DayNum = #{dayNum,jdbcType=TINYINT},
+			</if>
+			<choose>
+				<when test="specialRequirements != null">
+	                SpecialRequirements = #{specialRequirements,jdbcType=LONGVARCHAR},					
+				</when>
+				<otherwise>
+					SpecialRequirements = '',
+				</otherwise>
+			</choose>
+			<choose>
+				<when test="tourInfo != null">
+					TourInfo = #{tourInfo,jdbcType=LONGVARCHAR},
+				</when>
+				<otherwise>
+					TourInfo = '',
+				</otherwise>
+			</choose>
+			<if test="personalRoute != null">
+				PersonalRoute = #{personalRoute,jdbcType=LONGVARCHAR},
+			</if>
+			<choose>
+				<when test="voucherRemarks != null">
+					voucherRemarks = #{voucherRemarks,jdbcType=LONGVARCHAR},
+				</when>
+				<otherwise>
+					voucherRemarks = '',
+				</otherwise>
+			</choose>
+			<choose>
+				<when test="invoiceRemarks != null">
+					invoiceRemarks = #{invoiceRemarks,jdbcType=LONGVARCHAR},
+				</when>
+				<otherwise>
+					invoiceRemarks = '',
+				</otherwise>
+			</choose>
+			<if test="trackingNo != null">
+				TrackingNo = #{trackingNo,jdbcType=VARCHAR},
+			</if>
+		</set>
+		WHERE TourInfoForOrderId = #{id,jdbcType=VARCHAR}
+	</update>
+	
+	<update id="updateDepartureDateAndDayNum" parameterType="com.chinatour.entity.TourInfoForOrder">
+		UPDATE tour_info_for_order
+		SET DepartureDate = #{departureDate,jdbcType=DATE},
+		<if test="dayNum != null">
+			DayNum = #{dayNum,jdbcType=TINYINT},
+		</if>
+		<if test="dayNum == null">
+			DayNum = 0,
+		</if>
+		<if test="tourType != null">
+			TourType = #{tourType,jdbcType=VARCHAR},
+		</if>
+		<if test="trackingNo != null">
+			TrackingNo = #{trackingNo,jdbcType=VARCHAR},
+		</if>
+		<choose>
+			<when test="specialRequirements != null">
+				SpecialRequirements = #{specialRequirements,jdbcType=VARCHAR},
+			</when>
+			<otherwise>
+				SpecialRequirements = '',
+			</otherwise>
+		</choose>
+		<choose>
+			<when test="personalRoute != null">
+				PersonalRoute = #{personalRoute,jdbcType=VARCHAR}
+			</when>
+			<otherwise>
+				PersonalRoute = ''
+			</otherwise>
+		</choose>
+		WHERE TourInfoForOrderId = #{id,jdbcType=VARCHAR}
+	</update>
+</mapper>

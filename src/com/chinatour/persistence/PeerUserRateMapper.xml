@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.PeerUserRateMapper">
+	
+    <sql id="Base_Column_List">
+        PeerUserRateId,CurrencyId,ToCurrencyId,RateUp,RateDown,Rate,UpdateTime,IsAvailable
+    </sql>
+    
+	<resultMap type="com.chinatour.entity.PeerUserRate" id="BaseResultMap">
+	    <result column="PeerUserRateId" property="id" jdbcType="VARCHAR" />
+		<result column="CurrencyId" property="currencyId" jdbcType="VARCHAR" />
+		<result column="ToCurrencyId" property="toCurrencyId" jdbcType="VARCHAR" />
+		<result column="RateUp" property="rateUp" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+		<result column="RateDown" property="rateDown" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+		<result column="Rate" property="rate" javaType="java.math.BigDecimal" jdbcType="DECIMAL" />
+		<result column="UpdateTime" property="updateTime" jdbcType="TIMESTAMP" />
+		<result column="IsAvailable" property="isAvailable" jdbcType="INTEGER" />
+	</resultMap>
+	
+	<select id="findAll" resultMap="BaseResultMap">
+		SELECT 
+			r.*,t.CurrencyChs as currencyChs,t.CurrencyEng as currencyEng,t.Symbol as symbol
+	    FROM
+	    	peeruser_rate r,currency_type t
+	    WHERE
+	    	r.ToCurrencyId=t.CurrencyTypeId
+	</select>
+	
+	
+	<delete id="removeById" parameterType="String">
+	    DELETE FROM 
+		    peeruser_rate 
+		WHERE 
+		     PeerUserRateId=#{id}
+	</delete>	
+	
+	
+	<select id="findById" resultMap="BaseResultMap" parameterType="String">
+		SELECT 
+			<include refid="Base_Column_List"/>
+	    FROM
+	    	peeruser_rate 
+		WHERE 
+		     PeerUserRateId=#{id}
+	</select>
+	<update id="update" parameterType="com.chinatour.entity.PeerUserRate">
+		UPDATE peeruser_rate
+			<set>
+			    <if test="id != null">
+                    PeerUserRateId = #{id} ,
+                </if>
+                <if test="currencyId != null">
+                    CurrencyId = #{currencyId} ,
+                </if>
+                <if test="toCurrencyId != null">
+                    ToCurrencyId = #{toCurrencyId} ,
+                </if>
+                <if test="rateUp !=null">
+	                RateUp = #{rateUp} ,
+                </if>
+                <if test="rateDown !=null">
+	                RateDown = #{rateDown} ,
+                </if>
+                 <if test="rate !=null">
+	                Rate = #{rate} ,
+                </if>
+                <if test="updateTime !=null">
+	                UpdateTime = #{updateTime} ,
+                </if>
+                <if test="isAvailable != null">
+                    IsAvailable = #{isAvailable} ,
+                </if>
+			</set>
+		WHERE 
+            PeerUserRateId=#{id}
+	</update> 
+	
+	
+	 <insert id="save" parameterType="com.chinatour.entity.PeerUserRate">
+	     INSERT INTO peeruser_rate
+	     	<trim prefix="(" suffix=")" suffixOverrides=",">
+	     		 <if test="id != null">
+                    PeerUserRateId ,
+                </if>
+                <if test="currencyId != null">
+                    CurrencyId ,
+                </if>
+                <if test="toCurrencyId != null">
+                    ToCurrencyId ,
+                </if>
+                <if test="rateUp !=null">
+	                RateUp ,
+                </if>
+                <if test="rateDown !=null">
+	                RateDown ,
+                </if>
+                <if test="rate !=null">
+	                Rate ,
+                </if>
+                <if test="updateTime != null">
+                    UpdateTime ,
+                </if>
+                <if test="isAvailable !=null">
+	                IsAvailable 
+                </if>
+	     	</trim> 
+	     		
+	     	<trim prefix="values (" suffix=")" suffixOverrides=",">
+	     		<if test="id != null">
+                    #{id} ,
+                </if>
+                <if test="currencyId != null">
+                    #{currencyId} ,
+                </if>
+                <if test="toCurrencyId !=null">
+	                #{toCurrencyId} ,
+                </if>
+                <if test="rateUp !=null">
+	                #{rateUp} ,
+                </if>
+                <if test="rateDown !=null">
+	                #{rateDown} ,
+                </if>
+                 <if test="rate !=null">
+	                #{rate} ,
+                </if>
+                <if test="updateTime != null">
+                    #{updateTime} ,
+                </if>
+                <if test="isAvailable !=null">
+	                #{isAvailable} 
+                </if>
+	     	</trim>
+	</insert>
+	<select id="getRate"  resultMap="BaseResultMap">
+		select
+        	<include refid="Base_Column_List"/>
+        from peeruser_rate
+        <where>
+            <trim suffixOverrides="AND">
+                <if test="record.id != null">
+                    PeerUserRateId = #{record.id} AND
+                </if>
+                <if test="record.currencyId != null">
+                    CurrencyId = #{record.currencyId} AND
+                </if>
+                <if test="record.toCurrencyId != null">
+                    ToCurrencyId = #{record.toCurrencyId} AND
+                </if>
+                <if test="record.rateUp !=null">
+	                RateUp = #{record.rateUp} AND
+                </if>
+                <if test="record.rateDown !=null">
+	                RateDown = #{record.rateDown} AND
+                </if>
+                <if test="record.updateTime !=null">
+	                UpdateTime = #{record.updateTime} AND
+                </if>
+                <if test="record.isAvailable !=null">
+                    <if test="record.isAvailable !=1">
+	                    IsAvailable = #{record.isAvailable} 
+                    </if>
+                </if>
+            </trim>
+        </where>
+	</select>
+	 
+	<sql id="findForPage_sql">
+        select
+        	<include refid="Base_Column_List"/>
+        from peeruser_rate
+        <where>
+            <trim suffixOverrides="AND">
+                <if test="record.id != null">
+                    PeerUserRateId = #{record.id} AND
+                </if>
+                <if test="record.currencyId != null">
+                    CurrencyId = #{record.currencyId} AND
+                </if>
+                <if test="record.toCurrencyId != null">
+                    ToCurrencyId = #{record.toCurrencyId} AND
+                </if>
+                <if test="record.rateUp !=null">
+	                RateUp = #{record.rateUp} AND
+                </if>
+                <if test="record.rateDown !=null">
+	                RateDown = #{record.rateDown} AND
+                </if>
+                <if test="record.updateTime !=null">
+	                UpdateTime = #{record.updateTime} AND
+                </if>
+                <if test="record.isAvailable !=null">
+                    <if test="record.isAvailable !=1">
+	                    IsAvailable = #{record.isAvailable} 
+                    </if>
+                </if>
+            </trim>
+        </where>
+    </sql>
+</mapper>

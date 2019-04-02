@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.InvoiceAndCreditItemsMapper">
+	<sql id="Base_Column_List">
+		ItemsId,
+  		Description,
+  		Remarks,
+  		Amount,
+  		DollarAmount,
+  		InvoiceAndCreditId,
+  		BusinessNo,
+  		BillToDeptId,
+  		DeptId,
+ 		IfBeginningValue,
+  		IfVerified,
+  		VerifyRemarks
+	</sql>
+	<resultMap id="BaseResultMap" type="InvoiceAndCreditItems">
+		<result column="ItemsId" property="itemsId" jdbcType="VARCHAR" />
+		<result column="Description" property="description" jdbcType="VARCHAR" />
+		<result column="Remarks" property="remarks" jdbcType="VARCHAR" />
+		<result column="Amount" property="amount" jdbcType="DOUBLE" />
+		<result column="DollarAmount" property="dollarAmount" jdbcType="DOUBLE" />
+		<result column="InvoiceAndCreditId" property="invoiceAndCreditId" jdbcType="VARCHAR" />
+		<result column="BusinessNo" property="businessNo" jdbcType="INTEGER" />
+		<result column="BillToDeptId" property="billToDeptId" jdbcType="VARCHAR" />
+		<result column="DeptId" property="deptId" jdbcType="VARCHAR" />
+		<result column="IfBeginningValue" property="ifBeginningValue" jdbcType="INTEGER" />
+		<result column="IfVerified" property="ifVerified" jdbcType="INTEGER" />
+		<result column="VerifyRemarks" property="verifyRemarks" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<insert id="save" parameterType="InvoiceAndCreditItems">
+		INSERT INTO invoice_and_credit_items
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="itemsId != null">
+				ItemsId,
+			</if>
+			<if test="description != null">
+				Description,
+			</if>
+			<if test="remarks != null">
+				Remarks,
+			</if>
+			<if test="amount != null">
+				Amount,
+			</if>
+			<if test="dollarAmount != null">
+				DollarAmount,
+			</if>
+			<if test="invoiceAndCreditId != null">
+				InvoiceAndCreditId,
+			</if>
+			<if test="businessNo != null">
+				BusinessNo,
+			</if>
+			<if test="billToDeptId != null">
+				BillToDeptId,
+			</if>
+			<if test="deptId != null">
+				DeptId,
+			</if>
+			<if test="ifBeginningValue != null">
+				IfBeginningValue,
+			</if>
+			<if test="ifVerified != null">
+				IfVerified,
+			</if>
+			<if test="verifyRemarks != null">
+				VerifyRemarks,
+			</if>
+			<if test="sortNo != null">
+				SortNo
+			</if>
+		</trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="itemsId != null">
+				#{itemsId,jdbcType=VARCHAR},
+			</if>
+			<if test="description != null">
+				#{description,jdbcType=VARCHAR},
+			</if>
+			<if test="remarks != null">
+				#{remarks,jdbcType=VARCHAR},
+			</if>
+			<if test="amount != null">
+				#{amount,jdbcType=DOUBLE},
+			</if>
+			<if test="dollarAmount != null">
+				#{dollarAmount,jdbcType=DOUBLE},
+			</if>
+			<if test="invoiceAndCreditId != null">
+				#{invoiceAndCreditId,jdbcType=VARCHAR},
+			</if>
+			<if test="businessNo != null">
+				#{businessNo,jdbcType=INTEGER},
+			</if>
+			<if test="billToDeptId != null">
+				#{billToDeptId,jdbcType=VARCHAR},
+			</if>
+			<if test="deptId != null">
+				#{deptId,jdbcType=VARCHAR},
+			</if>
+			<if test="ifBeginningValue != null">
+				#{ifBeginningValue,jdbcType=INTEGER},
+			</if>
+			<if test="ifVerified != null">
+				#{ifVerified,jdbcType=INTEGER},
+			</if>
+			<if test="verifyRemarks != null">
+				#{verifyRemarks,jdbcType=VARCHAR},
+			</if>
+			<if test="sortNo != null">
+				#{sortNo,jdbcType=INTEGER}
+			</if>
+		</trim>
+	</insert>
+	<update id="update" parameterType="City">
+		UPDATE 
+			invoice_and_credit_items
+		<set>
+			<if test="description != null">
+				Description=#{description,jdbcType=VARCHAR},
+			</if>
+			<if test="remarks != null">
+				Remarks=#{remarks,jdbcType=VARCHAR},
+			</if>
+			<if test="amount != null">
+				Amount=#{amount,jdbcType=DOUBLE},
+			</if>
+			<if test="dollarAmount != null">
+				DollarAmount=#{dollarAmount,jdbcType=DOUBLE},
+			</if>
+			<if test="invoiceAndCreditId != null">
+				InvoiceAndCreditId=#{invoiceAndCreditId,jdbcType=VARCHAR},
+			</if>
+			<if test="businessNo != null">
+				BusinessNo=#{businessNo,jdbcType=INTEGER},
+			</if>
+			<if test="billToDeptId != null">
+				BillToDeptId=#{billToDeptId,jdbcType=VARCHAR},
+			</if>
+			<if test="deptId != null">
+				DeptId=#{deptId,jdbcType=VARCHAR},
+			</if>
+			<if test="ifBeginningValue != null">
+				IfBeginningValue=#{ifBeginningValue,jdbcType=INTEGER},
+			</if>
+			<if test="ifVerified != null">
+				IfVerified=#{ifVerified,jdbcType=INTEGER},
+			</if>
+			<if test="verifyRemarks != null">
+				VerifyRemarks=#{verifyRemarks,jdbcType=VARCHAR},
+			</if>
+		</set>
+		WHERE 
+			ItemsId = #{itemsId,jdbcType=VARCHAR}
+	</update>
+	<delete id="removeById" parameterType="java.lang.String">
+		DELETE FROM 
+			invoice_and_credit_items 
+		WHERE 
+			ItemsId = #{itemsId,jdbcType=VARCHAR}
+	</delete>
+	<select id="queryByInvoiceAndCreditId" resultMap="BaseResultMap">
+		SELECT
+		 <include refid="Base_Column_List"/>
+		FROM 
+			invoice_and_credit_items 
+		WHERE 
+			InvoiceAndCreditId=#{invoiceAndCreditId,jdbcType=VARCHAR}
+		ORDER BY SortNo ASC
+	</select>
+	
+	<select id="findById" resultMap="BaseResultMap">
+		SELECT
+		 <include refid="Base_Column_List"/>
+		FROM 
+			invoice_and_credit_items 
+		WHERE 
+			ItemsId = #{itemsId,jdbcType=VARCHAR}
+	</select>
+	<select id="findForPage" resultMap="BaseResultMap">
+        <include refid="Pager.paginationStart"/>
+        <include refid="Pager.paginationEnd"/>
+    </select>
+    
+    <select id="findForPageCount" resultType="int">
+        <include refid="Pager.countStart"/>
+        <include refid="Pager.countEnd"/>
+    </select>
+</mapper>

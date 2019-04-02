@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.OrderFeeItemsMapper">
+
+	<sql id="Base_Column_List">
+		OrderFeeItemsId,FeeTitle,Num,Price,Pax,OrderId
+	</sql>
+	<resultMap type="OrderFeeItems" id="BaseResultMap">
+		<id property="id" column="OrderFeeItemsId" jdbcType="VARCHAR" />
+		<result property="feeTitle" column="FeeTitle" jdbcType="VARCHAR" />
+		<result property="num" column="Num" jdbcType="INTEGER" />
+		<result property="price" column="Price" jdbcType="DECIMAL" />
+		<result property="pax" column="Pax" jdbcType="INTEGER" />
+		<result property="orderId" column="OrderId" jdbcType="VARCHAR" />
+	</resultMap>
+	<delete id="removeById" parameterType="java.lang.String">
+		delete from order_fee_items
+		where
+		OrderFeeItemsId = #{id,jdbcType=VARCHAR}
+	</delete>
+	<delete id="delByOrderId" parameterType="java.lang.String">
+		delete from order_fee_items
+		where
+		OrderId = #{id,jdbcType=VARCHAR}
+	</delete>
+	<insert id="save" parameterType="OrderFeeItems">
+		insert into order_fee_items
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				OrderFeeItemsId,
+			</if>
+			<if test="feeTitle != null">
+				FeeTitle,
+			</if>
+			<if test="num != null">
+				Num,
+			</if>
+			<if test="price != null">
+				Price,
+			</if>
+			<if test="pax != null">
+				Pax,
+			</if>
+			<if test="orderId != null">
+				OrderId,
+			</if>
+		</trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="feeTitle != null">
+				#{feeTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="num != null">
+				#{num,jdbcType=INTEGER},
+			</if>
+			<if test="price != null">
+				#{price,jdbcType=DECIMAL},
+			</if>
+			<if test="pax != null">
+				#{pax,jdbcType=INTEGER},
+			</if>
+			<if test="orderId != null">
+				#{orderId,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	
+	<select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
+	    select
+		<include refid="Base_Column_List" />
+		from order_fee_items
+		where
+		OrderFeeItemsId = #{id,jdbcType=VARCHAR}
+	</select>
+	<select id="findByOrderId" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from order_fee_items
+		where
+		OrderId = #{id,jdbcType=VARCHAR}
+		ORDER BY Num ASC
+	</select>
+	
+	<update id="update" parameterType="OrderFeeItems">
+		UPDATE 
+			order_fee_items
+		SET
+			FeeTitle=#{feeTitle,jdbcType=DECIMAL},
+			Price=#{price,jdbcType=DECIMAL},
+			Pax=#{pax,jdbcType=INTEGER}
+		WHERE
+		    OrderFeeItemsId = #{id,jdbcType=VARCHAR}
+	</update>
+</mapper>

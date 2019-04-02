@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.OrderAgencyRemarkMapper">
+	<resultMap id="BaseResultMap" type="com.chinatour.entity.OrderAgencyRemark">
+		<id column="OrderAgencyRemarksId" property="orderAgencyRemarksId" jdbcType="VARCHAR" />
+		<result column="ModifyDate" property="modifyDate" jdbcType="TIMESTAMP" />
+		<result column="OrderId" property="orderId" jdbcType="VARCHAR" />
+		<result column="UpdateRemark" property="updateRemark" jdbcType="LONGVARCHAR" />
+		<result column="UserName" property="userName" jdbcType="VARCHAR" />
+		<result column="UserId" property="userId" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		OrderAgencyRemarksId, ModifyDate, OrderId, UpdateRemark, UserId, UserName
+	</sql>
+	<insert id="save" parameterType="com.chinatour.entity.OrderAgencyRemark">
+		insert into order_agency_remark
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="orderAgencyRemarksId != null">
+				OrderAgencyRemarksId,
+			</if>
+			<if test="modifyDate != null">
+				ModifyDate,
+			</if>
+			<if test="orderId != null">
+				OrderId,
+			</if>
+			<if test="updateRemark != null">
+				UpdateRemark,
+			</if>
+			<if test="userId != null">
+				UserId,
+			</if>
+			<if test="userName != null">
+				UserName
+			</if>
+		</trim>
+		<trim prefix="select" suffixOverrides=",">
+			<if test="orderAgencyRemarksId != null">
+				#{orderAgencyRemarksId,jdbcType=VARCHAR},
+			</if>
+			<if test="modifyDate != null">
+				#{modifyDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="orderId != null">
+				#{orderId,jdbcType=VARCHAR},
+			</if>
+			<if test="updateRemark != null">
+				#{updateRemark,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=VARCHAR},
+			</if>
+			<if test="userName != null">
+				#{userName,jdbcType=VARCHAR}
+			</if>
+		</trim>
+	</insert>
+	<select id="queryByOrderId" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from order_agency_remark
+		where orderId = #{orderId,jdbcType=VARCHAR}
+		OREDER BY modifyDate DESC
+	</select>
+</mapper>

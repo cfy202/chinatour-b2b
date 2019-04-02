@@ -1,0 +1,825 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.VenderMapper">
+	
+    <sql id="Base_Column_List">
+        VenderId,Code,Name,CreateDate,ModifyDate,Contactor,Address,ZipCode,UserId,DeptId,Tel,Fax,Email,
+        Remarks,CountryId,Type,VenderType,PeerType,IsDel,Status,registrationNo,
+        cityId,stateId,bankName,branchNo,accountName,accountNumber,businessCode,BillEmail,B2bEmail
+    </sql>
+    
+	<resultMap type="Vender" id="BaseResultMap">
+	    <result column="VenderId" property="venderId" jdbcType="VARCHAR" />
+		<result column="Code" property="code" jdbcType="VARCHAR" />
+		<result column="Name" property="name" jdbcType="VARCHAR" />
+		<result column="CreateDate" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="ModifyDate" property="modifyDate" jdbcType="TIMESTAMP" />
+		<result column="Contactor" property="contactor" jdbcType="VARCHAR" />
+		<result column="Address" property="address" jdbcType="VARCHAR" />
+		<result column="ZipCode" property="zipCode" jdbcType="VARCHAR" />
+		<result column="UserId" property="userId" jdbcType="VARCHAR" />
+		<result column="DeptId" property="deptId" jdbcType="VARCHAR" />
+		<result column="Tel" property="tel" jdbcType="VARCHAR" />
+		<result column="Fax" property="fax" jdbcType="VARCHAR" />
+		<result column="Email" property="email" jdbcType="VARCHAR" />
+		<result column="BillEmail" property="billEmail" jdbcType="VARCHAR" />
+		<result column="B2bEmail" property="b2bEmail" jdbcType="VARCHAR" />
+		<result column="Remarks" property="remarks" jdbcType="VARCHAR" />
+		<result column="CountryId" property="countryId" jdbcType="VARCHAR" />
+		<result column="Type" property="type" jdbcType="INTEGER" />
+		<result column="VenderType" property="venderType" jdbcType="INTEGER" />
+		<result column="PeerType" property="peerType" jdbcType="INTEGER" />
+		<result column="IsDel" property="isDel" jdbcType="INTEGER" />
+		<result column="Status" property="status" jdbcType="INTEGER" />
+		<result column="registrationNo" property="registrationNo" jdbcType="VARCHAR" />
+		<result column="cityId" property="cityId" jdbcType="VARCHAR" />
+		<result column="stateId" property="stateId" jdbcType="VARCHAR" />
+		<result column="bankName" property="bankName" jdbcType="VARCHAR" />
+		<result column="branchNo" property="branchNo" jdbcType="VARCHAR" />
+		<result column="accountName" property="accountName" jdbcType="VARCHAR" />
+		<result column="accountNumber" property="accountNumber" jdbcType="VARCHAR" />
+		<result column="businessCode" property="businessCode" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<resultMap type="Vender" id="BaseResultMapAddConutryName" extends="BaseResultMap" >
+	    <result column="VenderId" property="venderId" jdbcType="VARCHAR" />
+		<result column="Code" property="code" jdbcType="VARCHAR" />
+		<result column="Name" property="name" jdbcType="VARCHAR" />
+		<result column="CreateDate" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="ModifyDate" property="modifyDate" jdbcType="TIMESTAMP" />
+		<result column="Contactor" property="contactor" jdbcType="VARCHAR" />
+		<result column="Address" property="address" jdbcType="VARCHAR" />
+		<result column="ZipCode" property="zipCode" jdbcType="VARCHAR" />
+		<result column="UserId" property="userId" jdbcType="VARCHAR" />
+		<result column="DeptId" property="deptId" jdbcType="VARCHAR" />
+		<result column="Tel" property="tel" jdbcType="VARCHAR" />
+		<result column="Fax" property="fax" jdbcType="VARCHAR" />
+		<result column="Email" property="email" jdbcType="VARCHAR" />
+		<result column="BillEmail" property="billEmail" jdbcType="VARCHAR" />
+		<result column="B2bEmail" property="b2bEmail" jdbcType="VARCHAR" />
+		<result column="Remarks" property="remarks" jdbcType="VARCHAR" />
+		<result column="CountryId" property="countryId" jdbcType="VARCHAR" />
+		<result column="Type" property="type" jdbcType="INTEGER" />
+		<result column="VenderType" property="venderType" jdbcType="INTEGER" />
+		<result column="PeerType" property="peerType" jdbcType="INTEGER" />
+		<result column="IsDel" property="isDel" jdbcType="INTEGER" />
+		<result column="Status" property="status" jdbcType="INTEGER" />
+		<result column="registrationNo" property="registrationNo" jdbcType="VARCHAR" />
+		<result column="cityId" property="cityId" jdbcType="VARCHAR" />
+		<result column="stateId" property="stateId" jdbcType="VARCHAR" />
+		<result column="bankName" property="bankName" jdbcType="VARCHAR" />
+		<result column="branchNo" property="branchNo" jdbcType="VARCHAR" />
+		<result column="accountName" property="accountName" jdbcType="VARCHAR" />
+		<result column="accountNumber" property="accountNumber" jdbcType="VARCHAR" />
+		<result column="businessCode" property="businessCode" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<select id="findAll" resultMap="BaseResultMap">
+		SELECT 
+			<include refid="Base_Column_List"/>
+	    FROM
+	    	vender
+	</select>
+	
+	
+	<delete id="removeById" parameterType="String">
+	    DELETE FROM 
+		    vender 
+		WHERE 
+		     VenderId=#{venderId}
+	</delete>	
+	
+	
+	<select id="findById" resultMap="BaseResultMap" parameterType="String">
+		SELECT 
+			<include refid="Base_Column_List"/>
+	    FROM
+	    	vender
+	    WHERE 
+	    	VenderId=#{venderId}
+	</select>
+	
+	<select id="find" resultMap="BaseResultMap" parameterType="Vender">
+		SELECT 
+			<include refid="Base_Column_List"/>
+	    FROM
+	    	vender
+	    <where>
+            <trim suffixOverrides="AND">
+                <if test="venderId != null">
+                    VenderId = #{venderId} AND
+                </if>
+                <if test="code != null">
+                    Code = #{code} AND
+                </if>
+                <if test="name != null">
+                    Name = #{name} AND
+                </if>
+                <if test="createDate !=null">
+	                CreateDate = #{createDate} AND
+                </if>
+                <if test="modifyDate !=null">
+	                ModifyDate = #{modifyDate} AND
+                </if>
+                <if test="contactor !=null">
+	                Contactor = #{contactor} AND
+                </if>
+                <if test="address != null">
+                    Address = #{address} AND
+                </if>
+                <if test="zipCode !=null">
+	                ZipCode = #{zipCode} AND
+                </if>
+                <if test="userId != null">
+                    UserId = #{userId} AND
+                </if>
+                 <if test="deptId != null">
+                    DeptId = #{deptId} AND
+                </if>
+                <if test="tel != null">
+                    Tel = #{tel} AND
+                </if>
+                <if test="fax != null">
+                    Fax = #{fax} AND
+                </if>
+                <if test="email != null">
+                    Email = #{email} AND
+                </if>
+                <if test="billEmail != null">
+                    BillEmail = #{billEmail} AND
+                </if>
+                <if test="remarks != null">
+                    Remarks = #{remarks} AND
+                </if>
+                <if test="countryId !=null">
+	                CountryId = #{countryId} AND
+                </if>
+                <if test="type !=null">
+	                Type = #{type} AND
+                </if>
+                <if test="venderType !=null">
+	                VenderType = #{venderType} AND
+                </if>
+                <if test="peerType !=null">
+	                PeerType = #{peerType} AND
+                </if>
+                <if test="isDel !=null">
+                    <if test="isDel !=1">
+	                    IsDel = #{isDel}  AND
+                    </if>
+                </if>
+                 <if test="status !=null">
+	                  Status = #{status} AND
+                </if>
+                 <if test="registrationNo !=null">
+	                registrationNo = #{registrationNo} AND
+                </if>
+                <if test="businessCode !=null">
+	                businessCode = #{businessCode} AND
+                </if>
+                 <if test="cityId !=null">
+	                cityId = #{cityId} AND
+                </if>
+                 <if test="stateId !=null">
+	                stateId = #{stateId} AND
+                </if>
+                 <if test="bankName !=null">
+	                bankName = #{bankName} AND
+                </if>
+                 <if test="branchNo !=null">
+	                branchNo = #{branchNo} AND
+                </if>
+                 <if test="accountName !=null">
+	                accountName = #{accountName} AND
+                </if>
+                <if test="accountNumber !=null">
+	                accountNumber = #{accountNumber} 
+                </if>
+            </trim>
+        </where>
+	</select>
+	
+	<select id="findSelect" resultMap="BaseResultMap" parameterType="Vender">
+		SELECT 
+			VenderId,Name
+	    FROM
+	    	vender
+	    <where>
+            <trim suffixOverrides="AND">
+                <if test="venderId != null">
+                    VenderId = #{venderId} AND
+                </if>
+                <if test="code != null">
+                    Code = #{code} AND
+                </if>
+                <if test="name != null">
+                    Name LIKE CONCAT('%','${name}','%') AND
+                </if>
+                <if test="userId != null">
+                    UserId = #{userId} AND
+                </if>
+                 <if test="deptId != null">
+                    DeptId = #{deptId} AND
+                </if>
+                <if test="type !=null">
+	                Type != #{type} AND
+                </if>
+                <if test="venderType !=null">
+	                VenderType = #{venderType} AND
+                </if>
+                <if test="peerType !=null">
+	                PeerType = #{peerType} AND
+                </if>
+                 <if test="registrationNo !=null">
+	                registrationNo = #{registrationNo} AND
+                </if>
+                 <if test="businessCode !=null">
+	                businessCode = #{businessCode} AND
+                </if>
+                 <if test="cityId !=null">
+	                cityId = #{cityId} AND
+                </if>
+                 <if test="stateId !=null">
+	                stateId = #{stateId} AND
+                </if>
+                 <if test="bankName !=null">
+	                bankName = #{bankName} AND
+                </if>
+                 <if test="branchNo !=null">
+	                branchNo = #{branchNo} AND
+                </if>
+                 <if test="accountName !=null">
+	                accountName = #{accountName} AND
+                </if>
+                <if test="accountNumber !=null">
+	                accountNumber = #{accountNumber} AND
+                </if>
+                <if test="isDel !=null">
+                    <if test="isDel !=1">
+	                    IsDel = #{isDel}  AND
+                    </if>
+                </if>
+	                  Status = 1 
+            </trim>
+        </where>
+        LIMIT 10
+	</select>
+	<select id="findSelectAll" resultMap="BaseResultMap" parameterType="Vender">
+		SELECT 
+			VenderId,Name
+	    FROM
+	    	vender
+	    <where>
+            <trim suffixOverrides="AND">
+                <if test="venderId != null">
+                    VenderId = #{venderId} AND
+                </if>
+                <if test="code != null">
+                    Code = #{code} AND
+                </if>
+                <if test="name != null">
+                    Name LIKE CONCAT('%','${name}','%') AND
+                </if>
+                <if test="userId != null">
+                    UserId = #{userId} AND
+                </if>
+                 <if test="deptId != null">
+                    DeptId = #{deptId} AND
+                </if>
+                <if test="type !=null">
+	                Type != #{type} AND
+                </if>
+                <if test="venderType !=null">
+	                VenderType = #{venderType} AND
+                </if>
+                <if test="peerType !=null">
+	                PeerType = #{peerType} AND
+                </if>
+                <if test="isDel !=null">
+                    <if test="isDel !=1">
+	                    IsDel = #{isDel}  AND
+                    </if>
+                </if>
+                <if test="registrationNo !=null">
+	                registrationNo = #{registrationNo} AND
+                </if>
+                 <if test="businessCode !=null">
+	                businessCode = #{businessCode} AND
+                </if>
+                 <if test="cityId !=null">
+	                cityId = #{cityId} AND
+                </if>
+                 <if test="stateId !=null">
+	                stateId = #{stateId} AND
+                </if>
+                 <if test="bankName !=null">
+	                bankName = #{bankName} AND
+                </if>
+                 <if test="branchNo !=null">
+	                branchNo = #{branchNo} AND
+                </if>
+                 <if test="accountName !=null">
+	                accountName = #{accountName} AND
+                </if>
+                <if test="accountNumber !=null">
+	                accountNumber = #{accountNumber} AND
+                </if>
+                 <if test="status !=null">
+	                  Status = #{status} 
+                </if>
+            </trim>
+        </where>
+	</select>
+	
+	<select id="findNameById" resultType="String" parameterType="String">
+		SELECT 
+			name
+	    FROM
+	    	vender
+	    WHERE 
+	    	VenderId=#{venderId,jdbcType=VARCHAR}
+	</select>
+	
+	<update id="update" parameterType="Vender">
+		UPDATE vender
+			<set>
+			    <if test="venderId != null">
+                    VenderId = #{venderId} ,
+                </if>
+                <if test="code != null">
+                    Code = #{code} ,
+                </if>
+                <if test="name != null">
+                    Name = #{name} ,
+                </if>
+                <if test="createDate !=null">
+	                CreateDate = #{createDate} ,
+                </if>
+                <if test="modifyDate !=null">
+	                ModifyDate = #{modifyDate} ,
+                </if>
+                <if test="contactor !=null">
+	                Contactor = #{contactor} ,
+                </if>
+                <if test="address != null">
+                    Address = #{address} ,
+                </if>
+                <if test="zipCode !=null">
+	                ZipCode = #{zipCode} ,
+                </if>
+                <if test="userId != null">
+                    UserId = #{userId} ,
+                </if>
+                 <if test="deptId != null">
+                    DeptId = #{deptId} ,
+                </if>
+                <if test="tel != null">
+                    Tel = #{tel} ,
+                </if>
+                <if test="fax != null">
+                    Fax = #{fax} ,
+                </if>
+                <if test="email != null">
+                    Email = #{email} ,
+                </if>
+                <if test="b2bEmail != null">
+                    B2bEmail = #{b2bEmail} ,
+                </if>
+                <if test="remarks != null">
+                    Remarks = #{remarks} ,
+                </if>
+                <if test="billEmail != null">
+                    BillEmail = #{billEmail} ,
+                </if>
+                <if test="countryId !=null">
+	                CountryId = #{countryId} ,
+                </if>
+                <if test="type !=null">
+	                Type = #{type} ,
+                </if>
+                <if test="venderType !=null">
+	                VenderType = #{venderType} ,
+                </if>
+                <if test="peerType !=null">
+	                PeerType = #{peerType} ,
+                </if>
+                <if test="isDel !=null">
+	                IsDel = #{isDel} ,
+                </if>
+                <if test="status !=null">
+	                Status = #{status},
+                </if>
+                <if test="registrationNo !=null">
+	                registrationNo = #{registrationNo},
+                </if>
+                 <if test="businessCode !=null">
+	                businessCode = #{businessCode},
+                </if>
+                 <if test="cityId !=null">
+	                cityId = #{cityId},
+                </if>
+                 <if test="stateId !=null">
+	                stateId = #{stateId},
+                </if>
+                 <if test="bankName !=null">
+	                bankName = #{bankName},
+                </if>
+                 <if test="branchNo !=null">
+	                branchNo = #{branchNo},
+                </if>
+                 <if test="accountName !=null">
+	                accountName = #{accountName},
+                </if>
+                <if test="accountNumber !=null">
+	                accountNumber = #{accountNumber}
+                </if>
+			</set>
+		WHERE 
+            VenderId=#{venderId}
+	</update> 
+	
+	
+	 <insert id="save" parameterType="Vender">
+	     INSERT INTO vender
+	     	<trim prefix="(" suffix=")" suffixOverrides=",">
+	     		 <if test="venderId != null">
+                    VenderId ,
+                </if>
+                <if test="code != null">
+                    Code ,
+                </if>
+                <if test="name != null">
+                    Name ,
+                </if>
+                <if test="createDate !=null">
+	                CreateDate ,
+                </if>
+                <if test="modifyDate !=null">
+	                ModifyDate ,
+                </if>
+                <if test="contactor !=null">
+	                Contactor ,
+                </if>
+                <if test="address != null">
+                    Address ,
+                </if>
+                <if test="zipCode !=null">
+	                ZipCode ,
+                </if>
+                <if test="userId != null">
+                    UserId ,
+                </if>
+                 <if test="deptId != null">
+                    DeptId ,
+                </if>
+                <if test="tel != null">
+                    Tel ,
+                </if>
+                <if test="fax != null">
+                    Fax ,
+                </if>
+                <if test="email != null">
+                    Email ,
+                </if>
+                <if test="billEmail != null">
+                    BillEmail ,
+                </if>
+                <if test="b2bEmail != null">
+                    B2bEmail ,
+                </if>
+                <if test="remarks != null">
+                    Remarks ,
+                </if>
+                <if test="countryId !=null">
+	                CountryId ,
+                </if>
+                <if test="type !=null">
+	                Type ,
+                </if>
+                <if test="venderType !=null">
+	                VenderType ,
+                </if>
+                <if test="peerType !=null">
+	                PeerType ,
+                </if>
+                <if test="isDel !=null">
+	                IsDel,
+                </if>
+                 <if test="status !=null">
+	                Status,
+                </if>
+                <if test="registrationNo !=null">
+	                registrationNo,
+                </if>
+                 <if test="businessCode !=null">
+	                businessCode,
+                </if>
+                 <if test="cityId !=null">
+	                cityId,
+                </if>
+                 <if test="stateId !=null">
+	                stateId,
+                </if>
+                 <if test="bankName !=null">
+	                bankName,
+                </if>
+                 <if test="branchNo !=null">
+	                branchNo,
+                </if>
+                 <if test="accountName !=null">
+	                accountName,
+                </if>
+                <if test="accountNumber !=null">
+	                accountNumber
+                </if>
+	     	</trim> 
+	     	<trim prefix="values (" suffix=")" suffixOverrides=",">
+	     		<if test="venderId != null">
+                    #{venderId} ,
+                </if>
+                <if test="code != null">
+                    #{code} ,
+                </if>
+                <if test="name != null">
+                    #{name} ,
+                </if>
+                <if test="createDate !=null">
+	                #{createDate} ,
+                </if>
+                <if test="modifyDate !=null">
+	                #{modifyDate} ,
+                </if>
+                <if test="contactor !=null">
+	                #{contactor} ,
+                </if>
+                <if test="address != null">
+                    #{address} ,
+                </if>
+                <if test="zipCode !=null">
+	                #{zipCode} ,
+                </if>
+                <if test="userId != null">
+                    #{userId} ,
+                </if>
+                 <if test="deptId != null">
+                    #{deptId} ,
+                </if>
+                <if test="tel != null">
+                    #{tel} ,
+                </if>
+                <if test="fax != null">
+                    #{fax} ,
+                </if>
+                <if test="email != null">
+                    #{email} ,
+                </if>
+                <if test="billEmail != null">
+                    #{billEmail} ,
+                </if>
+                <if test="b2bEmail != null">
+                    #{b2bEmail} ,
+                </if>
+                <if test="remarks != null">
+                    #{remarks} ,
+                </if>
+                <if test="countryId !=null">
+	                #{countryId} ,
+                </if>
+                <if test="type !=null">
+	                #{type} ,
+                </if>
+                <if test="venderType !=null">
+	                #{venderType} ,
+                </if>
+                <if test="peerType !=null">
+	                #{peerType} ,
+                </if>
+                <if test="isDel !=null">
+	                #{isDel},
+                </if>
+                <if test="status !=null">
+	                #{status},
+                </if>
+                 <if test="registrationNo !=null">
+	                #{registrationNo},
+                </if>
+                 <if test="businessCode !=null">
+	               #{businessCode},
+                </if>
+                 <if test="cityId !=null">
+	                #{cityId},
+                </if>
+                 <if test="stateId !=null">
+	                #{stateId},
+                </if>
+                 <if test="bankName !=null">
+	                #{bankName},
+                </if>
+                 <if test="branchNo !=null">
+	                #{branchNo},
+                </if>
+                 <if test="accountName !=null">
+	                #{accountName},
+                </if>
+                <if test="accountNumber !=null">
+	                #{accountNumber}
+                </if>
+	     	</trim>
+	</insert>
+
+	 
+	<sql id="findForPage_sql">
+        SELECT 
+		t.VenderId,t.Code,t.Name,t.CreateDate,t.ModifyDate,t.Contactor,t.Address,t.ZipCode,t.UserId,t.DeptId,t.Tel,t.Fax,t.Email,
+	    t.Remarks,t.Type,t.VenderType,t.PeerType,t.IsDel,t.Status,t.registrationNo,t.BillEmail,t.B2bEmail,
+	    t.cityId,t.stateId,t.bankName,t.branchNo,t.accountName,t.accountNumber,t.businessCode,c.CountryName,t.username 
+		FROM (SELECT v.*,z.username,z.id as id FROM vender v left join zs_admin z on v.UserId=z.id)t LEFT JOIN country c ON t.CountryId=c.CountryId
+        <where>
+            <trim suffixOverrides="AND">
+                <if test="record.venderId != null">
+                    t.VenderId = #{record.venderId} AND
+                </if>
+                <if test="record.code != null">
+                    t.Code LIKE CONCAT('%',"${record.code}",'%') AND
+                </if>
+                <if test="record.name != null">
+                    t.Name LIKE CONCAT('%',"${record.name}",'%') AND
+                </if>
+                <if test="record.createDate !=null">
+	                t.CreateDate = #{record.createDate} AND
+                </if>
+                <if test="record.modifyDate !=null">
+	                t.ModifyDate = #{record.modifyDate} AND
+                </if>
+                <if test="record.contactor !=null">
+	                t.Contactor LIKE CONCAT('%',"${record.contactor}",'%') AND
+                </if>
+                <if test="record.address != null">
+                    t.Address = #{record.address} AND
+                </if>
+                <if test="record.zipCode !=null">
+	                t.ZipCode = #{record.zipCode} AND
+                </if>
+                <if test="record.userId != null">
+                    t.UserId = #{record.userId} AND
+                </if>
+                 <if test="record.deptId != null">
+                    t.DeptId = #{record.deptId} AND
+                </if>
+                <if test="record.tel != null">
+                    t.Tel LIKE CONCAT('%',"${record.tel}",'%') AND
+                </if>
+                <if test="record.fax != null">
+                    t.Fax = #{record.fax} AND
+                </if>
+                <if test="record.email != null">
+                    t.Email = #{record.email} AND
+                </if>
+                <if test="record.billEmail != null">
+                    t.BillEmail = #{record.billEmail} AND
+                </if>
+                <if test="record.remarks != null">
+                    t.Remarks = #{record.remarks} AND
+                </if>
+                <if test="record.countryId !=null">
+	                t.CountryId = #{record.countryId} AND
+                </if>
+                <if test="record.type !=null">
+	                t.Type = #{record.type} AND
+                </if>
+                <if test="record.venderType !=null">
+	                t.VenderType = #{record.venderType} AND
+                </if>
+                <if test="record.peerType !=null">
+	                t.PeerType = #{record.peerType} AND
+                </if>
+                 <if test="record.registrationNo !=null">
+	                t.registrationNo = #{record.registrationNo} AND
+                </if>
+                 <if test="record.businessCode !=null">
+	                t.businessCode = #{record.businessCode} AND
+                </if>
+                 <if test="record.cityId !=null">
+	                t.cityId = #{record.cityId} AND
+                </if>
+                 <if test="record.stateId !=null">
+	                t.stateId = #{record.stateId} AND
+                </if>
+                 <if test="record.bankName !=null">
+	                t.bankName = #{record.bankName} AND
+                </if>
+                 <if test="record.branchNo !=null">
+	                t.branchNo = #{record.branchNo} AND
+                </if>
+                 <if test="record.accountName !=null">
+	                t.accountName = #{record.accountName} AND
+                </if>
+                <if test="record.accountNumber !=null">
+	                t.accountNumber = #{record.accountNumber} AND
+                </if>
+                <if test="record.countryName != null">
+                    c.countryName LIKE CONCAT('%',"${record.countryName}",'%') AND
+                </if>
+                <if test="record.userName != null">
+                    t.userName LIKE CONCAT('%',"${record.userName}",'%') AND
+                </if>
+                <if test="record.isDel !=null">
+                    <if test="record.isDel !=1">
+	                    t.IsDel = #{record.isDel} 
+                    </if>
+                </if>
+            </trim>
+        </where>
+        order by name
+    </sql>
+    
+    <select id="findForPage" resultMap="BaseResultMap">
+        <include refid="Pager.paginationStart"/>
+        <include refid="findForPage_sql"/>
+        <include refid="Pager.paginationEnd"/>
+    </select>
+    <select id="findForPageCount" resultType="int">
+        <include refid="Pager.countStart"/>
+        <include refid="findForPage_sql"/>
+        <include refid="Pager.countEnd"/>
+    </select>
+    
+    <select id="findVenderUserName" resultMap="BaseResultMapAddConutryName" parameterType="Vender">
+		SELECT 
+		t.username,t.`Name`,t.Contactor,t.Address,t.ZipCode,t.Tel,t.Fax,t.Email,t.Remarks ,c.CountryName,t.stateId,t.cityId
+		FROM (SELECT v.*,z.username,z.id as id FROM vender v left join zs_admin z on v.UserId=z.id)t LEFT JOIN country c ON t.CountryId=c.CountryId
+	    <where> 
+	    		 t.IsDel =0 
+	    		 <trim suffixOverrides="AND">
+                <if test="name != null">
+                   AND  t.Name LIKE CONCAT('%','${name}','%')
+                </if>
+                <if test="deptId != null">
+                   AND  t.DeptId  = #{deptId} 
+                </if>
+                <if test="tel !=null">
+	               AND  t.Tel LIKE CONCAT('%','${tel}','%') 
+                </if>
+                <if test="contactor !=null">
+	               AND  t.Contactor LIKE CONCAT('%','${contactor}','%') 
+                </if>
+                <if test="zipCode !=null">
+	               AND  t.ZipCode LIKE CONCAT('%','${zipCode}','%') 
+                </if>
+                <if test="stateId !=null">
+	               AND  t.StateId  = #{stateId} 
+                </if>
+                <if test="countryName !=null">
+	               AND  c.CountryName LIKE CONCAT('%','${countryName}','%')
+                </if>
+                <if test="cityId !=null">
+	               AND  t.CityId LIKE CONCAT('%','${cityId}','%')
+                </if>
+                <if test="code !=null">
+	               AND  t.Code LIKE CONCAT('%','${code}','%')
+                </if>
+                <if test="userName !=null">
+	               AND  t.userName LIKE CONCAT('%','${userName}','%')
+                </if>
+                <if test="type !=null">
+	               AND  t.Type =${type}
+                </if>
+            </trim>
+            
+        </where>
+        order by t.name
+	</select>
+    <select id="findByDept" resultMap="BaseResultMap" parameterType="String">
+		SELECT 
+			<include refid="Base_Column_List"/>
+	    FROM
+	    	vender
+	    WHERE 
+	    	DeptId=#{DeptId}
+	    AND type=2
+	    
+	</select>
+	
+    <select id="findMaxCode" resultType="string" parameterType="Vender">
+    	SELECT 
+    		MAX(`Code`) 
+    	FROM 
+    		vender 
+    	<where>
+            <trim suffixOverrides="AND">
+                <if test="deptId != null">
+                    DeptId = #{deptId} AND
+                </if>
+                <if test="type != null">
+                    Type = #{type} AND
+                </if>
+                <if test="isDel !=null">
+                    <if test="isDel !=1">
+	                    IsDel = #{isDel}  AND
+                    </if>
+                </if>
+            </trim>
+        </where>
+    		
+    </select>
+</mapper>

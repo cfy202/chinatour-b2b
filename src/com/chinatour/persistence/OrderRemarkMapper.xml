@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.OrderRemarkMapper">
+	<resultMap id="BaseResultMap" type="com.chinatour.entity.OrderRemark">
+		<id column="OrderRemarksId" property="orderRemarksId" jdbcType="VARCHAR" />
+		<result column="ModifyDate" property="modifyDate" jdbcType="TIMESTAMP" />
+		<result column="OrderId" property="orderId" jdbcType="VARCHAR" />
+		<result column="UpdateRemark" property="updateRemark" jdbcType="LONGVARCHAR" />
+		<result column="UserId" property="userId" jdbcType="VARCHAR" />
+		<result column="UserName" property="userName" jdbcType="VARCHAR" />  
+		<result column="NoticeState" property="noticeState" jdbcType="INTEGER" />
+		<result column="NoticeAccountant" property="noticeAccountant" jdbcType="INTEGER" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		OrderRemarksId, ModifyDate, OrderId, UpdateRemark, UserId, UserName, NoticeState, NoticeAccountant
+	</sql>
+
+	<sql id="findForPage_sql">
+		select
+		<include refid="Base_Column_List" />
+		from order_remark
+		<where>
+			<if test="record.orderRemarksId != null">
+				OrderRemarksId = #{record.orderRemarksId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.modifyDate != null">
+				AND ModifyDate = #{record.modifyDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.orderId != null">
+				AND OrderId = #{record.orderId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.updateRemark != null">
+				AND UpdateRemark = #{record.updateRemark,jdbcType=LONGVARCHAR}
+			</if>
+			<if test="record.userId != null">
+				AND UserId = #{record.userId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.userName != null">
+				AND UserName = #{record.userName,jdbcType=VARCHAR}
+			</if>
+			<if test="record.noticeState ！= null">
+				AND NoticeState	= #{record.noticeState,jdbcType=INTEGER}	
+			</if>
+			<if test="record.noticeAccountant != null">
+				AND NoticeAccountant = #{record.noticeAccountant,jdbcType=INTEGER}	
+			</if>
+		</where>
+	</sql>
+	
+	<select id="findForPage" resultMap="BaseResultMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findForPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+
+	<select id="find" resultMap="BaseResultMap" parameterType="com.chinatour.entity.OrderRemark">
+		select
+		<include refid="Base_Column_List" />
+		from order_remark
+		<where>
+			<if test="orderRemarksId != null">
+				OrderRemarksId = #{orderRemarksId,jdbcType=VARCHAR}
+			</if>
+			<if test="modifyDate != null">
+				AND ModifyDate = #{modifyDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="orderId != null">
+				AND OrderId = #{orderId,jdbcType=VARCHAR}
+			</if>
+			<if test="updateRemark != null">
+				AND UpdateRemark = #{updateRemark,jdbcType=LONGVARCHAR}
+			</if>
+			<if test="userId != null">
+				AND UserId = #{userId,jdbcType=VARCHAR}
+			</if>
+			<if test="userName != null">
+				AND UserName = #{userName,jdbcType=VARCHAR}
+			</if>
+			<if test="noticeState ！= null">
+				AND NoticeState	= #{noticeState,jdbcType=INTEGER}	
+			</if>
+			<if test="noticeAccountant != null">
+				AND NoticeAccountant = #{noticeAccountant,jdbcType=INTEGER}	
+			</if>
+		</where>
+	</select>
+
+	<select id="findAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from order_remark
+	</select>
+
+	<select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from order_remark
+		where OrderRemarksId = #{orderRemarksId,jdbcType=VARCHAR}
+	</select>
+
+	<delete id="removeById" parameterType="java.lang.String">
+		delete from order_remark
+		where OrderRemarksId = #{orderRemarksId,jdbcType=VARCHAR}
+	</delete>
+
+	<insert id="save" parameterType="com.chinatour.entity.OrderRemark">
+		insert into order_remark
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="orderRemarksId != null">
+				OrderRemarksId,
+			</if>
+			<if test="modifyDate != null">
+				ModifyDate,
+			</if>
+			<if test="orderId != null">
+				OrderId,
+			</if>
+			<if test="updateRemark != null">
+				UpdateRemark,
+			</if>
+			<if test="userId != null">
+				UserId,
+			</if>
+			<if test="userName != null">
+				UserName,
+			</if>
+			<if test="noticeState != null">
+				NoticeState,
+			</if>
+			<if test="noticeAccountant != null">
+				NoticeAccountant	
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="orderRemarksId != null">
+				#{orderRemarksId,jdbcType=VARCHAR},
+			</if>
+			<if test="modifyDate != null">
+				#{modifyDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="orderId != null">
+				#{orderId,jdbcType=VARCHAR},
+			</if>
+			<if test="updateRemark != null">
+				#{updateRemark,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=VARCHAR},
+			</if>
+			<if test="userName != null">
+				#{userName,jdbcType=VARCHAR},
+			</if>
+			<if test="noticeState != null">
+				#{noticeState,jdbcType=INTEGER},
+			</if>
+			<if test="noticeAccountant != null">
+				#{noticeAccountant,jdbcType=INTEGER}	
+			</if>
+		</trim>
+	</insert>
+
+	<update id="update" parameterType="com.chinatour.entity.OrderRemark">
+		update order_remark
+		<set>
+			<if test="modifyDate != null">
+				ModifyDate = #{modifyDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="orderId != null">
+				OrderId = #{orderId,jdbcType=VARCHAR},
+			</if>
+			<if test="updateRemark != null">
+				UpdateRemark = #{updateRemark,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="userId != null">
+				UserId = #{userId,jdbcType=VARCHAR},
+			</if>
+			<if test="userName != null">
+				UserName = #{userName,jdbcType=VARCHAR},
+			</if>
+			<if test="noticeState ！= null">
+				NoticeState	= #{noticeState,jdbcType=INTEGER},	
+			</if>
+			<if test="noticeAccountant != null">
+				NoticeAccountant = #{noticeAccountant,jdbcType=INTEGER}	
+			</if>
+		</set>
+		where OrderRemarksId = #{orderRemarksId,jdbcType=VARCHAR}
+	</update>
+	<select id="queryByOrderId" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from order_remark
+		where orderId = #{orderId,jdbcType=VARCHAR}
+		ORDER BY ModifyDate DESC
+	</select>
+</mapper>

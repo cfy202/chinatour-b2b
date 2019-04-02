@@ -1,0 +1,113 @@
+DROP TABLE IF EXISTS `vender`;
+CREATE TABLE `vender` (
+  `VenderId` varchar(36) NOT NULL,
+  `Code` varchar(36) NOT NULL DEFAULT '',
+  `Name` varchar(128) NOT NULL DEFAULT '',
+  `CreateDate` timestamp NOT NULL DEFAULT current_timestamp,
+  `ModifyDate` datetime,
+  `Contactor` varchar(64) NOT NULL DEFAULT '',
+  `Address` varchar(256) NOT NULL DEFAULT '',
+  `ZipCode` varchar(10) NOT NULL DEFAULT '',
+  `UserId` varchar(36) NOT NULL DEFAULT '',
+  `DeptId` varchar(36) NOT NULL,
+  `Tel` varchar(32) NOT NULL DEFAULT '',
+  `Fax` varchar(32) NOT NULL DEFAULT '',
+  `Email` varchar(128) NOT NULL DEFAULT '',
+  `Remarks` varchar(256) NOT NULL DEFAULT '',
+  `CountryId` varchar(36) NOT NULL DEFAULT '',
+  `Type` tinyint(2) NOT NULL DEFAULT '0',
+  `VenderType` tinyint(2) NOT NULL DEFAULT '0',
+  `PeerType` tinyint(2) NOT NULL DEFAULT '0',
+  `IsDel` tinyint(2) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`VenderId`,`DeptId`),
+  KEY `fk_vender_dept` (`DeptId`),
+  KEY `VenderId` (`VenderId`),
+  CONSTRAINT `fk_vender_dept` FOREIGN KEY (`DeptId`) REFERENCES `dept` (`DeptId`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*站内信相关表*/
+DROP TABLE IF EXISTS `notice`;
+CREATE TABLE `notice` (
+  `NoticeId` varchar(36) NOT NULL,
+  `Title` varchar(300) NOT NULL DEFAULT '',
+  `CreateDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `Content` text,
+  `IsDel` tinyint(2) DEFAULT '0',
+  PRIMARY KEY (`NoticeId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `appendix`;
+CREATE TABLE `appendix` (
+  `AppendixId` varchar(36) NOT NULL,
+  `AppendixFile` varchar(255) NOT NULL DEFAULT '',
+  `NoticeId` varchar(36) NOT NULL,
+  PRIMARY KEY (`AppendixId`),
+  KEY `fk_appendix_notice` (`NoticeId`),
+  CONSTRAINT `fk_appendix_notice` FOREIGN KEY (`NoticeId`) REFERENCES `notice` (`NoticeId`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `noticecontact`;
+CREATE TABLE `noticecontact` (
+  `NoticeContactId` varchar(36) NOT NULL,
+  `SendUser` varchar(36) NOT NULL DEFAULT '',
+  `ReceiveUser` varchar(36) NOT NULL DEFAULT '',
+  `Type` tinyint(2) NOT NULL DEFAULT '0',
+  `State` tinyint(2) NOT NULL DEFAULT '0',
+  `NoticeId` varchar(36) NOT NULL,
+  PRIMARY KEY (`NoticeContactId`),
+  KEY `fk_contactor_notice` (`NoticeId`),
+  CONSTRAINT `fk_contactor_notice` FOREIGN KEY (`NoticeId`) REFERENCES `notice` (`NoticeId`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE currency_type;
+CREATE TABLE `currency_type` (
+  `CurrencyTypeId` varchar(36) NOT NULL,
+  `CurrencyChs` varchar(20) NOT NULL DEFAULT '' COMMENT '本位币中国简称',
+  `CurrencyEng` varchar(20) NOT NULL DEFAULT '' COMMENT '本位币美国简称',
+  `Symbol` varchar(16) NOT NULL DEFAULT '' COMMENT '货币符号',
+  PRIMARY KEY (`CurrencyTypeId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE rateofcurrency;
+CREATE TABLE `rateofcurrency` (
+  `Id` varchar(36) NOT NULL,
+  `CurrencyId` varchar(36) NOT NULL DEFAULT '',
+  `ToCurrencyId` varchar(36) NOT NULL DEFAULT '',
+  `RateUp` decimal(10,2) NOT NULL DEFAULT '0',
+  `RateDown` decimal(10,2) NOT NULL DEFAULT '0',
+  `UsRate` decimal(10,2) NOT NULL DEFAULT '0',
+  `CurrencyTypeId` varchar(36) NOT NULL DEFAULT '',
+  `UpdateTime` timestamp NULL DEFAULT NULL,
+  `IsAvailable` int(2) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`Id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE tour_type;
+CREATE TABLE `tour_type` (
+  `TourTypeId` varchar(36) NOT NULL DEFAULT '',
+  `Code` int(2) NOT NULL DEFAULT '0',
+  `Type` varchar(128) NOT NULL DEFAULT '',
+  `IsDel` int(2) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`TourTypeId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `share_type`;
+CREATE TABLE `share_type` (
+  `ShareTypeId` varchar(36) NOT NULL,
+  `TypeName` varchar(255) NOT NULL,
+  `IsDel` tinyint(2) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ShareTypeId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `share_space`;
+CREATE TABLE `share_space` (
+  `ShareSpaceId` varchar(36) NOT NULL,
+  `ShareName` varchar(255) NOT NULL DEFAULT '',
+  `ShareTypeId` varchar(36) NOT NULL DEFAULT '',
+  `ShareUrl` varchar(255) NOT NULL DEFAULT '',
+  `IsDel` tinyint(2) NOT NULL DEFAULT '0',
+  `CreateDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `ModifyDate` datetime DEFAULT NULL,
+  `UserId` varchar(36) NOT NULL DEFAULT '',
+  PRIMARY KEY (`ShareSpaceId`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;

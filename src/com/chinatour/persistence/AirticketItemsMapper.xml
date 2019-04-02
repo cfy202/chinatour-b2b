@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.AirticketItemsMapper">
+	<resultMap id="BaseResultMap" type="com.chinatour.entity.AirticketItems">
+		<id column="ItemsId" property="itemsId" jdbcType="VARCHAR" />
+		<result column="TicketNo" property="ticketNo" jdbcType="VARCHAR" />
+		<result column="Net" property="net" jdbcType="DECIMAL" />
+		<result column="Tax" property="tax" jdbcType="DECIMAL" />
+		<result column="Total" property="total" jdbcType="DECIMAL" />
+		<result column="Selling" property="selling" jdbcType="DECIMAL" />
+		<result column="Charge" property="charge" jdbcType="DECIMAL" />
+		<result column="SupplierpricefororderId" property="supplierpricefororderId"
+			jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ItemsId, TicketNo, Net, Tax, Total, Selling,Charge, SupplierpricefororderId
+	</sql>
+	<select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from airticket_items
+		where ItemsId = #{itemsId,jdbcType=VARCHAR}
+	</select>
+	<select id="findByOrderId" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from airticket_items
+		where SupplierpricefororderId = #{supplierpricefororderId,jdbcType=VARCHAR}
+		ORDER BY TicketNo
+	</select>
+	<delete id="delete" parameterType="java.lang.String">
+		delete from airticket_items
+		where ItemsId = #{itemsId,jdbcType=VARCHAR}
+	</delete>
+	<insert id="save" parameterType="com.chinatour.entity.AirticketItems">
+		insert into airticket_items
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="itemsId != null">
+				ItemsId,
+			</if>
+			<if test="ticketNo != null">
+				TicketNo,
+			</if>
+			<if test="net != null">
+				Net,
+			</if>
+			<if test="tax != null">
+				Tax,
+			</if>
+			<if test="total != null">
+				Total,
+			</if>
+			<if test="selling != null">
+				Selling,
+			</if>
+			<if test="charge != null">
+				Charge,
+			</if>
+			<if test="supplierpricefororderId != null">
+				SupplierpricefororderId,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="itemsId != null">
+				#{itemsId,jdbcType=VARCHAR},
+			</if>
+			<if test="ticketNo != null">
+				#{ticketNo,jdbcType=VARCHAR},
+			</if>
+			<if test="net != null">
+				#{net,jdbcType=DECIMAL},
+			</if>
+			<if test="tax != null">
+				#{tax,jdbcType=DECIMAL},
+			</if>
+			<if test="total != null">
+				#{total,jdbcType=DECIMAL},
+			</if>
+			<if test="selling != null">
+				#{selling,jdbcType=DECIMAL},
+			</if>
+			<if test="charge != null">
+				#{charge,jdbcType=DECIMAL},
+			</if>
+			<if test="supplierpricefororderId != null">
+				#{supplierpricefororderId,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="update" parameterType="com.chinatour.entity.AirticketItems">
+		update airticket_items
+		<set>
+			<if test="ticketNo != null">
+				TicketNo = #{ticketNo,jdbcType=VARCHAR},
+			</if>
+			<if test="net != null">
+				Net = #{net,jdbcType=DECIMAL},
+			</if>
+			<if test="tax != null">
+				Tax = #{tax,jdbcType=DECIMAL},
+			</if>
+			<if test="total != null">
+				Total = #{total,jdbcType=DECIMAL},
+			</if>
+			<if test="selling != null">
+				Selling = #{selling,jdbcType=DECIMAL},
+			</if>
+			<if test="charge != null">
+				Charge = #{charge,jdbcType=DECIMAL},
+			</if>
+			<if test="supplierpricefororderId != null">
+				SupplierpricefororderId =
+				#{supplierpricefororderId,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ItemsId = #{itemsId,jdbcType=VARCHAR}
+	</update>
+	<select id="find" resultMap="BaseResultMap" parameterType="com.chinatour.entity.AirticketItems">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM airticket_items
+		<where>
+			<if test="ticketNo != null">
+				TicketNo = #{ticketNo,jdbcType=VARCHAR}
+			</if>
+			<if test="net != null">
+				AND Net = #{net,jdbcType=DECIMAL}
+			</if>
+			<if test="tax != null">
+				AND Tax = #{tax,jdbcType=DECIMAL}
+			</if>
+			<if test="total != null">
+				AND Total = #{total,jdbcType=DECIMAL}
+			</if>
+			<if test="selling != null">
+				AND Selling = #{selling,jdbcType=DECIMAL}
+			</if>
+			<if test="charge != null">
+				AND Charge = #{charge,jdbcType=DECIMAL}
+			</if>
+			<if test="supplierpricefororderId != null">
+				AND SupplierpricefororderId =
+				#{supplierpricefororderId,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+	<insert id="batchSave" parameterType="java.util.List">
+		INSERT INTO airticket_items
+			(<include refid="Base_Column_List"/>)
+		values 
+			<foreach collection="list" item="item" index="index" separator="," >
+				(
+				#{item.itemsId,jdbcType=VARCHAR},
+				#{item.ticketNo,jdbcType=VARCHAR},
+				#{item.net,jdbcType=DECIMAL},
+				#{item.tax,jdbcType=DECIMAL},
+				#{item.total,jdbcType=DECIMAL},
+				#{item.selling,jdbcType=DECIMAL},
+				#{item.charge,jdbcType=DECIMAL},
+				#{item.supplierpricefororderId,jdbcType=VARCHAR}
+				)
+			</foreach>
+	</insert>
+</mapper>

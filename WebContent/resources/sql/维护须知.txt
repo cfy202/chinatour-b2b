@@ -1,0 +1,62 @@
+服务器地址：173.193.149.242
+用户名：root
+密码：PVS12537
+(注意大小写)
+
+数据库地址：173.193.149.242
+用户名：root
+密码：root2583938
+
+项目打war包的数据库用户密码
+连接地址：127.0.0.1   （必须使用此地址）
+jdbc.password=chinatour2583938
+jdbc.username=chinatour
+
+1： 上传warb包 
+war包上传至 /home/chinaotur/
+
+2： 关闭tomcat 服务 
+
+切换至tomcat目录
+cd /home/tomcat/bin
+关闭服务
+./shutdown.sh 
+
+3： 备份数据
+
+切换至3.0备份目录
+cd /home/chinatour/chinatour
+执行备份数据命令（*注文件名 后面是 日期 + 时间）
+mysqldump -uroot -p chinatour|gzip>chinatour-2015-1-25-21.sql.gz 
+
+切换至2.0备份目录
+cd /home/chinaotur/business
+执行备份数据命令（*注文件名 后面是 日期 + 时间）
+mysqldump -uroot -p business|gzip>business-2015-2-5-21.sql.gz
+
+4： 重启电脑
+reboot
+
+5：删除旧的war包
+切换至tomcat目录
+cd /home/tomcat/webapps/
+删除包
+rm -rf chinatour-3.0
+rm -rf chinatour-3.0.war 
+
+6：把上传的新war 移动到tomcat下
+ mv /home/chinatour/chinatour-3.0.war /home/tomcat/webapps/
+ 
+7： 启动tomcat 服务 
+
+切换至tomcat目录
+cd /home/tomcat/bin
+启动服务
+ ./startup.sh
+ 
+8：完成 root用户安全退出
+ exit
+
+ 
+ 注：如需紧急重启服务器
+请依次执行 2,4,7 操作

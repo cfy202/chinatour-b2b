@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.RegionMapper">
+
+	<sql id="Base_Column_List">
+		RegionId, RegionName
+	</sql>
+
+	<sql id="findForPage_sql">
+		select
+		<include refid="Base_Column_List" />
+		from Region
+		<where>
+			<if test="record.id != null">
+				RegionId = #{record.id,jdbcType=VARCHAR}
+			</if>
+			<if test="record.regionName != null">
+				AND RegionName = #{record.regionName,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</sql>
+
+	<resultMap type="Region" id="BaseResultMap">
+		<id property="id" column="RegionId" jdbcType="VARCHAR" />
+		<result property="regionName" column="RegionName" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<resultMap type="Region" id="ResultMapForDept">
+		<id property="id" column="RegionId" jdbcType="VARCHAR" />
+		<result property="regionName" column="RegionName" jdbcType="VARCHAR" />
+		<collection property="regionDeptRel" select="com.chinatour.persistence.RegionDeptRelMapper.findByRegionId"
+			ofType="com.chinatour.entity.RegionDeptRel" column="RegionId"/>
+	</resultMap>
+
+	<select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Region
+		where
+		RegionId = #{id,jdbcType=VARCHAR}
+	</select>
+
+	<select id="findAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from Region
+	</select>
+	
+	<select id="findDeptByRegionId" parameterType="java.lang.String" resultMap="ResultMapForDept">
+		select
+			r.regionId, r.regionName
+		from Region r
+		where
+		RegionId = #{id,jdbcType=VARCHAR}
+		
+	</select>
+
+	<select id="findForPage" resultMap="BaseResultMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findForPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+
+	<delete id="removeById" parameterType="java.lang.String">
+		delete from Region
+		where
+		RegionId = #{id,jdbcType=VARCHAR}
+	</delete>
+
+	<update id="update" parameterType="Region">
+		update region 
+		set RegionName = #{regionName,jdbcType=VARCHAR}
+		where RegionId = #{id,jdbcType=VARCHAR}
+	</update>
+
+	<insert id="save" parameterType="Region">
+		insert into Region (RegionId,RegionName) 
+		values (#{id,jdbcType=VARCHAR},#{regionName,jdbcType=VARCHAR})
+	</insert>
+</mapper>

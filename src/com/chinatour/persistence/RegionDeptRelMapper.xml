@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.RegionDeptRelMapper">
+	
+	<resultMap id="BaseResultMap" type="com.chinatour.entity.RegionDeptRel">
+		<id column="RegionDeptRelId" property="id" jdbcType="VARCHAR" />
+		<result column="RegionId" property="regionId" jdbcType="VARCHAR" />
+		<result column="DeptId" property="deptId" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<resultMap type="com.chinatour.entity.RegionDeptRel" id="ResultMapperForDept">
+		<id column="RegionDeptRelId" property="id" jdbcType="VARCHAR" />
+		<result column="RegionId" property="regionId" jdbcType="VARCHAR" />
+		<result column="DeptId" property="deptId" jdbcType="VARCHAR" />
+		<association property="dept" column="DeptId"
+			select="com.chinatour.persistence.DeptMapper.findById" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		RegionDeptRelId, RegionId, DeptId
+	</sql>
+
+	<sql id="findForPage_sql">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM region_dept_rel
+		<if test="record.id != null">
+			AND RegionDeptRelId = #{record.id,jdbcType=VARCHAR}
+		</if>
+		<if test="record.regionId != null">
+			AND RegionId = #{record.regionId,jdbcType=VARCHAR}
+		</if>
+		<if test="record.deptId != null">
+			AND DeptId = #{record.deptId,jdbcType=VARCHAR}
+		</if>
+	</sql>
+
+	<select id="findForPage" resultMap="BaseResultMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findForPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+
+	<select id="find" resultMap="BaseResultMap"
+		parameterType="com.chinatour.entity.RegionDeptRel">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM region_dept_rel
+		<if test="record.id != null">
+			RegionDeptRelId = #{record.id,jdbcType=VARCHAR}
+		</if>
+		<if test="record.regionId != null">
+			AND RegionId = #{record.regionId,jdbcType=VARCHAR}
+		</if>
+		<if test="record.deptId != null">
+			AND DeptId = #{record.deptId,jdbcType=VARCHAR}
+		</if>
+	</select>
+
+	<select id="findAll" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM  region_dept_rel
+	</select>
+
+	<select id="findByDeptId" resultMap="BaseResultMap" parameterType="java.lang.String">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM  region_dept_rel
+		WHERE DeptId = #{deptId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="findByRegionId" resultMap="ResultMapperForDept" parameterType="java.lang.String">
+		SELECT
+		rd.RegionDeptRelId, rd.RegionId, rd.DeptId
+		FROM  region_dept_rel rd
+		WHERE
+		rd.RegionId = #{id,jdbcType=VARCHAR}
+	</select>
+
+	<select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String">
+		SELECT
+		D.DeptName
+		FROM  region_dept_rel R join Dept D on(R.DeptId=D.DeptId)
+		WHERE
+		RegionDeptRelId =
+		#{id,jdbcType=VARCHAR}
+	</select>
+	
+	<delete id="removeById" parameterType="java.lang.String">
+		DELETE FROM region_dept_rel
+		WHERE  RegionDeptRelId = #{id,jdbcType=VARCHAR}
+	</delete>
+
+	<insert id="save" parameterType="com.chinatour.entity.RegionDeptRel">
+		INSERT INTO region_dept_rel
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				RegionDeptRelId,
+			</if>
+			<if test="regionId != null">
+				RegionId,
+			</if>
+			<if test="deptId != null">
+				DeptId,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="regionId != null">
+				#{regionId,jdbcType=VARCHAR},
+			</if>
+			<if test="deptId != null">
+				#{deptId,jdbcType=VARCHAR},
+			</if>
+			
+		</trim>
+	</insert>
+
+	<update id="update" parameterType="com.chinatour.entity.RegionDeptRel">
+		UPDATE region_dept_rel
+		<set>
+			<if test="regionId != null">
+				RegionId = #{regionId,jdbcType=VARCHAR},
+			</if>
+			<if test="deptId != null">
+				DeptId = #{deptId,jdbcType=VARCHAR},
+			</if>
+		</set>
+		WHERE  RegionDeptRelId = #{id,jdbcType=VARCHAR}
+	</update>
+	
+	<update id="updateByDeptId" parameterType="com.chinatour.entity.RegionDeptRel">
+		UPDATE region_dept_rel
+		<set>
+			<if test="regionId != null">
+				RegionId = #{regionId,jdbcType=VARCHAR},
+			</if>
+		</set>
+		WHERE  DeptId = #{deptId,jdbcType=VARCHAR}
+	</update>
+	
+	<select id="removeByIds" resultMap="BaseResultMap">
+		delete 
+		from region_dept_rel
+		<where>
+            <trim suffixOverrides="AND">
+                RegionDeptRelId in
+                <foreach item="item" index="index" collection="ids" open="("
+                         separator="," close=")">
+                    #{item}
+                </foreach>
+                AND
+            </trim>
+        </where>
+	</select>
+	
+	 <insert id="addTrainRecordBatch" useGeneratedKeys="true" parameterType="java.util.List">  
+        <selectKey resultType="long" keyProperty="id" order="AFTER">  
+          SELECT  
+            LAST_INSERT_ID()  
+        </selectKey>  
+        insert into region_dept_rel (RegionDeptRelId,RegionId,DeptId)   
+        values  
+        <foreach collection="list" item="item" index="index" separator="," >  
+            (#{item.id},#{item.regionId},#{item.deptId})  
+        </foreach>  
+    </insert>  
+</mapper>

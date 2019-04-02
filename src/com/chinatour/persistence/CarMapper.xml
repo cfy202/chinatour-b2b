@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.CarMapper">
+
+	<sql id="Base_Column_List">
+		CarId, CarName, TourId,TourCode, Seats,CarRemark
+	</sql>
+
+	<sql id="findForPage_sql">
+		select
+		<include refid="Base_Column_List" />
+		from car
+		<where>
+			<if test="record.carId != null">
+				CarId = #{record.CarId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tourId != null">
+				TourId = #{record.tourId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tourCode != null">
+				TourCode = #{record.tourCode,jdbcType=VARCHAR}
+			</if>
+			<if test="record.carName != null">
+				AND CarName LIKE CONCAT('%','${record.carName}','%')
+			</if>
+			<if test="record.seats != null">
+				AND seats=#{record.Seats,jdbcType=INTEGER}
+			</if>
+			<if test="record.carRemark != null">
+				AND CarRemark LIKE CONCAT('%','${record.carRemark}','%')
+			</if>
+		</where>
+	</sql>
+
+	<resultMap type="Car" id="BaseResultMap">
+		<id property="carId" column="CarId" jdbcType="VARCHAR" />
+		<result property="tourId" column="TourId" jdbcType="VARCHAR" />
+		<result property="tourCode" column="TourCode" jdbcType="VARCHAR" />
+		<result property="carName" column="CarName" jdbcType="VARCHAR" />
+		<result property="seats" column="Seats" jdbcType="INTEGER" />
+		<result property="carRemark" column="CarRemark" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
+	    select
+		<include refid="Base_Column_List" />
+		from car
+		where
+		CarId = #{id,jdbcType=VARCHAR}
+	</select>
+
+	<select id="findAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from car
+	</select>
+
+	<select id="findForPage" resultMap="BaseResultMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findForPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+
+	<delete id="removeById" parameterType="java.lang.String">
+		delete from car
+		where
+		CityId = #{id,jdbcType=VARCHAR}
+	</delete>
+
+	<update id="update" parameterType="Car">
+		update car
+		<set>
+			<if test="carName != null">
+				CarName = #{carName,jdbcType=VARCHAR},
+			</if>
+			<if test="tourId != null">
+				TourId = #{tourId,jdbcType=VARCHAR},
+			</if>
+			<if test="tourCode != null">
+				TourCode = #{tourCode,jdbcType=VARCHAR},
+			</if>
+			<if test="seats != null">
+				Seats = #{seats,jdbcType=INTEGER},
+			</if>
+			<if test="carRemark != null">
+				CarRemark = #{carRemark,jdbcType=INTEGER},
+			</if>
+		</set>
+		where CarId = #{carId,jdbcType=VARCHAR}
+	</update>
+
+	<insert id="save" parameterType="Car">
+		insert into car
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="carId != null">
+				CarId,
+			</if>
+			<if test="carName != null">
+				CarName,
+			</if>
+			<if test="tourId != null">
+				TourId,
+			</if>
+			<if test="tourCode != null">
+				TourCode,
+			</if>
+			<if test="seats != null">
+				Seats,
+			</if>
+			<if test="carRemark != null">
+				CarRemark,
+			</if>
+		</trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="carId != null">
+				#{carId,jdbcType=VARCHAR},
+			</if>
+			<if test="carName != null">
+				#{carName,jdbcType=VARCHAR},
+			</if>
+			<if test="tourId != null">
+				#{tourId,jdbcType=VARCHAR},
+			</if>
+			<if test="tourCode != null">
+				#{tourCode,jdbcType=VARCHAR},
+			</if>
+			<if test="seats != null">
+				#{seats,jdbcType=INTEGER},
+			</if>
+			<if test="carRemark != null">
+				#{carRemark,jdbcType=VARCHAR}
+			</if>
+		</trim>
+	</insert>
+	
+	<select id="findByTourId" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT
+			<include refid="Base_Column_List" />
+		FROM
+			car
+		WHERE 
+			TourId = #{id,jdbcType=VARCHAR}
+	</select>  
+</mapper>

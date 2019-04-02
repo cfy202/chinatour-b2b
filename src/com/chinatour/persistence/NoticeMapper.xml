@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.NoticeMapper">
+	
+    <sql id="Base_Column_List">
+        NoticeId,Title,CreateDate,Content,IsDel
+    </sql>
+    
+	<resultMap type="Notice" id="BaseResultMap">
+	    <result column="NoticeId" property="noticeId" jdbcType="VARCHAR" />
+		<result column="Title" property="title" jdbcType="VARCHAR" />
+		<result column="CreateDate" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="Content" property="content" jdbcType="VARCHAR" />
+		<result column="IsDel" property="isDel" jdbcType="INTEGER" />
+	</resultMap>
+	
+	<select id="findAll" resultMap="BaseResultMap">
+		SELECT 
+			<include refid="Base_Column_List"/>
+	    FROM
+	    	notice
+	</select>
+	
+	
+	<delete id="removeById" parameterType="String">
+	    DELETE FROM 
+		    notice 
+		WHERE 
+		     NoticeId=#{noticeId}
+	</delete>	
+	
+	
+	<select id="findById" resultMap="BaseResultMap" parameterType="String">
+		SELECT 
+			<include refid="Base_Column_List"/>
+	    FROM
+	    	notice
+	    WHERE 
+	    	NoticeId=#{noticeId}
+	</select>
+	
+	<update id="update" parameterType="Notice">
+		UPDATE notice
+			<set>
+			    <if test="noticeId != null">
+                    NoticeId = #{noticeId} ,
+                </if>
+                <if test="title != null">
+                    Title = #{title} ,
+                </if>
+                <if test="createDate !=null">
+	                CreateDate = #{createDate} ,
+                </if>
+                <if test="content != null">
+                    Content = #{content} ,
+                </if>
+                <if test="isDel !=null">
+	                IsDel = #{isDel} 
+                </if>
+			</set>
+		WHERE 
+            NoticeId=#{noticeId}
+	</update> 
+	
+	
+	 <insert id="save" parameterType="Notice">
+	     INSERT INTO notice
+	     	<trim prefix="(" suffix=")" suffixOverrides=",">
+	     		<if test="noticeId != null">
+                    NoticeId ,
+                </if>
+                <if test="title != null">
+                    Title ,
+                </if>
+                <if test="createDate !=null">
+	                CreateDate ,
+                </if>
+                <if test="content != null">
+                    Content ,
+                </if>
+                <if test="isDel !=null">
+	                IsDel 
+                </if>
+	     	</trim> 
+	     		
+	     	<trim prefix="values (" suffix=")" suffixOverrides=",">
+	     		<if test="noticeId != null">
+                    #{noticeId} ,
+                </if>
+                <if test="title != null">
+                    #{title} ,
+                </if>
+                <if test="createDate !=null">
+	                #{createDate} ,
+                </if>
+                <if test="content != null">
+                    #{content} ,
+                </if>
+                <if test="isDel !=null">
+	                #{isDel} 
+                </if>
+	     	</trim>
+	</insert>
+
+	 
+	<sql id="findForPage_sql">
+        select
+        	<include refid="Base_Column_List"/>
+        from notice
+        <where>
+            <trim suffixOverrides="AND">
+                <if test="record.noticeId != null">
+                    NoticeId = #{record.noticeId} AND
+                </if>
+                <if test="record.title != null">
+                    Title LIKE CONCAT('%','${record.title}','%')
+                </if>
+                <if test="record.createDate !=null">
+	                CreateDate = #{record.createDate} AND
+                </if>
+                <if test="record.content != null">
+                    Content = #{record.content} AND
+                </if>
+                <if test="record.isDel !=null">
+                    <if test="record.isDel !=1">
+	                    IsDel = #{record.isDel} 
+                    </if>
+                </if>
+            </trim>
+        </where>
+        ORDER BY CreateDate DESC
+    </sql>
+    
+    <select id="findForPage" resultMap="BaseResultMap">
+        <include refid="Pager.paginationStart"/>
+        <include refid="findForPage_sql"/>
+        <include refid="Pager.paginationEnd"/>
+    </select>
+    
+    <select id="findForPageCount" resultType="int">
+        <include refid="Pager.countStart"/>
+        <include refid="findForPage_sql"/>
+        <include refid="Pager.countEnd"/>
+    </select>
+</mapper>

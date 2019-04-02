@@ -1,0 +1,37 @@
+/*行程表*/
+CREATE TABLE `grouproute` (
+  `GroupRouteId` varchar(36) NOT NULL,
+  `DayNum` int(11) NOT NULL,
+  `RouteName` varchar(128) NOT NULL DEFAULT '',
+  `RouteDescribe` varchar(1280) NOT NULL DEFAULT '',
+  `IsDel` tinyint(2) NOT NULL DEFAULT '0',
+  `CreateDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `ModifyDate` datetime DEFAULT NULL,
+  `GroupLineId` varchar(36) NOT NULL DEFAULT '',
+  PRIMARY KEY (`GroupRouteId`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
+/*线路酒店中间表*/
+CREATE TABLE `groupline_hotel_rel` (
+  `GroupLineHotelRelId` varchar(36) NOT NULL,
+  `GroupLineId` varchar(36) NOT NULL,
+  `HotelId` varchar(36) NOT NULL,
+  PRIMARY KEY (`GroupLineHotelRelId`),
+  KEY `groupline_rel_grouplineId` (`GroupLineId`),
+  KEY `groupline_rel_hotels_hotelId` (`HotelId`),
+  CONSTRAINT `groupline_rel_grouplineId` FOREIGN KEY (`GroupLineId`) REFERENCES `groupline` (`GroupLineId`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `groupline_rel_hotels_hotelId` FOREIGN KEY (`HotelId`) REFERENCES `hotel` (`HotelId`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*线路表*/
+
+CREATE TABLE `groupline` (
+  `GroupLineId` varchar(36) NOT NULL,
+  `TourCode` varchar(45) NOT NULL DEFAULT '',
+  `TourName` varchar(64) NOT NULL DEFAULT '',
+  `TripDesc` longtext,
+  `TourTypeId` varchar(36) NOT NULL DEFAULT '',
+  `Aviliable` tinyint(2) DEFAULT NULL,
+  PRIMARY KEY (`GroupLineId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

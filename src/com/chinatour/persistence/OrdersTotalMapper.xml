@@ -1,0 +1,1746 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.OrdersTotalMapper">
+	<sql id="Base_Column_List">
+		OrdersTotalId, OrderNumber, TotalPeople, DeptId, UserId, WR, Agent, CompanyId, Company,Tel,
+		ContactName, BookingDate, Address, Email, PostCode, CustomerSourceId, CountryId, StateId, CityId,Tax,CheckTime, IsDel,PeerUserId
+	</sql>
+	
+	<resultMap type="com.chinatour.entity.OrdersTotal" id="BaseResultMap">
+		<id property="ordersTotalId" column="OrdersTotalId" jdbcType="VARCHAR" />
+		<result property="orderNumber" column="OrderNumber" jdbcType="VARCHAR" />
+		<result property="totalPeople" column="TotalPeople" jdbcType="INTEGER" />
+		<result property="deptId" column="DeptId" jdbcType="VARCHAR" />
+		<result property="userId" column="UserId" jdbcType="VARCHAR" />
+		<result property="wr" column="WR" jdbcType="VARCHAR" />
+		<result property="agent" column="Agent" jdbcType="VARCHAR" />
+		<result property="companyId" column="CompanyId" jdbcType="VARCHAR" />
+		<result property="company" column="Company" jdbcType="VARCHAR" />
+		<result property="contactName" column="ContactName" jdbcType="VARCHAR" />
+		<result property="bookingDate" column="BookingDate" jdbcType="TIMESTAMP" />
+		<result property="address" column="Address" jdbcType="VARCHAR" />
+		<result property="tel" column="Tel" jdbcType="VARCHAR" />
+		<result property="email" column="Email" jdbcType="VARCHAR" />
+		<result property="postCode" column="PostCode" jdbcType="VARCHAR" />
+		<result property="customerSourceId" column="CustomerSourceId" jdbcType="VARCHAR" />
+		<result property="countryId" column="CountryId" jdbcType="VARCHAR" />
+		<result property="stateId" column="StateId" jdbcType="VARCHAR" />
+		<result property="cityId" column="CityId" jdbcType="VARCHAR" />
+		<result column="Tax" property="tax" jdbcType="TINYINT" />
+		<result column="CheckTime" property="checkTime" jdbcType="DATE" />
+		<result column="IsDel" property="isDel" jdbcType="TINYINT" /> 
+		<result column="PeerUserId" property="peerUserId" jdbcType="VARCHAR" /> 
+	</resultMap>
+	
+	 <resultMap id="ResultMapForSumPayOrCost" type="com.chinatour.entity.OrdersTotal" extends="BaseResultMap">
+		<association property="sumFee" column="OrdersTotalId"
+			select="com.chinatour.persistence.OrderMapper.findSumFeeByOrdersTotalId" />
+		<association property="order" column="OrdersTotalId" 
+			select="com.chinatour.persistence.OrderMapper.findSumPayOrCostByOrdersId"/>
+	</resultMap>
+	
+	<sql id="findForPage_sql">
+		SELECT 
+		ordersTotal.OrdersTotalId, ordersTotal.OrderNumber, ordersTotal.TotalPeople, ordersTotal.UserId, ordersTotal.WR, ordersTotal.Agent, ordersTotal.Company,ordersTotal.PeerUserId,
+		ordersTotal.ContactName, ordersTotal.BookingDate, ordersTotal.CustomerSourceId, ordersTotal.Tax, ordersTotal.CheckTime, ordersTotal.SumFee,ordersTotal.IsDel,
+		d.deptName as deptId
+		FROM 
+		(SELECT ot.*,SUM(IFNULL(o.CommonTourFee,0)) AS SumFee
+		FROM orders_total ot LEFT JOIN orders o
+		ON ot.OrdersTotalId = o.OrdersTotalId
+		<where>
+		<if test="record.ordersTotalId != null">
+			AND ot.OrdersTotalId = #{record.ordersTotalId,jdbcType=VARCHAR}
+		</if>
+		<if test="record.orderNumber != null">
+			AND ot.OrderNumber LIKE CONCAT('%','${record.orderNumber}','%')
+		</if>
+		<if test="record.totalPeople != null">
+			AND ot.TotalPeople = #{record.totalPeople,jdbcType=INTEGER}
+		</if>
+		<if test="record.deptId != null">
+			AND ot.DeptId = #{record.deptId,jdbcType=VARCHAR}
+		</if>
+		<if test="record.userId != null">
+			AND ot.UserId = #{record.userId,jdbcType=VARCHAR}
+		</if>
+		<if test="record.wr != null">
+			AND ot.WR = #{record.wr,jdbcType=VARCHAR}
+		</if>
+		<if test="record.bookingDate != null">
+			AND ot.BookingDate = #{record.bookingDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="record.beginningDate != null">
+			AND ot.BookingDate <![CDATA[>=]]> #{record.beginningDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="record.endingDate != null">
+			AND DATE_FORMAT(ot.BookingDate,'%Y-%m-%d') <![CDATA[<=]]> #{record.endingDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="record.settlementDateBeg != null">
+			AND ot.CheckTime <![CDATA[>=]]> #{record.settlementDateBeg,jdbcType=TIMESTAMP}
+		</if>
+		<if test="record.settlementDateEnd != null">
+			AND ot.CheckTime <![CDATA[<=]]> #{record.settlementDateEnd,jdbcType=TIMESTAMP}
+		</if>
+		<if test="record.agent != null">
+			AND ot.Agent LIKE CONCAT('%','${record.agent}','%')
+		</if>
+		<if test="record.companyId != null">
+			AND ot.CompanyId = #{record.companyId,jdbcType=VARCHAR}
+		</if>
+		<if test="record.company != null">
+			AND ot.Company LIKE CONCAT('%','${record.company}','%')
+		</if>
+		<if test="record.contactName != null">
+			AND ot.ContactName LIKE CONCAT('%','${record.contactName}','%')
+		</if>
+		<if test="record.address != null">
+			AND ot.Address LIKE CONCAT('%','${record.address}','%')
+		</if>
+		<if test="record.tel != null">
+			AND ot.Tel LIKE CONCAT('%','${record.tel}','%')
+		</if>
+		<if test="record.email != null">
+			AND ot.Email = #{record.email,jdbcType=VARCHAR}
+		</if>
+		<if test="record.postCode != null">
+			AND ot.PostCode = #{record.postCode,jdbcType=VARCHAR}
+		</if>
+		<if test="record.isDel != null">
+			AND ot.IsDel = #{record.isDel,jdbcType=TINYINT}
+		</if>
+		<if test="record.tax!=null and record.tax!=4" >
+			AND ot.Tax=#{record.tax}
+		</if>
+		<if test="record.tax==4">
+			AND (ot.Tax=2 or ot.Tax=4)
+		</if>
+		<if test="record.customerSourceId != null">
+			AND ot.CustomerSourceId IN (SELECT CustomerSourceId FROM CustomerSource WHERE SourceName LIKE CONCAT('%','${record.customerSourceId}','%'))
+		</if>
+		</where>
+		GROUP BY ot.OrdersTotalId
+		) ordersTotal, dept d
+		WHERE ordersTotal.deptId = d.deptId
+		ORDER BY ordersTotal.BookingDate DESC
+	</sql>
+	
+	<sql id="findForPageCount_sql">
+		SELECT 
+			ordersTotal.OrdersTotalId
+		FROM 
+		(SELECT ot.*,SUM(IFNULL(o.CommonTourFee,0)) AS SumFee
+		FROM orders_total ot LEFT JOIN orders o
+		ON ot.OrdersTotalId = o.OrdersTotalId
+		<where>
+		<if test="record.ordersTotalId != null">
+			AND ot.OrdersTotalId = #{record.ordersTotalId,jdbcType=VARCHAR}
+		</if>
+		<if test="record.orderNumber != null">
+			AND ot.OrderNumber LIKE CONCAT('%','${record.orderNumber}','%')
+		</if>
+		<if test="record.totalPeople != null">
+			AND ot.TotalPeople = #{record.totalPeople,jdbcType=INTEGER}
+		</if>
+		<if test="record.deptId != null">
+			AND ot.DeptId = #{record.deptId,jdbcType=VARCHAR}
+		</if>
+		<if test="record.userId != null">
+			AND ot.UserId = #{record.userId,jdbcType=VARCHAR}
+		</if>
+		<if test="record.wr != null">
+			AND ot.WR = #{record.wr,jdbcType=VARCHAR}
+		</if>
+		<if test="record.bookingDate != null">
+			AND ot.BookingDate = #{record.bookingDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="record.beginningDate != null">
+			AND ot.BookingDate <![CDATA[>=]]> #{record.beginningDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="record.endingDate != null">
+			AND DATE_FORMAT(ot.BookingDate,'%Y-%m-%d') <![CDATA[<=]]> #{record.endingDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="record.settlementDateBeg != null">
+			AND ot.CheckTime <![CDATA[>=]]> #{record.settlementDateBeg,jdbcType=TIMESTAMP}
+		</if>
+		<if test="record.settlementDateEnd != null">
+			AND ot.CheckTime <![CDATA[<=]]> #{record.settlementDateEnd,jdbcType=TIMESTAMP}
+		</if>
+		<if test="record.agent != null">
+			AND ot.Agent LIKE CONCAT('%','${record.agent}','%')
+		</if>
+		<if test="record.companyId != null">
+			AND ot.CompanyId = #{record.companyId,jdbcType=VARCHAR}
+		</if>
+		<if test="record.company != null">
+			AND ot.Company LIKE CONCAT('%','${record.company}','%')
+		</if>
+		<if test="record.contactName != null">
+			AND ot.ContactName LIKE CONCAT('%','${record.contactName}','%')
+		</if>
+		<if test="record.address != null">
+			AND ot.Address LIKE CONCAT('%','${record.address}','%')
+		</if>
+		<if test="record.tel != null">
+			AND ot.Tel LIKE CONCAT('%','${record.tel}','%')
+		</if>
+		<if test="record.email != null">
+			AND ot.Email = #{record.email,jdbcType=VARCHAR}
+		</if>
+		<if test="record.postCode != null">
+			AND ot.PostCode = #{record.postCode,jdbcType=VARCHAR}
+		</if>
+		<if test="record.tax!=null and record.tax!=4" >
+			AND ot.Tax=#{record.tax}
+		</if>
+		<if test="record.tax==4">
+			AND (ot.Tax=2 or ot.Tax=4)
+		</if>
+		<if test="record.customerSourceId != null">
+			AND ot.CustomerSourceId IN (SELECT CustomerSourceId FROM CustomerSource WHERE SourceName LIKE CONCAT('%','${record.customerSourceId}','%'))
+		</if>
+		</where>
+		GROUP BY ot.OrdersTotalId
+		) ordersTotal, dept d
+		WHERE ordersTotal.deptId = d.deptId
+	</sql>
+	
+	<sql id="findForGroupPage_sql">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM orders_total ot,admin_group ag
+		<where>
+				ot.UserId = ag.AdminId
+			<if test="record.ordersTotalId != null">
+				AND OrdersTotalId = #{record.ordersTotalId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.orderNumber != null">
+				AND OrderNumber LIKE CONCAT('%','${record.orderNumber}','%')
+			</if>
+			<if test="record.totalPeople != null">
+				AND TotalPeople = #{record.totalPeople,jdbcType=INTEGER}
+			</if>
+			<if test="record.deptId != null">
+				AND DeptId = #{record.deptId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.userId != null">
+				AND UserId = #{record.userId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.wr != null">
+				AND WR = #{record.wr,jdbcType=VARCHAR}
+			</if>
+			<if test="record.bookingDate != null">
+				AND BookingDate = #{record.bookingDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.beginningDate != null">
+				AND BookingDate <![CDATA[>=]]> #{record.beginningDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.endingDate != null">
+				AND DATE_FORMAT(BookingDate,'%Y-%m-%d') <![CDATA[<=]]> #{record.endingDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.agent != null">
+				AND Agent LIKE CONCAT('%','${record.agent}','%')
+			</if>
+			<if test="record.companyId != null">
+				AND CompanyId = #{record.companyId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.company != null">
+				AND Company LIKE CONCAT('%','${record.company}','%')
+			</if>
+			<if test="record.contactName != null">
+				AND ContactName LIKE CONCAT('%','${record.contactName}','%')
+			</if>
+			<if test="record.address != null">
+				AND Address LIKE CONCAT('%','${record.address}','%')
+			</if>
+			<if test="record.tel != null">
+				AND Tel LIKE CONCAT('%','${record.tel}','%')
+			</if>
+			<if test="record.email != null">
+				AND Email = #{record.email,jdbcType=VARCHAR}
+			</if>
+			<if test="record.postCode != null">
+				AND PostCode = #{record.postCode,jdbcType=VARCHAR}
+			</if>
+			<if test="record.customerSourceId != null">
+				AND CustomerSourceId IN (SELECT CustomerSourceId FROM CustomerSource WHERE SourceName LIKE CONCAT('%','${record.customerSourceId}','%'))
+			</if>
+			<if test="record.countryId != null">
+				AND CountryId = #{record.countryId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.stateId != null">
+				AND StateId = #{record.stateId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.cityId != null">
+				AND CityId = #{record.cityId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tax!=null and record.tax!=4" >
+				AND ot.Tax=#{record.tax}
+			</if>
+			<if test="record.tax==4">
+				AND (ot.Tax=2 or ot.Tax=4)
+			</if>
+			<if test="record.groupId != null">
+				AND ag.GroupId = #{record.groupId,jdbcType=VARCHAR}
+			</if>
+			ORDER BY OrderNumber DESC,BookingDate DESC
+		</where>
+	</sql>
+	
+	<sql id="findForGroupPageCount_sql">
+		SELECT
+			OrdersTotalId
+		FROM orders_total ot,admin_group ag
+		<where>
+				ot.UserId = ag.AdminId
+			<if test="record.ordersTotalId != null">
+				AND OrdersTotalId = #{record.ordersTotalId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.orderNumber != null">
+				AND OrderNumber LIKE CONCAT('%','${record.orderNumber}','%')
+			</if>
+			<if test="record.totalPeople != null">
+				AND TotalPeople = #{record.totalPeople,jdbcType=INTEGER}
+			</if>
+			<if test="record.deptId != null">
+				AND DeptId = #{record.deptId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.userId != null">
+				AND UserId = #{record.userId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.wr != null">
+				AND WR = #{record.wr,jdbcType=VARCHAR}
+			</if>
+			<if test="record.bookingDate != null">
+				AND BookingDate = #{record.bookingDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.beginningDate != null">
+				AND BookingDate <![CDATA[>=]]> #{record.beginningDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.endingDate != null">
+				AND DATE_FORMAT(BookingDate,'%Y-%m-%d') <![CDATA[<=]]> #{record.endingDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.agent != null">
+				AND Agent LIKE CONCAT('%','${record.agent}','%')
+			</if>
+			<if test="record.companyId != null">
+				AND CompanyId = #{record.companyId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.company != null">
+				AND Company LIKE CONCAT('%','${record.company}','%')
+			</if>
+			<if test="record.contactName != null">
+				AND ContactName LIKE CONCAT('%','${record.contactName}','%')
+			</if>
+			<if test="record.address != null">
+				AND Address LIKE CONCAT('%','${record.address}','%')
+			</if>
+			<if test="record.tel != null">
+				AND Tel LIKE CONCAT('%','${record.tel}','%')
+			</if>
+			<if test="record.email != null">
+				AND Email = #{record.email,jdbcType=VARCHAR}
+			</if>
+			<if test="record.postCode != null">
+				AND PostCode = #{record.postCode,jdbcType=VARCHAR}
+			</if>
+			<if test="record.customerSourceId != null">
+				AND CustomerSourceId IN (SELECT CustomerSourceId FROM CustomerSource WHERE SourceName LIKE CONCAT('%','${record.customerSourceId}','%'))
+			</if>
+			<if test="record.countryId != null">
+				AND CountryId = #{record.countryId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.stateId != null">
+				AND StateId = #{record.stateId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.cityId != null">
+				AND CityId = #{record.cityId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tax!=null and record.tax!=4" >
+				AND ot.Tax=#{record.tax}
+			</if>
+			<if test="record.tax==4">
+				AND (ot.Tax=2 or ot.Tax=4)
+			</if>
+			<if test="record.groupId != null">
+				AND ag.GroupId = #{record.groupId,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</sql>
+	
+	<select id="findForPage" resultMap="BaseResultMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findForPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findForPageCount_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+	
+	<select id="findForGroupPage" resultMap="BaseResultMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findForGroupPage_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findForGroupPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findForGroupPageCount_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+	<!-- 总订单  显示总人数 -->
+	<select id="findOrderTotalSumPepole" resultType="com.chinatour.entity.OrdersTotal" parameterType="com.chinatour.entity.OrdersTotal">
+		SELECT
+			SUM(tt.TotalPeople) as TotalPeople,
+			SUM(tt.SumFee) as SumFee
+		FROM (
+			SELECT
+				ot.TotalPeople, 
+				SUM(o.CommonTourFee) AS SumFee
+				FROM orders_total ot,orders o
+				<where>
+					ot.OrdersTotalId = o.OrdersTotalId 
+					<if test="ordersTotalId != null">
+						AND ot.OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+					</if>
+					<if test="orderNumber != null">
+						AND ot.OrderNumber LIKE CONCAT('%','${orderNumber}','%')
+					</if>
+					<if test="totalPeople != null">
+						AND ot.TotalPeople = #{totalPeople,jdbcType=INTEGER}
+					</if>
+					<if test="deptId != null">
+						AND ot.DeptId = #{deptId,jdbcType=VARCHAR}
+					</if>
+					<if test="userId != null">
+						AND ot.UserId = #{userId,jdbcType=VARCHAR}
+					</if>
+					<if test="wr != null">
+						AND ot.WR = #{wr,jdbcType=VARCHAR}
+					</if>
+					<if test="bookingDate != null">
+						AND ot.BookingDate = #{bookingDate,jdbcType=TIMESTAMP}
+					</if>
+					<if test="beginningDate != null">
+						AND ot.BookingDate <![CDATA[>=]]> #{beginningDate,jdbcType=TIMESTAMP}
+					</if>
+					<if test="endingDate != null">
+						AND DATE_FORMAT(ot.BookingDate,'%Y-%m-%d') <![CDATA[<=]]> #{endingDate,jdbcType=TIMESTAMP}
+					</if>
+					<if test="agent != null">
+						AND ot.Agent LIKE CONCAT('%','${agent}','%')
+					</if>
+					<if test="companyId != null">
+						AND ot.CompanyId = #{companyId,jdbcType=VARCHAR}
+					</if>
+					<if test="company != null">
+						AND ot.Company LIKE CONCAT('%','${company}','%')
+					</if>
+					<if test="contactName != null">
+						AND ot.ContactName LIKE CONCAT('%','${contactName}','%')
+					</if>
+					<if test="address != null">
+						AND ot.Address LIKE CONCAT('%','${address}','%')
+					</if>
+					<if test="tel != null">
+						AND ot.Tel LIKE CONCAT('%','${tel}','%')
+					</if>
+					<if test="email != null">
+						AND ot.Email = #{email,jdbcType=VARCHAR}
+					</if>
+					<if test="postCode != null">
+						AND ot.PostCode = #{postCode,jdbcType=VARCHAR}
+					</if>
+					<if test="customerSourceId != null">
+						AND ot.CustomerSourceId = #{customerSourceId, jdbcType=VARCHAR}
+					</if>
+					<if test="tax!=null and tax!=4" >
+						AND ot.Tax=#{tax}
+					</if>
+					<if test="tax==4">
+						AND (ot.Tax=2 or ot.Tax=4)
+					</if>
+					GROUP BY ot.OrdersTotalId
+				</where> 
+			)tt
+	</select>
+	<!-- 总订单 Group 显示总人数 -->
+	<select id="findGroupOrderTotalSumPepole" resultType="com.chinatour.entity.OrdersTotal" parameterType="com.chinatour.entity.OrdersTotal">
+		SELECT
+			SUM(ot.TotalPeople) as TotalPeople
+			FROM orders_total ot,admin_group ag
+			<where>
+					ot.UserId = ag.AdminId
+				<if test="ordersTotalId != null">
+					AND OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+				</if>
+				<if test="orderNumber != null">
+					AND OrderNumber LIKE CONCAT('%','${orderNumber}','%')
+				</if>
+				<if test="totalPeople != null">
+					AND TotalPeople = #{totalPeople,jdbcType=INTEGER}
+				</if>
+				<if test="deptId != null">
+					AND DeptId = #{deptId,jdbcType=VARCHAR}
+				</if>
+				<if test="userId != null">
+					AND UserId = #{userId,jdbcType=VARCHAR}
+				</if>
+				<if test="wr != null">
+					AND WR = #{wr,jdbcType=VARCHAR}
+				</if>
+				<if test="bookingDate != null">
+					AND BookingDate = #{bookingDate,jdbcType=TIMESTAMP}
+				</if>
+				<if test="beginningDate != null">
+					AND BookingDate <![CDATA[>=]]> #{beginningDate,jdbcType=TIMESTAMP}
+				</if>
+				<if test="endingDate != null">
+					AND DATE_FORMAT(BookingDate,'%Y-%m-%d') <![CDATA[<=]]> #{endingDate,jdbcType=TIMESTAMP}
+				</if>
+				<if test="agent != null">
+					AND Agent LIKE CONCAT('%','${agent}','%')
+				</if>
+				<if test="companyId != null">
+					AND CompanyId = #{companyId,jdbcType=VARCHAR}
+				</if>
+				<if test="company != null">
+					AND Company LIKE CONCAT('%','${company}','%')
+				</if>
+				<if test="contactName != null">
+					AND ContactName LIKE CONCAT('%','${contactName}','%')
+				</if>
+				<if test="address != null">
+					AND Address LIKE CONCAT('%','${address}','%')
+				</if>
+				<if test="tel != null">
+					AND Tel LIKE CONCAT('%','${tel}','%')
+				</if>
+				<if test="email != null">
+					AND Email = #{email,jdbcType=VARCHAR}
+				</if>
+				<if test="postCode != null">
+					AND PostCode = #{postCode,jdbcType=VARCHAR}
+				</if>
+				<if test="customerSourceId != null">
+					AND CustomerSourceId IN (SELECT CustomerSourceId FROM CustomerSource WHERE SourceName LIKE CONCAT('%','${record.customerSourceId}','%'))
+				</if>
+				<if test="countryId != null">
+					AND CountryId = #{countryId,jdbcType=VARCHAR}
+				</if>
+				<if test="stateId != null">
+					AND StateId = #{stateId,jdbcType=VARCHAR}
+				</if>
+				<if test="cityId != null">
+					AND CityId = #{cityId,jdbcType=VARCHAR}
+				</if>
+				<if test="groupId != null">
+					AND ag.GroupId = #{groupId,jdbcType=VARCHAR}
+				</if>
+				<if test="tax!=null and tax!=4" >
+					AND ot.Tax=#{tax}
+				</if>
+				<if test="tax==4">
+					AND (ot.Tax=2 or ot.Tax=4)
+				</if>
+			</where>
+	</select>
+	<select id="find" resultMap="BaseResultMap" parameterType="com.chinatour.entity.OrdersTotal">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM orders_total
+		<where>
+			<if test="record.ordersTotalId != null">
+				OrdersTotalId = #{record.ordersTotalId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.peerUserId != null">
+				PeerUserId = #{record.peerUserId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.orderNumber != null">
+				AND OrderNumber = #{record.orderNumber,jdbcType=VARCHAR}
+			</if>
+			<if test="record.totalPeople != null">
+				AND TotalPeople = #{record.totalPeople,jdbcType=INTEGER}
+			</if>
+			<if test="record.deptId != null">
+				AND DeptId = #{record.deptId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.userId != null">
+				AND UserId = #{record.userId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.wr != null">
+				AND WR = #{record.wr,jdbcType=VARCHAR}
+			</if>
+			<if test="record.bookingDate != null">
+				AND BookingDate = #{record.bookingDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.agent != null">
+				AND Agent = #{record.agent,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.companyId != null">
+				AND CompanyId = #{record.companyId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.company != null">
+				AND Company = #{record.companyId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.contactName != null">
+				AND ContactName = #{record.contactName,jdbcType=VARCHAR}
+			</if>
+			<if test="record.address != null">
+				AND Address = #{record.address,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tel != null">
+				AND Tel = #{record.address,jdbcType=VARCHAR}
+			</if>
+			<if test="record.email != null">
+				AND Email = #{record.email,jdbcType=VARCHAR}
+			</if>
+			<if test="record.postCode != null">
+				AND PostCode = #{record.postCode,jdbcType=VARCHAR}
+			</if>
+			<if test="record.customerSourceId != null">
+				AND CustomerSourceId = #{record.customerSourceId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.countryId != null">
+				AND CountryId = #{record.countryId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.stateId != null">
+				AND StateId = #{record.stateId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.cityId != null">
+				AND CityId = #{record.cityId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.checkTime != null">
+				AND CheckTime = #{checkTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.tax != null">
+				AND Tax = #{tax,jdbcType=TINYINT}
+			</if>
+		</where>
+	</select>
+
+	<select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM orders_total
+		WHERE OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="findByOrderId" parameterType="java.lang.String" resultMap="BaseResultMap" >
+		SELECT
+		o.OrdersTotalId OrdersTotalId, o.OrderNumber OrderNumber, o.TotalPeople TotalPeople, o.DeptId DeptId, o.UserId UserId, o.WR WR, o.Agent Agent, o.CompanyId CompanyId, o.Company Company,o.Tel Tel,
+		o.ContactName ContactName, o.BookingDate BookingDate, o.Address Address, o.Email Email, o.PostCode PostCode, o.CustomerSourceId CustomerSourceId, o.CountryId CountryId, o.StateId StateId, o.CityId CityId,o.Tax Tax,o.CheckTime CheckTime, o.IsDel IsDel,o.PeerUserId PeerUserId
+		FROM orders_total o,orders s
+		WHERE o.OrdersTotalId=s.OrdersTotalId
+		AND s.orderId=#{orderId,jdbcType=VARCHAR}
+	</select>
+
+	<select id="findAll" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM orders_total
+	</select>
+	
+	<insert id="save" parameterType="com.chinatour.entity.OrdersTotal">
+		INSERT INTO orders_total
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="ordersTotalId != null">
+				OrdersTotalId,
+			</if>
+			<if test="totalPeople != null">
+				TotalPeople,
+			</if>
+			<if test="deptId != null">
+				DeptId,
+			</if>
+			<if test="userId != null">
+				UserId,
+			</if>
+			<if test="wr != null">
+				WR,
+			</if>
+			<if test="bookingDate != null">
+				BookingDate,
+			</if>
+			<if test="agent != null">
+				Agent,
+			</if>
+			<if test="companyId != null">
+				CompanyId,
+			</if>
+			<if test="company != null">
+				Company,
+			</if>
+			<if test="contactName != null">
+				ContactName,
+			</if>
+			<if test="address != null">
+				Address,
+			</if>
+			<if test="tel != null">
+				Tel,
+			</if>
+			<if test="email != null">
+				Email,
+			</if>
+			<if test="postCode != null">
+				PostCode,
+			</if>
+			<if test="customerSourceId != null">
+				CustomerSourceId,
+			</if>
+			<if test="countryId != null">
+				CountryId,
+			</if>
+			<if test="stateId != null">
+				StateId,
+			</if>
+			<if test="cityId != null">
+				CityId,
+			</if>
+			<if test="tax != null">
+				Tax,
+			</if>
+			<if test="checkTime != null">
+				CheckTime,
+			</if>
+			<if test="server != null">
+				Server,
+			</if>
+			<if test="peerUserId != null">
+				PeerUserId
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="ordersTotalId != null">
+				#{ordersTotalId,jdbcType=VARCHAR},
+			</if>
+			<if test="totalPeople != null">
+				#{totalPeople,jdbcType=INTEGER},
+			</if>
+			<if test="deptId != null">
+				#{deptId,jdbcType=VARCHAR},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=VARCHAR},
+			</if>
+			<if test="wr != null">
+				#{wr,jdbcType=VARCHAR},
+			</if>
+			<if test="bookingDate != null">
+				#{bookingDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="agent != null">
+				#{agent,jdbcType=VARCHAR},
+			</if>
+			<if test="companyId != null">
+				#{companyId,jdbcType=VARCHAR},
+			</if>
+			<if test="company != null">
+				#{company,jdbcType=VARCHAR},
+			</if>
+			<if test="contactName != null">
+				#{contactName,jdbcType=VARCHAR},
+			</if>
+			<if test="address != null">
+				#{address,jdbcType=VARCHAR},
+			</if>
+			<if test="tel != null">
+				#{tel,jdbcType=VARCHAR},
+			</if>
+			<if test="email != null">
+				#{email,jdbcType=VARCHAR},
+			</if>
+			<if test="postCode != null">
+				#{postCode,jdbcType=VARCHAR},
+			</if>
+			<if test="customerSourceId != null">
+				#{customerSourceId,jdbcType=VARCHAR},
+			</if>
+			<if test="countryId != null">
+				#{countryId,jdbcType=VARCHAR},
+			</if>
+			<if test="stateId != null">
+				#{stateId,jdbcType=VARCHAR},
+			</if>
+			<if test="cityId != null">
+				#{cityId,jdbcType=VARCHAR},
+			</if>
+			<if test="tax != null">
+				#{tax,jdbcType=TINYINT},
+			</if>
+			<if test="checkTime != null">
+				#{checkTime,jdbcType=DATE},
+			</if>
+			<if test="server != null">
+				#{server,jdbcType=VARCHAR},
+			</if>
+			<if test="peerUserId != null">
+				#{peerUserId,jdbcType=VARCHAR}
+			</if>
+		</trim>
+	</insert>
+	
+	<update id="changeTotalPeople">
+	    UPDATE orders_total SET TotalPeople = TotalPeople + #{change,jdbcType=INTEGER}  
+	    WHERE OrdersTotalId = #{id,jdbcType=VARCHAR}
+	</update>
+	
+	<update id="setTotalPeopleByOrdersTotalId">
+   		UPDATE orders_total SET TotalPeople = #{totalPeople,jdbcType=INTEGER}  
+	    WHERE OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+	</update>
+	
+	<update id="update" parameterType="com.chinatour.entity.OrdersTotal">
+		UPDATE orders_total
+		<set>
+			<if test="totalPeople != null">
+				TotalPeople = #{totalPeople,jdbcType=INTEGER},
+			</if>
+			<if test="deptId != null">
+				DeptId = #{deptId,jdbcType=VARCHAR},
+			</if>
+			<if test="userId != null">
+				UserId = #{userId,jdbcType=VARCHAR},
+			</if>
+			<if test="wr != null">
+				WR = #{wr,jdbcType=VARCHAR},
+			</if>
+			<if test="bookingDate != null">
+				BookingDate = #{bookingDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="agent != null">
+				Agent = #{agent,jdbcType=VARCHAR},
+			</if>
+			<if test="companyId != null">
+				CompanyId = #{companyId,jdbcType=VARCHAR},
+			</if>
+			<if test="company != null">
+				Company = #{company,jdbcType=VARCHAR},
+			</if>
+			<if test="contactName != null">
+				ContactName = #{contactName,jdbcType=VARCHAR},
+			</if>
+			<if test="address != null">
+				Address = #{address,jdbcType=VARCHAR},
+			</if>
+			<if test="tel != null">
+				Tel = #{tel,jdbcType=VARCHAR},
+			</if>
+			<if test="email != null">
+				Email = #{email,jdbcType=VARCHAR},
+			</if>
+			<if test="postCode != null">
+				PostCode = #{postCode,jdbcType=VARCHAR},
+			</if>
+			<if test="customerSourceId != null">
+				CustomerSourceId = #{customerSourceId,jdbcType=VARCHAR},
+			</if>
+			<if test="countryId != null">
+				CountryId = #{countryId,jdbcType=VARCHAR},
+			</if>
+			<if test="stateId != null">
+				StateId = #{stateId,jdbcType=VARCHAR},
+			</if>
+			<if test="cityId != null">
+				CityId = #{cityId,jdbcType=VARCHAR},
+			</if>
+			<if test="tax != null">
+				Tax = #{tax,jdbcType=TINYINT},
+			</if>
+			<if test="checkTime != null">
+				CheckTime = #{checkTime,jdbcType=DATE},
+			</if>
+		</set>
+		WHERE OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+	</update>
+	
+	<sql id="findOrderTotalTax_sql">
+		SELECT
+			expm.*,
+			ss.SprCheck
+		FROM 
+			(
+				SELECT
+					o.orderId,ot.OrdersTotalId,ot.OrderNumber,ot.agent,
+					ot.tax,ot.BookingDate,ot.userId,ot.CheckTime,ot.totalPeople
+				FROM orders_total ot,orders o ,tour_info_for_order t
+				WHERE ot.OrdersTotalId=o.OrdersTotalId
+					AND t.OrderId=o.OrderId
+				<if test="record.ordersTotalId != null">
+					AND ot.OrdersTotalId = #{record.ordersTotalId,jdbcType=VARCHAR}
+				</if>
+				<if test="record.orderNumber != null">
+					AND ot.OrderNumber LIKE CONCAT('%','${record.orderNumber}','%')
+				</if>
+				<if test="record.totalPeople != null">
+					AND ot.TotalPeople = #{record.totalPeople,jdbcType=INTEGER}
+				</if>
+				<if test="record.deptId != null">
+					AND ot.DeptId = #{record.deptId,jdbcType=VARCHAR}
+				</if>
+				<if test="record.userId != null">
+					AND ot.UserId = #{record.userId,jdbcType=VARCHAR}
+				</if>
+				<if test="record.wr != null">
+					AND ot.WR = #{record.wr,jdbcType=VARCHAR}
+				</if>
+				<if test="record.bookingDate != null">
+					AND ot.BookingDate = #{record.bookingDate,jdbcType=TIMESTAMP}
+				</if>
+				<if test="record.beginningDate != null">
+					AND ot.BookingDate <![CDATA[>=]]> #{record.beginningDate,jdbcType=TIMESTAMP}
+				</if>
+				<if test="record.endingDate != null">
+					AND DATE_FORMAT(ot.BookingDate,'%Y-%m-%d') <![CDATA[<=]]> #{record.endingDate,jdbcType=TIMESTAMP}
+				</if>
+				<if test="record.arrivalBeginningDate != null">
+					AND t.ScheduleOfArriveTime <![CDATA[>=]]> #{record.arrivalBeginningDate,jdbcType=TIMESTAMP}
+				</if>
+				<if test="record.arrivalEndingDate!= null">
+					AND t.ScheduleOfArriveTime <![CDATA[<=]]> #{record.arrivalEndingDate,jdbcType=TIMESTAMP}
+				</if>
+				<if test="record.settlementDateBeg != null">
+					AND ot.CheckTime <![CDATA[>=]]> #{record.settlementDateBeg,jdbcType=TIMESTAMP}
+				</if>
+				<if test="record.settlementDateEnd != null">
+					AND ot.CheckTime <![CDATA[<=]]> #{record.settlementDateEnd,jdbcType=TIMESTAMP}
+				</if>
+				<if test="record.agent != null">
+					AND ot.Agent LIKE CONCAT('%','${record.agent}','%')
+				</if>
+				<if test="record.companyId != null">
+					AND ot.CompanyId = #{record.companyId,jdbcType=VARCHAR}
+				</if>
+				<if test="record.company != null">
+					AND ot.Company LIKE CONCAT('%','${record.company}','%')
+				</if>
+				<if test="record.contactName != null">
+					AND ot.ContactName LIKE CONCAT('%','${record.contactName}','%')
+				</if>
+				<if test="record.address != null">
+					AND ot.Address LIKE CONCAT('%','${record.address}','%')
+				</if>
+				<if test="record.tel != null">
+					AND ot.Tel LIKE CONCAT('%','${record.tel}','%')
+				</if>
+				<if test="record.email != null">
+					AND ot.Email = #{record.email,jdbcType=VARCHAR}
+				</if>
+				<if test="record.postCode != null">
+					AND ot.PostCode = #{record.postCode,jdbcType=VARCHAR}
+				</if>
+				<if test="record.tax!=null and record.tax!=2" >
+					AND ot.Tax=#{record.tax}
+				</if>
+				<if test="record.tax==2">
+					AND (ot.Tax=2 or ot.Tax=4)
+				</if>
+			)expm
+				LEFT JOIN(
+					SELECT
+						sr.SprCheck,
+						sr.orderId
+					FROM 
+						SupplierPriceRemark sr
+					WHERE sr.Type=1
+						AND (sr.isDel=0 OR sr.isDel IS NULL)
+						AND (sr.SprCheck=1 OR sr.SprCheck=3 OR sr.SprCheck=5)
+					)ss 
+		ON ss.orderId=expm.orderId
+		<where>
+			<if test="record.sprCheck!= null">
+				ss.SprCheck=#{record.sprCheck}
+			</if>
+		</where>
+		GROUP BY expm.OrdersTotalId
+		ORDER BY expm.BookingDate DESC
+	</sql>
+	
+	<select id="findOrderTotalTaxPage" resultMap="ResultMapForSumPayOrCost">
+		<include refid="Pager.paginationStart" />
+		<include refid="findOrderTotalTax_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findOrderTotalTaxPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findOrderTotalTax_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+	
+	<!-- 打印  账单结算 总人数总收入支出-->
+	<select id="findOrderTotalTaxPrint" resultMap="ResultMapForSumPayOrCost" parameterType="com.chinatour.entity.OrdersTotal">
+		SELECT
+			expm.*,
+			ss.SprCheck
+		FROM 
+			(
+				SELECT
+					o.orderId,ot.OrdersTotalId,ot.OrderNumber,ot.agent,
+					ot.tax,ot.BookingDate,ot.userId,ot.CheckTime,ot.totalPeople
+				FROM orders_total ot,orders o ,tour_info_for_order t
+				WHERE ot.OrdersTotalId=o.OrdersTotalId
+					AND t.OrderId=o.OrderId
+				<if test="ordersTotalId != null">
+					AND ot.OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+				</if>
+				<if test="orderNumber != null">
+					AND ot.OrderNumber LIKE CONCAT('%','${orderNumber}','%')
+				</if>
+				<if test="totalPeople != null">
+					AND ot.TotalPeople = #{totalPeople,jdbcType=INTEGER}
+				</if>
+				<if test="deptId != null">
+					AND ot.DeptId = #{deptId,jdbcType=VARCHAR}
+				</if>
+				<if test="userId != null">
+					AND ot.UserId = #{userId,jdbcType=VARCHAR}
+				</if>
+				<if test="wr != null">
+					AND ot.WR = #{wr,jdbcType=VARCHAR}
+				</if>
+				<if test="bookingDate != null">
+					AND ot.BookingDate = #{bookingDate,jdbcType=TIMESTAMP}
+				</if>
+				<if test="beginningDate != null">
+					AND ot.BookingDate <![CDATA[>=]]> #{beginningDate,jdbcType=TIMESTAMP}
+				</if>
+				<if test="endingDate != null">
+					AND DATE_FORMAT(ot.BookingDate,'%Y-%m-%d') <![CDATA[<=]]> #{endingDate,jdbcType=TIMESTAMP}
+				</if>
+				<if test="arrivalBeginningDate != null">
+					AND t.ScheduleOfArriveTime <![CDATA[>=]]> #{arrivalBeginningDate,jdbcType=TIMESTAMP}
+				</if>
+				<if test="arrivalEndingDate!= null">
+					AND t.ScheduleOfArriveTime <![CDATA[<=]]> #{arrivalEndingDate,jdbcType=TIMESTAMP}
+				</if>
+				<if test="settlementDateBeg != null">
+					AND ot.CheckTime <![CDATA[>=]]> #{settlementDateBeg,jdbcType=TIMESTAMP}
+				</if>
+				<if test="settlementDateEnd != null">
+					AND ot.CheckTime <![CDATA[<=]]> #{settlementDateEnd,jdbcType=TIMESTAMP}
+				</if>
+				<if test="agent != null">
+					AND ot.Agent LIKE CONCAT('%','${agent}','%')
+				</if>
+				<if test="companyId != null">
+					AND ot.CompanyId = #{companyId,jdbcType=VARCHAR}
+				</if>
+				<if test="company != null">
+					AND ot.Company LIKE CONCAT('%','${company}','%')
+				</if>
+				<if test="contactName != null">
+					AND ot.ContactName LIKE CONCAT('%','${contactName}','%')
+				</if>
+				<if test="address != null">
+					AND ot.Address LIKE CONCAT('%','${address}','%')
+				</if>
+				<if test="tel != null">
+					AND ot.Tel LIKE CONCAT('%','${tel}','%')
+				</if>
+				<if test="email != null">
+					AND ot.Email = #{email,jdbcType=VARCHAR}
+				</if>
+				<if test="postCode != null">
+					AND ot.PostCode = #{postCode,jdbcType=VARCHAR}
+				</if>
+				<if test="tax!=null and tax!=2" >
+					AND ot.Tax=#{tax}
+				</if>
+				<if test="tax==2">
+					AND (ot.Tax=2 or ot.Tax=4)
+				</if>
+			)expm
+				LEFT JOIN(
+					SELECT
+						sr.SprCheck,
+						sr.orderId
+					FROM 
+						SupplierPriceRemark sr
+					WHERE sr.Type=1
+						AND (sr.isDel=0 OR sr.isDel IS NULL)
+						AND (sr.SprCheck=1 OR sr.SprCheck=3 OR sr.SprCheck=5)
+					)ss 
+		ON ss.orderId=expm.orderId
+		<where>
+			<if test="sprCheck!= null">
+				ss.SprCheck=#{sprCheck}
+			</if>
+		</where>
+		GROUP BY expm.OrdersTotalId
+		ORDER BY expm.BookingDate DESC
+	</select>
+		
+	<!-- 总订单  显示总人数 -->
+	<select id="findSumPepoleAndPayOrCost" resultType="com.chinatour.entity.OrdersTotal" parameterType="com.chinatour.entity.OrdersTotal">
+		SELECT
+			SUM(tt.TotalPeople) as TotalPeople,
+			SUM(tt.CommonTourFee) as sumFee,SUM(tt.payTotalSum) as payTotalSum,SUM(tt.costTotalSum) as costTotalSum 
+		FROM (
+			SELECT t.TotalPeople,SUM(t.CommonTourFee) as CommonTourFee,SUM(payTotalSum) as payTotalSum,SUM(costTotalSum) as costTotalSum FROM
+				(
+				SELECT os.*,ROUND(Sum(IF(p.PayOrCost=1,p.sum,0)),2) as payTotalSum, ROUND(Sum(IF(p.PayOrCost=2,p.sum,0)),2) as costTotalSum FROM
+					(
+					SELECT
+						expm.*
+					FROM 
+						(
+							SELECT
+								o.orderId,ot.OrdersTotalId,ot.OrderNumber,ot.agent,
+								ot.tax,ot.BookingDate,ot.userId,ot.CheckTime,ot.totalPeople,o.CommonTourFee
+							FROM orders_total ot,orders o,tour_info_for_order t
+							WHERE ot.OrdersTotalId=o.OrdersTotalId
+								AND t.OrderId=o.OrderId
+							<if test="ordersTotalId != null">
+								AND ot.OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+							</if>
+							<if test="orderNumber != null">
+								AND ot.OrderNumber LIKE CONCAT('%','${orderNumber}','%')
+							</if>
+							<if test="totalPeople != null">
+								AND ot.TotalPeople = #{totalPeople,jdbcType=INTEGER}
+							</if>
+							<if test="deptId != null">
+								AND ot.DeptId = #{deptId,jdbcType=VARCHAR}
+							</if>
+							<if test="userId != null">
+								AND ot.UserId = #{userId,jdbcType=VARCHAR}
+							</if>
+							<if test="wr != null">
+								AND ot.WR = #{wr,jdbcType=VARCHAR}
+							</if>
+							<if test="bookingDate != null">
+								AND ot.BookingDate = #{bookingDate,jdbcType=TIMESTAMP}
+							</if>
+							<if test="beginningDate != null">
+								AND ot.BookingDate <![CDATA[>=]]> #{beginningDate,jdbcType=TIMESTAMP}
+							</if>
+							<if test="endingDate != null">
+								AND DATE_FORMAT(ot.BookingDate,'%Y-%m-%d') <![CDATA[<=]]> #{endingDate,jdbcType=TIMESTAMP}
+							</if>
+							<if test="arrivalBeginningDate != null">
+								AND t.ScheduleOfArriveTime <![CDATA[>=]]> #{arrivalBeginningDate,jdbcType=TIMESTAMP}
+							</if>
+							<if test="arrivalEndingDate!= null">
+								AND t.ScheduleOfArriveTime <![CDATA[<=]]> #{arrivalEndingDate,jdbcType=TIMESTAMP}
+							</if>
+							<if test="settlementDateBeg != null">
+								AND ot.CheckTime <![CDATA[>=]]> #{settlementDateBeg,jdbcType=TIMESTAMP}
+							</if>
+							<if test="settlementDateEnd != null">
+								AND ot.CheckTime <![CDATA[<=]]> #{settlementDateEnd,jdbcType=TIMESTAMP}
+							</if>
+							<if test="agent != null">
+								AND ot.Agent LIKE CONCAT('%','${agent}','%')
+							</if>
+							<if test="companyId != null">
+								AND ot.CompanyId = #{companyId,jdbcType=VARCHAR}
+							</if>
+							<if test="company != null">
+								AND ot.Company LIKE CONCAT('%','${company}','%')
+							</if>
+							<if test="contactName != null">
+								AND ot.ContactName LIKE CONCAT('%','${contactName}','%')
+							</if>
+							<if test="address != null">
+								AND ot.Address LIKE CONCAT('%','${address}','%')
+							</if>
+							<if test="tel != null">
+								AND ot.Tel LIKE CONCAT('%','${tel}','%')
+							</if>
+							<if test="email != null">
+								AND ot.Email = #{email,jdbcType=VARCHAR}
+							</if>
+							<if test="postCode != null">
+								AND ot.PostCode = #{postCode,jdbcType=VARCHAR}
+							</if>
+							<if test="tax!=null and tax!=2" >
+								AND ot.Tax=#{tax}
+							</if>
+							<if test="tax==2">
+								AND (ot.Tax=2 or ot.Tax=4)
+							</if>
+						)expm
+							LEFT JOIN(
+								SELECT
+									sr.SprCheck,
+									sr.orderId
+								FROM 
+									SupplierPriceRemark sr
+								WHERE sr.Type=1
+									AND (sr.isDel=0 OR sr.isDel IS NULL)
+									AND (sr.SprCheck=1 OR sr.SprCheck=3 OR sr.SprCheck=5)
+								)ss 
+					ON ss.orderId=expm.orderId
+					<where>
+						<if test="sprCheck!= null">
+							ss.SprCheck=#{sprCheck}
+						</if>
+					</where>
+					GROUP BY expm.orderId
+				)os LEFT JOIN pay_cost_records p
+				on os.orderId=p.OrderId
+				GROUP BY os.orderId
+			)t GROUP BY t.ordersTotalId
+		)tt
+	</select>
+	
+	<!-- group -->
+	<sql id="findGroupOrderTotalTax_sql">
+		SELECT
+			expm.*,
+			ss.SprCheck
+		FROM 
+			(
+				SELECT
+					o.orderId,ot.OrdersTotalId,ot.OrderNumber,ot.agent,
+					ot.tax,ot.BookingDate,ot.userId,ot.CheckTime,ot.totalPeople
+				FROM orders_total ot,orders o ,admin_group ag,tour_info_for_order t
+				WHERE ot.OrdersTotalId=o.OrdersTotalId
+					AND o.UserId=ag.AdminId
+					AND t.OrderId=o.OrderId
+				<if test="record.groupId != null">
+					AND ag.GroupId = #{record.groupId,jdbcType=VARCHAR}
+				</if>
+				<if test="record.ordersTotalId != null">
+					AND ot.OrdersTotalId = #{record.ordersTotalId,jdbcType=VARCHAR}
+				</if>
+				<if test="record.orderNumber != null">
+					AND ot.OrderNumber LIKE CONCAT('%','${record.orderNumber}','%')
+				</if>
+				<if test="record.totalPeople != null">
+					AND ot.TotalPeople = #{record.totalPeople,jdbcType=INTEGER}
+				</if>
+				<if test="record.deptId != null">
+					AND ot.DeptId = #{record.deptId,jdbcType=VARCHAR}
+				</if>
+				<if test="record.userId != null">
+					AND ot.UserId = #{record.userId,jdbcType=VARCHAR}
+				</if>
+				<if test="record.wr != null">
+					AND ot.WR = #{record.wr,jdbcType=VARCHAR}
+				</if>
+				<if test="record.bookingDate != null">
+					AND ot.BookingDate = #{record.bookingDate,jdbcType=TIMESTAMP}
+				</if>
+				<if test="record.beginningDate != null">
+					AND ot.BookingDate <![CDATA[>=]]> #{record.beginningDate,jdbcType=TIMESTAMP}
+				</if>
+				<if test="record.endingDate != null">
+					AND DATE_FORMAT(ot.BookingDate,'%Y-%m-%d') <![CDATA[<=]]> #{record.endingDate,jdbcType=TIMESTAMP}
+				</if>
+				<if test="record.settlementDateBeg != null">
+					AND ot.CheckTime <![CDATA[>=]]> #{record.settlementDateBeg,jdbcType=TIMESTAMP}
+				</if>
+				<if test="record.settlementDateEnd != null">
+					AND ot.CheckTime <![CDATA[<=]]> #{record.settlementDateEnd,jdbcType=TIMESTAMP}
+				</if>
+				<if test="record.arrivalBeginningDate != null">
+					AND t.ScheduleOfArriveTime <![CDATA[>=]]> #{record.arrivalBeginningDate,jdbcType=TIMESTAMP}
+				</if>
+				<if test="record.arrivalEndingDate!= null">
+					AND t.ScheduleOfArriveTime <![CDATA[<=]]> #{record.arrivalEndingDate,jdbcType=TIMESTAMP}
+				</if>
+				<if test="record.agent != null">
+					AND ot.Agent LIKE CONCAT('%','${record.agent}','%')
+				</if>
+				<if test="record.companyId != null">
+					AND ot.CompanyId = #{record.companyId,jdbcType=VARCHAR}
+				</if>
+				<if test="record.company != null">
+					AND ot.Company LIKE CONCAT('%','${record.company}','%')
+				</if>
+				<if test="record.contactName != null">
+					AND ot.ContactName LIKE CONCAT('%','${record.contactName}','%')
+				</if>
+				<if test="record.address != null">
+					AND ot.Address LIKE CONCAT('%','${record.address}','%')
+				</if>
+				<if test="record.tel != null">
+					AND ot.Tel LIKE CONCAT('%','${record.tel}','%')
+				</if>
+				<if test="record.email != null">
+					AND ot.Email = #{record.email,jdbcType=VARCHAR}
+				</if>
+				<if test="record.postCode != null">
+					AND ot.PostCode = #{record.postCode,jdbcType=VARCHAR}
+				</if>
+				<if test="record.tax!=null and record.tax!=2" >
+					AND ot.Tax=#{record.tax}
+				</if>
+				<if test="record.tax==2">
+					AND (ot.Tax=2 or ot.Tax=4)
+				</if>
+			)expm
+				LEFT JOIN(
+					SELECT
+						sr.SprCheck,
+						sr.orderId
+					FROM 
+						SupplierPriceRemark sr
+					WHERE sr.Type=1
+						AND (sr.isDel=0 OR sr.isDel IS NULL)
+						AND (sr.SprCheck=1 OR sr.SprCheck=3 OR sr.SprCheck=5)
+					)ss 
+			ON ss.orderId=expm.orderId
+			<where>
+				<if test="record.sprCheck!= null">
+					ss.SprCheck=#{record.sprCheck}
+				</if>
+			</where>
+			GROUP BY expm.OrdersTotalId
+			ORDER BY expm.BookingDate DESC
+	</sql>
+	
+	<select id="findOrderTotalTaxGroupPage" resultMap="ResultMapForSumPayOrCost">
+		<include refid="Pager.paginationStart" />
+		<include refid="findGroupOrderTotalTax_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findOrderTotalTaxGroupPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findGroupOrderTotalTax_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+	
+	<!--Group 总订单  显示总人数 -->
+	<select id="findGroupSumPepoleAndPayOrCost" resultType="com.chinatour.entity.OrdersTotal" parameterType="com.chinatour.entity.OrdersTotal">
+		SELECT
+			SUM(tt.TotalPeople) as TotalPeople,
+			SUM(tt.CommonTourFee) as sumFee,SUM(tt.payTotalSum) as payTotalSum,SUM(tt.costTotalSum) as costTotalSum 
+		FROM (
+			SELECT t.TotalPeople,SUM(t.CommonTourFee) as CommonTourFee,SUM(payTotalSum) as payTotalSum,SUM(costTotalSum) as costTotalSum FROM
+				(
+				SELECT os.*,ROUND(Sum(IF(p.PayOrCost=1,p.sum,0)),2) as payTotalSum, ROUND(Sum(IF(p.PayOrCost=2,p.sum,0)),2) as costTotalSum FROM
+					(
+					SELECT
+						expm.*
+					FROM 
+						(
+							SELECT
+								o.orderId,ot.OrdersTotalId,ot.OrderNumber,ot.agent,
+								ot.tax,ot.BookingDate,ot.userId,ot.CheckTime,ot.totalPeople,o.CommonTourFee
+							FROM orders_total ot,orders o ,admin_group ag,tour_info_for_order t
+							WHERE ot.OrdersTotalId=o.OrdersTotalId
+								AND o.UserId=ag.AdminId
+								AND t.OrderId=o.OrderId
+							<if test="groupId != null">
+								AND ag.GroupId = #{groupId,jdbcType=VARCHAR}
+							</if>
+							<if test="ordersTotalId != null">
+								AND ot.OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+							</if>
+							<if test="orderNumber != null">
+								AND ot.OrderNumber LIKE CONCAT('%','${orderNumber}','%')
+							</if>
+							<if test="totalPeople != null">
+								AND ot.TotalPeople = #{totalPeople,jdbcType=INTEGER}
+							</if>
+							<if test="deptId != null">
+								AND ot.DeptId = #{deptId,jdbcType=VARCHAR}
+							</if>
+							<if test="userId != null">
+								AND ot.UserId = #{userId,jdbcType=VARCHAR}
+							</if>
+							<if test="wr != null">
+								AND ot.WR = #{wr,jdbcType=VARCHAR}
+							</if>
+							<if test="bookingDate != null">
+								AND ot.BookingDate = #{bookingDate,jdbcType=TIMESTAMP}
+							</if>
+							<if test="beginningDate != null">
+								AND ot.BookingDate <![CDATA[>=]]> #{beginningDate,jdbcType=TIMESTAMP}
+							</if>
+							<if test="endingDate != null">
+								AND DATE_FORMAT(ot.BookingDate,'%Y-%m-%d') <![CDATA[<=]]> #{endingDate,jdbcType=TIMESTAMP}
+							</if>
+							<if test="settlementDateBeg != null">
+								AND ot.CheckTime <![CDATA[>=]]> #{settlementDateBeg,jdbcType=TIMESTAMP}
+							</if>
+							<if test="settlementDateEnd != null">
+								AND ot.CheckTime <![CDATA[<=]]> #{settlementDateEnd,jdbcType=TIMESTAMP}
+							</if>
+							<if test="arrivalBeginningDate != null">
+								AND t.ScheduleOfArriveTime <![CDATA[>=]]> #{arrivalBeginningDate,jdbcType=TIMESTAMP}
+							</if>
+							<if test="arrivalEndingDate!= null">
+								AND t.ScheduleOfArriveTime <![CDATA[<=]]> #{arrivalEndingDate,jdbcType=TIMESTAMP}
+							</if>
+							<if test="agent != null">
+								AND ot.Agent LIKE CONCAT('%','${agent}','%')
+							</if>
+							<if test="companyId != null">
+								AND ot.CompanyId = #{companyId,jdbcType=VARCHAR}
+							</if>
+							<if test="company != null">
+								AND ot.Company LIKE CONCAT('%','${company}','%')
+							</if>
+							<if test="contactName != null">
+								AND ot.ContactName LIKE CONCAT('%','${contactName}','%')
+							</if>
+							<if test="address != null">
+								AND ot.Address LIKE CONCAT('%','${address}','%')
+							</if>
+							<if test="tel != null">
+								AND ot.Tel LIKE CONCAT('%','${tel}','%')
+							</if>
+							<if test="email != null">
+								AND ot.Email = #{email,jdbcType=VARCHAR}
+							</if>
+							<if test="postCode != null">
+								AND ot.PostCode = #{postCode,jdbcType=VARCHAR}
+							</if>
+							<if test="tax!=null and tax!=2" >
+								AND ot.Tax=#{tax}
+							</if>
+							<if test="tax==2">
+								AND (ot.Tax=2 or ot.Tax=4)
+							</if>
+						)expm
+							LEFT JOIN(
+								SELECT
+									sr.SprCheck,
+									sr.orderId
+								FROM 
+									SupplierPriceRemark sr
+								WHERE sr.Type=1
+									AND (sr.isDel=0 OR sr.isDel IS NULL)
+									AND (sr.SprCheck=1 OR sr.SprCheck=3 OR sr.SprCheck=5)
+								)ss 
+					ON ss.orderId=expm.orderId
+					<where>
+						<if test="sprCheck!= null">
+							ss.SprCheck=#{sprCheck}
+						</if>
+					</where>
+					GROUP BY expm.orderId
+				)os LEFT JOIN pay_cost_records p
+				on os.orderId=p.OrderId
+				GROUP BY os.orderId
+			)t GROUP BY t.ordersTotalId
+		)tt
+	</select>
+	
+	<!--Group  打印  账单结算 总人数总收入支出-->
+	<select id="findGroupOrderTotalTaxPrint" resultMap="ResultMapForSumPayOrCost" parameterType="com.chinatour.entity.OrdersTotal">
+		SELECT
+			expm.*,
+			ss.SprCheck
+		FROM 
+			(
+				SELECT
+					o.orderId,ot.OrdersTotalId,ot.OrderNumber,ot.agent,
+					ot.tax,ot.BookingDate,ot.userId,ot.CheckTime,ot.totalPeople
+				FROM orders_total ot,orders o ,admin_group ag,tour_info_for_order t
+				WHERE ot.OrdersTotalId=o.OrdersTotalId
+					AND o.UserId=ag.AdminId
+					AND t.OrderId=o.OrderId
+				<if test="groupId != null">
+					AND ag.GroupId = #{groupId,jdbcType=VARCHAR}
+				</if>
+				<if test="ordersTotalId != null">
+					AND ot.OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+				</if>
+				<if test="orderNumber != null">
+					AND ot.OrderNumber LIKE CONCAT('%','${orderNumber}','%')
+				</if>
+				<if test="totalPeople != null">
+					AND ot.TotalPeople = #{totalPeople,jdbcType=INTEGER}
+				</if>
+				<if test="deptId != null">
+					AND ot.DeptId = #{deptId,jdbcType=VARCHAR}
+				</if>
+				<if test="userId != null">
+					AND ot.UserId = #{userId,jdbcType=VARCHAR}
+				</if>
+				<if test="wr != null">
+					AND ot.WR = #{wr,jdbcType=VARCHAR}
+				</if>
+				<if test="bookingDate != null">
+					AND ot.BookingDate = #{bookingDate,jdbcType=TIMESTAMP}
+				</if>
+				<if test="beginningDate != null">
+					AND ot.BookingDate <![CDATA[>=]]> #{beginningDate,jdbcType=TIMESTAMP}
+				</if>
+				<if test="endingDate != null">
+					AND DATE_FORMAT(ot.BookingDate,'%Y-%m-%d') <![CDATA[<=]]> #{endingDate,jdbcType=TIMESTAMP}
+				</if>
+				<if test="settlementDateBeg != null">
+					AND ot.CheckTime <![CDATA[>=]]> #{settlementDateBeg,jdbcType=TIMESTAMP}
+				</if>
+				<if test="settlementDateEnd != null">
+					AND ot.CheckTime <![CDATA[<=]]> #{settlementDateEnd,jdbcType=TIMESTAMP}
+				</if>
+				<if test="arrivalBeginningDate != null">
+					AND t.ScheduleOfArriveTime <![CDATA[>=]]> #{arrivalBeginningDate,jdbcType=TIMESTAMP}
+				</if>
+				<if test="arrivalEndingDate!= null">
+					AND t.ScheduleOfArriveTime <![CDATA[<=]]> #{arrivalEndingDate,jdbcType=TIMESTAMP}
+				</if>
+				<if test="agent != null">
+					AND ot.Agent LIKE CONCAT('%','${agent}','%')
+				</if>
+				<if test="companyId != null">
+					AND ot.CompanyId = #{companyId,jdbcType=VARCHAR}
+				</if>
+				<if test="company != null">
+					AND ot.Company LIKE CONCAT('%','${company}','%')
+				</if>
+				<if test="contactName != null">
+					AND ot.ContactName LIKE CONCAT('%','${contactName}','%')
+				</if>
+				<if test="address != null">
+					AND ot.Address LIKE CONCAT('%','${address}','%')
+				</if>
+				<if test="tel != null">
+					AND ot.Tel LIKE CONCAT('%','${tel}','%')
+				</if>
+				<if test="email != null">
+					AND ot.Email = #{email,jdbcType=VARCHAR}
+				</if>
+				<if test="postCode != null">
+					AND ot.PostCode = #{postCode,jdbcType=VARCHAR}
+				</if>
+				<if test="tax!=null and tax!=2" >
+					AND ot.Tax=#{tax}
+				</if>
+				<if test="tax==2">
+					AND (ot.Tax=2 or ot.Tax=4)
+				</if>
+			)expm
+				LEFT JOIN(
+					SELECT
+						sr.SprCheck,
+						sr.orderId
+					FROM 
+						SupplierPriceRemark sr
+					WHERE sr.Type=1
+						AND (sr.isDel=0 OR sr.isDel IS NULL)
+						AND (sr.SprCheck=1 OR sr.SprCheck=3 OR sr.SprCheck=5)
+					)ss 
+		ON ss.orderId=expm.orderId
+		<where>
+			<if test="sprCheck!= null">
+				ss.SprCheck=#{sprCheck}
+			</if>
+		</where>
+		GROUP BY expm.OrdersTotalId
+		ORDER BY expm.BookingDate DESC
+	</select>
+	
+		<!-- region 订单查看 -->
+	<sql id="findOrderOfRegionList">
+		SELECT
+			o.OrdersTotalId,o.OrderNumber, o.TotalPeople,o.UserId,o.WR,o.Agent,o.Company,
+			o.ContactName, o.BookingDate, o.Address, o.Email, o.PostCode,
+			o.CustomerSourceId,o.Tax,o.CheckTime,exmp.deptName as deptId
+		FROM 
+		orders_total o,
+			(
+			SELECT
+				d.DeptId,d.DeptName
+			FROM
+				zs_admin za,admin_region ar,region r,dept d,region_dept_rel rd
+			<where>
+				za.id=ar.AdminId
+			AND r.RegionId=ar.RegionId
+			AND rd.RegionId=r.RegionId
+			AND rd.DeptId=d.DeptId
+			<if test="record.userId!= null">
+				AND ar.AdminId=#{record.userId}
+			</if>
+			GROUP BY d.DeptId
+			</where>
+			)exmp 
+		where exmp.DeptId=o.DeptId
+			<if test="record.ordersTotalId != null">
+				AND o.OrdersTotalId = #{record.ordersTotalId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.orderNumber != null">
+				AND o.OrderNumber LIKE CONCAT('%','${record.orderNumber}','%')
+			</if>
+			<if test="record.totalPeople != null">
+				AND o.TotalPeople = #{record.totalPeople,jdbcType=INTEGER}
+			</if>
+			<if test="record.deptId != null">
+				AND o.DeptId = #{record.deptId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.wr != null">
+				AND o.WR = #{record.wr,jdbcType=VARCHAR}
+			</if>
+			<if test="record.beginningDate != null">
+				AND o.BookingDate <![CDATA[>=]]> #{record.beginningDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.endingDate != null">
+				AND DATE_FORMAT(o.BookingDate,'%Y-%m-%d') <![CDATA[<=]]> #{record.endingDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.agent != null">
+				AND o.Agent LIKE CONCAT('%','${record.agent}','%')
+			</if>
+			<if test="record.companyId != null">
+				AND o.CompanyId = #{record.companyId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.company != null">
+				AND o.Company LIKE CONCAT('%','${record.company}','%')
+			</if>
+			<if test="record.contactName != null">
+				AND o.ContactName LIKE CONCAT('%','${record.contactName}','%')
+			</if>
+			<if test="record.address != null">
+				AND o.Address LIKE CONCAT('%','${record.address}','%')
+			</if>
+			<if test="record.tel != null">
+				AND o.Tel LIKE CONCAT('%','${record.tel}','%')
+			</if>
+			<if test="record.email != null">
+				AND o.Email = #{record.email,jdbcType=VARCHAR}
+			</if>
+			<if test="record.postCode != null">
+				AND o.PostCode = #{record.postCode,jdbcType=VARCHAR}
+			</if>
+			<if test="record.customerSourceId != null">
+				AND o.CustomerSourceId IN (SELECT CustomerSourceId FROM CustomerSource WHERE SourceName LIKE CONCAT('%','${record.customerSourceId}','%'))
+			</if>
+			<if test="record.countryId != null">
+				AND o.CountryId = #{record.countryId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.stateId != null">
+				AND o.StateId = #{record.stateId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.cityId != null">
+				AND o.CityId = #{record.cityId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tax!=null and record.tax!=4" >
+				AND o.Tax=#{record.tax}
+			</if>
+			<if test="record.tax==4">
+				AND (o.Tax=2 or o.Tax=4)
+			</if>
+			ORDER BY o.OrderNumber DESC,o.BookingDate DESC
+	</sql>
+
+	<select id="findOrderOfRegionPage" resultMap="BaseResultMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findOrderOfRegionList" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findOrderOfRegionPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findOrderOfRegionList" />
+		<include refid="Pager.countEnd" />
+	</select>
+	
+	<!-- 总订单  显示总人数 -->
+	<select id="findRegionOrderTotalSumPepole" resultType="com.chinatour.entity.OrdersTotal" parameterType="com.chinatour.entity.OrdersTotal">
+		SELECT
+			SUM(o.TotalPeople) as TotalPeople
+		FROM 
+		orders_total o,
+			(
+			SELECT
+				d.DeptId,d.DeptName
+			FROM
+				zs_admin za,admin_region ar,region r,dept d,region_dept_rel rd
+			<where>
+				za.id=ar.AdminId
+			AND r.RegionId=ar.RegionId
+			AND rd.RegionId=r.RegionId
+			AND rd.DeptId=d.DeptId
+			<if test="userId!= null">
+				AND ar.AdminId=#{userId}
+			</if>
+			GROUP BY d.DeptId
+			</where>
+			)exmp 
+		where exmp.DeptId=o.DeptId
+			<if test="ordersTotalId != null">
+				AND o.OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+			</if>
+			<if test="orderNumber != null">
+				AND o.OrderNumber LIKE CONCAT('%','${orderNumber}','%')
+			</if>
+			<if test="totalPeople != null">
+				AND o.TotalPeople = #{totalPeople,jdbcType=INTEGER}
+			</if>
+			<if test="deptId != null">
+				AND o.DeptId = #{deptId,jdbcType=VARCHAR}
+			</if>
+			<if test="wr != null">
+				AND o.WR = #{wr,jdbcType=VARCHAR}
+			</if>
+			<if test="beginningDate != null">
+				AND o.BookingDate <![CDATA[>=]]> #{beginningDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="endingDate != null">
+				AND DATE_FORMAT(o.BookingDate,'%Y-%m-%d') <![CDATA[<=]]> #{endingDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="agent != null">
+				AND o.Agent LIKE CONCAT('%','${agent}','%')
+			</if>
+			<if test="companyId != null">
+				AND o.CompanyId = #{companyId,jdbcType=VARCHAR}
+			</if>
+			<if test="company != null">
+				AND o.Company LIKE CONCAT('%','${company}','%')
+			</if>
+			<if test="contactName != null">
+				AND o.ContactName LIKE CONCAT('%','${contactName}','%')
+			</if>
+			<if test="address != null">
+				AND o.Address LIKE CONCAT('%','${address}','%')
+			</if>
+			<if test="tel != null">
+				AND o.Tel LIKE CONCAT('%','${tel}','%')
+			</if>
+			<if test="email != null">
+				AND o.Email = #{email,jdbcType=VARCHAR}
+			</if>
+			<if test="postCode != null">
+				AND o.PostCode = #{postCode,jdbcType=VARCHAR}
+			</if>
+			<if test="customerSourceId != null">
+				AND o.CustomerSourceId IN (SELECT CustomerSourceId FROM CustomerSource WHERE SourceName LIKE CONCAT('%','${record.customerSourceId}','%'))
+			</if>
+			<if test="countryId != null">
+				AND o.CountryId = #{countryId,jdbcType=VARCHAR}
+			</if>
+			<if test="stateId != null">
+				AND o.StateId = #{stateId,jdbcType=VARCHAR}
+			</if>
+			<if test="cityId != null">
+				AND o.CityId = #{cityId,jdbcType=VARCHAR}
+			</if>
+			<if test="tax!=null and tax!=4" >
+				AND o.Tax=#{tax}
+			</if>
+			<if test="tax==4">
+				AND (o.Tax=2 or o.Tax=4)
+			</if>
+	</select>
+	<select id="findNoOrderId" resultType="com.chinatour.entity.OrdersTotal" parameterType="java.lang.String">
+		
+		SELECT 
+			OrdersTotalId 
+		FROM 
+			orders_total
+	    WHERE 
+	    	OrdersTotalId 
+	    	NOT IN(
+	    		SELECT 
+	    			OrdersTotalId 
+	    		from 
+	    			orders 
+	    		WHERE 
+	    			PeerUserId=#{peerUserId,jdbcType=VARCHAR}
+	   ) AND PeerUserId=#{peerUserId,jdbcType=VARCHAR}
+	</select>
+	<select id="deleteByOrdersTotalId" parameterType="java.lang.String">
+		DELETE FROM orders_total WHERE OrdersTotalId = #{ordersTotalId,jdbcType=VARCHAR}
+	</select>
+</mapper>

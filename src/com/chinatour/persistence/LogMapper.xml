@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.LogMapper">
+
+	<sql id="Base_Column_List">
+		LogId, CreateTime, Content, Ip, Operation, Operator, Parameter, OrderId, OrderNo
+	</sql>
+
+	<sql id="findForPage_sql">
+		select
+		<include refid="Base_Column_List" />
+		from log
+		<where>
+			<if test="record.id != null">
+				LogId = #{record.id,jdbcType=VARCHAR}
+			</if>
+			<if test="record.createtime != null">
+				AND CreateTime LIKE CONCAT('%','${record.createtime}','%')
+			</if>
+			<if test="record.content != null">
+				AND Content LIKE CONCAT('%','${record.content}','%')
+			</if>
+			<if test="record.ip != null">
+				AND Ip LIKE CONCAT('%','${record.ip}','%')
+			</if>
+			<if test="record.operation != null">
+				AND Operation LIKE CONCAT('%','${record.operation}','%')
+			</if>
+			<if test="record.operator != null">
+				AND Operator LIKE CONCAT('%','${record.operator}','%')
+			</if>
+			<if test="record.parameter != null">
+				AND Parameter LIKE CONCAT('%','${record.parameter}','%')
+			</if>
+			<if test="record.orderId != null">
+				AND OrderId LIKE CONCAT('%','${record.orderId}','%')
+			</if>
+			<if test="record.orderNo != null">
+				AND OrderNo LIKE CONCAT('%','${record.orderNo}','%')
+			</if>
+			
+		</where>
+	</sql>
+
+	<resultMap type="Log" id="BaseResultMap">
+		<id property="id" column="LogId" jdbcType="VARCHAR" />
+		<result property="CreateTime" column="CreateTime" jdbcType="TIMESTAMP" />
+		<result property="Content" column="Content" jdbcType="VARCHAR" />
+		<result property="Ip" column="Ip" jdbcType="VARCHAR" />
+		<result property="Operation" column="Operation" jdbcType="VARCHAR" />
+		<result property="Operator" column="Operator" jdbcType="VARCHAR" />
+		<result property="Parameter" column="Parameter" jdbcType="VARCHAR" />
+		<result property="OrderId" column="OrderId" jdbcType="VARCHAR" />
+		<result property="OrderNo" column="OrderNo" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
+	    select
+		<include refid="Base_Column_List" />
+		from log
+		where
+		LogId = #{id,jdbcType=VARCHAR}
+	</select>
+
+	<select id="findAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from log
+	</select>
+
+	<select id="findForPage" resultMap="BaseResultMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findForPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+
+	<delete id="removeById" parameterType="java.lang.String">
+		delete from log
+		where
+		LogId = #{id,jdbcType=VARCHAR}
+	</delete>
+
+	<update id="update" parameterType="Log">
+		update log
+		<set>
+			<if test="createTime != null">
+				CreateTime = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="content != null">
+				Content = #{content,jdbcType=VARCHAR},
+			</if>
+			<if test="ip != null">
+				Ip = #{ip,jdbcType=VARCHAR}
+			</if>
+			<if test="operation != null">
+				Operation = #{operation,jdbcType=VARCHAR},
+			</if>
+			<if test="operator != null">
+				Operator = #{operator,jdbcType=VARCHAR},
+			</if>
+			<if test="parameter != null">
+				Parameter = #{parameter,jdbcType=VARCHAR}
+			</if>
+			<if test="orderId != null">
+				OrderId = #{orderId,jdbcType=VARCHAR},
+			</if>
+			<if test="orderNo != null">
+				OrderNo = #{orderNo,jdbcType=VARCHAR}
+			</if>
+		</set>
+		where LogId = #{id,jdbcType=VARCHAR}
+	</update>
+	
+	
+	<insert id="save" parameterType="Log">
+		insert into log
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="content != null">
+				Content,
+			</if>
+			<if test="ip != null">
+				Ip,
+			</if>
+			<if test="operation != null">
+				Operation,
+			</if>
+			<if test="operator != null">
+				Operator,
+			</if>
+			<if test="parameter != null">
+				Parameter,
+			</if>
+			<if test="orderId != null">
+				OrderId,
+			</if>
+			<if test="orderNo != null">
+				OrderNo,
+			</if>
+		</trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="content != null">
+				#{content,jdbcType=VARCHAR},
+			</if>
+			<if test="ip != null">
+				#{ip,jdbcType=VARCHAR},
+			</if>
+			<if test="operation != null">
+				#{operation,jdbcType=VARCHAR},
+			</if>
+			<if test="operator != null">
+				#{operator,jdbcType=VARCHAR},
+			</if>
+			<if test="parameter != null">
+				#{parameter,jdbcType=VARCHAR},
+			</if>
+			<if test="orderId != null">
+				#{orderId,jdbcType=VARCHAR},
+			</if>
+			<if test="orderNo != null">
+				#{orderNo,jdbcType=VARCHAR}
+			</if>
+		</trim>
+	</insert>
+</mapper>

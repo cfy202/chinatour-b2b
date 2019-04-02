@@ -1,0 +1,659 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.EnquirysMapper">
+
+	<sql id="Base_Column_List">
+		enquiryId, enquiryNo, firstName,
+		lastName, createDate,
+		contactPhone,
+		email,teamPopulation, amountOfAdult, amountBelow12,
+		amountBelow21,arriveDate, shoppingOption,
+		specialRequirment,
+		commentOfTour,
+		privateTravelDetails, hotelStandard, remarks,
+		userId,
+		deptId, humanRaceId,
+		languageId,stateId, countryId,
+		enquiryDocs,
+		enState, type, isAvailable,serverIp,brand,tourTypeId
+	</sql>
+
+	<resultMap type="com.chinatour.entity.Enquirys" id="BaseResultMap">
+		<result column="EnquiryId" property="enquiryId" jdbcType="VARCHAR" />
+		<result column="EnquiryNo" property="enquiryNo" jdbcType="VARCHAR" />
+		<result column="FirstName" property="firstName" jdbcType="VARCHAR" />
+		<result column="LastName" property="lastName" jdbcType="VARCHAR" />
+		<result column="CreateDate" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="ContactPhone" property="contactPhone" jdbcType="VARCHAR" />
+		<result column="Email" property="email" jdbcType="VARCHAR" />
+		<result column="TeamPopulation" property="teamPopulation" jdbcType="VARCHAR" />
+		<result column="AmountOfAdult" property="amountOfAdult"
+			jdbcType="INTEGER" />
+		<result column="AmountBelow12" property="amountBelow12"
+			jdbcType="INTEGER" />
+		<result column="AmountBelow21" property="amountBelow21"
+			jdbcType="INTEGER" />
+		<result column="ArriveDate" property="arriveDate" jdbcType="TIMESTAMP" />
+		<result column="ShoppingOption" property="shoppingOption"
+			jdbcType="VARCHAR" />
+		<result column="SpecialRequirment" property="specialRequirment"
+			jdbcType="LONGVARCHAR" />
+		<result column="CommentOfTour" property="commentOfTour"
+			jdbcType="LONGVARCHAR" />
+		<result column="PrivateTravelDetails" property="privateTravelDetails"
+			jdbcType="LONGVARCHAR" />
+		<result column="HotelStandard" property="hotelStandard"
+			jdbcType="VARCHAR" />
+		<result column="Remarks" property="remarks" jdbcType="VARCHAR" />
+		<result column="UserId" property="userId" jdbcType="VARCHAR" />
+		<result column="DeptId" property="deptId" jdbcType="VARCHAR" />
+		<result column="HumanRaceId" property="humanRaceId" jdbcType="VARCHAR" />
+		<result column="LanguageId" property="languageId" jdbcType="VARCHAR" />
+		<result column="StateId" property="stateId" jdbcType="VARCHAR" />
+		<result column="CountryId" property="countryId" jdbcType="VARCHAR" />
+		<result column="EnquiryDocs" property="enquiryDocs" jdbcType="VARCHAR" />
+		<result column="EnState" property="enState" jdbcType="TINYINT" />
+		<result column="Type" property="type" jdbcType="TINYINT" />
+		<result column="IsAvailable" property="isAvailable" jdbcType="TINYINT" />
+		<result column="ServerIp" property="serverIp" jdbcType="VARCHAR" />
+		<result column="Brand" property="brand" jdbcType="VARCHAR" />
+		<result column="TourTypeId" property="tourTypeId" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<resultMap type="com.chinatour.entity.Enquirys" id="ResultMapForAdmin">
+		<result column="EnquiryId" property="enquiryId" jdbcType="VARCHAR" />
+		<result column="EnquiryNo" property="enquiryNo" jdbcType="VARCHAR" />
+		<result column="FirstName" property="firstName" jdbcType="VARCHAR" />
+		<result column="LastName" property="lastName" jdbcType="VARCHAR" />
+		<result column="CreateDate" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="ContactPhone" property="contactPhone" jdbcType="VARCHAR" />
+		<result column="Email" property="email" jdbcType="VARCHAR" />
+		<result column="TeamPopulation" property="teamPopulation" jdbcType="VARCHAR" />
+		<result column="AmountOfAdult" property="amountOfAdult"
+			jdbcType="INTEGER" />
+		<result column="AmountBelow12" property="amountBelow12"
+			jdbcType="INTEGER" />
+		<result column="AmountBelow21" property="amountBelow21"
+			jdbcType="INTEGER" />
+		<result column="ArriveDate" property="arriveDate" jdbcType="TIMESTAMP" />
+		<result column="ShoppingOption" property="shoppingOption"
+			jdbcType="VARCHAR" />
+		<result column="SpecialRequirment" property="specialRequirment"
+			jdbcType="LONGVARCHAR" />
+		<result column="CommentOfTour" property="commentOfTour"
+			jdbcType="LONGVARCHAR" />
+		<result column="PrivateTravelDetails" property="privateTravelDetails"
+			jdbcType="LONGVARCHAR" />
+		<result column="HotelStandard" property="hotelStandard"
+			jdbcType="VARCHAR" />
+		<result column="Remarks" property="remarks" jdbcType="VARCHAR" />
+		<result column="HumanRaceId" property="humanRaceId" jdbcType="VARCHAR" />
+		<result column="LanguageId" property="languageId" jdbcType="VARCHAR" />
+		<result column="StateId" property="stateId" jdbcType="VARCHAR" />
+		<result column="CountryId" property="countryId" jdbcType="VARCHAR" />
+		<result column="EnquiryDocs" property="enquiryDocs" jdbcType="VARCHAR" />
+		<result column="EnState" property="enState" jdbcType="TINYINT" />
+		<result column="Type" property="type" jdbcType="TINYINT" />
+		<result column="IsAvailable" property="isAvailable" jdbcType="TINYINT" />
+		<result column="ServerIp" property="serverIp" jdbcType="VARCHAR" />
+		<result column="Brand" property="brand" jdbcType="VARCHAR" />
+		<result column="TourTypeId" property="tourTypeId" jdbcType="VARCHAR" />
+		<association property="admin" column="userId"
+			select="com.chinatour.persistence.AdminMapper.findById" />
+		<association property="dept" column="deptId"
+			select="com.chinatour.persistence.DeptMapper.findById" />
+	</resultMap>
+	
+	<select id="findAll" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		enquirys
+	</select>
+
+
+	<delete id="removeById" parameterType="String">
+		DELETE FROM
+		enquirys
+		WHERE
+		enquiryId=#{enquiryId}
+	</delete>
+
+
+	<select id="findById" resultMap="BaseResultMap" parameterType="String">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		enquirys
+		WHERE
+		enquiryId=#{enquiryId}
+	</select>
+
+	<update id="update" parameterType="Enquirys">
+		UPDATE enquirys
+		<set>
+			<if test="enquiryId != null">
+				enquiryId= #{enquiryId,jdbcType=VARCHAR} ,
+			</if>
+			<if test="firstName != null">
+				FirstName= #{firstName,jdbcType=VARCHAR} ,
+			</if>
+			<if test="lastName !=null">
+				LastName= #{lastName,jdbcType=VARCHAR} ,
+			</if>
+			<if test="createDate !=null">
+				CreateDate= #{createDate,jdbcType=DATE} ,
+			</if>
+			<if test="contactPhone !=null">
+				ContactPhone= #{contactPhone,jdbcType=VARCHAR} ,
+			</if>
+			<if test="email != null">
+				Email= #{email,jdbcType=VARCHAR} ,
+			</if>
+			<if test="teamPopulation !=null">
+				TeamPopulation= #{teamPopulation,jdbcType=INTEGER} ,
+			</if>
+			<if test="amountOfAdult !=null">
+				AmountOfAdult= #{amountOfAdult,jdbcType=INTEGER} ,
+			</if>
+			<if test="amountBelow12 != null">
+				AmountBelow12= #{amountBelow12,jdbcType=INTEGER} ,
+			</if>
+			<if test="amountBelow21 != null">
+				AmountBelow21= #{amountBelow21,jdbcType=INTEGER} ,
+			</if>
+			<if test="arriveDate != null">
+				ArriveDate= #{arriveDate,jdbcType=DATE} ,
+			</if>
+			<if test="shoppingOption != null">
+				ShoppingOption= #{shoppingOption,jdbcType=VARCHAR} ,
+			</if>
+			<if test="specialRequirment != null">
+				SpecialRequirment= #{specialRequirment,jdbcType=VARCHAR} ,
+			</if>
+			<if test="commentOfTour != null">
+				CommentOfTour= #{commentOfTour,jdbcType=VARCHAR} ,
+			</if>
+			<if test="privateTravelDetails !=null">
+				PrivateTravelDetails= #{privateTravelDetails,jdbcType=VARCHAR} ,
+			</if>
+			<if test="hotelStandard !=null">
+				HotelStandard= #{hotelStandard,jdbcType=VARCHAR} ,
+			</if>
+			<if test="remarks !=null">
+				Remarks= #{remarks,jdbcType=VARCHAR} ,
+			</if>
+			<if test="userId !=null">
+				UserId= #{userId,jdbcType=VARCHAR} ,
+			</if>
+			<if test="deptId !=null">
+				DeptId= #{deptId,jdbcType=VARCHAR} ,
+			</if>
+			<if test="humanRaceId !=null">
+				HumanRaceId= #{humanRaceId,jdbcType=VARCHAR} ,
+			</if>
+			<if test="languageId !=null">
+				LanguageId= #{languageId,jdbcType=VARCHAR} ,
+			</if>
+			<if test="stateId !=null">
+				StateId= #{stateId,jdbcType=VARCHAR} ,
+			</if>
+			<if test="countryId !=null">
+				CountryId= #{countryId,jdbcType=VARCHAR} ,
+			</if>
+			<if test="enquiryDocs !=null">
+				EnquiryDocs= #{enquiryDocs,jdbcType=VARCHAR} ,
+			</if>
+			<if test="enState !=null">
+				EnState= #{enState,jdbcType=TINYINT} ,
+			</if>
+			<if test="type !=null">
+				Type= #{type,jdbcType=TINYINT} ,
+			</if>
+			<if test="isAvailable !=null">
+				IsAvailable= #{isAvailable,jdbcType=TINYINT} ,
+			</if>
+			<if test="serverIp != null">
+				ServerIp= #{serverIp,jdbcType=VARCHAR},
+			</if>
+			<if test="brand != null">
+				Brand= #{brand,jdbcType=VARCHAR},
+			</if>
+			<if test="tourTypeId != null">
+				TourTypeId= #{tourTypeId,jdbcType=VARCHAR}
+			</if>
+		</set>
+		WHERE
+		EnquiryId=#{enquiryId}
+	</update>
+
+	<insert id="save" parameterType="Enquirys">
+		INSERT INTO enquirys
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="enquiryId != null">
+				EnquiryId ,
+			</if>
+			<if test="enquiryNo == null">
+				EnquiryNo ,
+			</if>
+			<if test="firstName != null">
+				FirstName ,
+			</if>
+			<if test="lastName !=null">
+				LastName ,
+			</if>
+			<if test="createDate !=null">
+				CreateDate ,
+			</if>
+			<if test="contactPhone !=null">
+				ContactPhone ,
+			</if>
+			<if test="email != null">
+				Email ,
+			</if>
+			<if test="teamPopulation !=null">
+				TeamPopulation ,
+			</if>
+			<if test="amountOfAdult !=null">
+				AmountOfAdult ,
+			</if>
+			<if test="amountBelow12 != null">
+				AmountBelow12 ,
+			</if>
+			<if test="amountBelow21 != null">
+				AmountBelow21 ,
+			</if>
+			<if test="arriveDate != null">
+				ArriveDate ,
+			</if>
+			<if test="shoppingOption != null">
+				ShoppingOption ,
+			</if>
+			<if test="specialRequirment != null">
+				SpecialRequirment ,
+			</if>
+			<if test="commentOfTour != null">
+				CommentOfTour ,
+			</if>
+			<if test="privateTravelDetails !=null">
+				PrivateTravelDetails ,
+			</if>
+			<if test="hotelStandard !=null">
+				HotelStandard ,
+			</if>
+			<if test="remarks !=null">
+				Remarks ,
+			</if>
+			<if test="userId !=null">
+				UserId ,
+			</if>
+			<if test="deptId !=null">
+				DeptId,
+			</if>
+			<if test="humanRaceId !=null">
+				HumanRaceId,
+			</if>
+			<if test="languageId !=null">
+				LanguageId,
+			</if>
+			<if test="stateId !=null">
+				StateId,
+			</if>
+			<if test="countryId !=null">
+				CountryId,
+			</if>
+			<if test="enquiryDocs !=null">
+				EnquiryDocs,
+			</if>
+			<if test="enState !=null">
+				EnState,
+			</if>
+			<if test="type !=null">
+				Type,
+			</if>
+			<if test="isAvailable !=null">
+				IsAvailable,
+			</if>
+			<if test="serverIp !=null">
+				ServerIp,
+			</if>
+			<if test="brand !=null">
+				Brand,
+			</if>
+			<if test="tourTypeId !=null">
+				TourTypeId
+			</if>
+		</trim>
+
+		<trim prefix="select" suffixOverrides=",">
+			<if test="enquiryId != null">
+				#{enquiryId,jdbcType=VARCHAR} ,
+			</if>
+			<if test="enquiryNo == null">
+				CONCAT('',COALESCE(MAX(EnquiryNo),100000)+1) ,
+			</if>
+			<if test="firstName != null">
+				#{firstName,jdbcType=VARCHAR} ,
+			</if>
+			<if test="lastName !=null">
+				#{lastName,jdbcType=VARCHAR} ,
+			</if>
+			<if test="createDate !=null">
+				#{createDate,jdbcType=DATE} ,
+			</if>
+			<if test="contactPhone !=null">
+				#{contactPhone,jdbcType=VARCHAR} ,
+			</if>
+			<if test="email != null">
+				#{email,jdbcType=VARCHAR} ,
+			</if>
+			<if test="teamPopulation !=null">
+				#{teamPopulation,jdbcType=INTEGER} ,
+			</if>
+			<if test="amountOfAdult !=null">
+				#{amountOfAdult,jdbcType=INTEGER} ,
+			</if>
+			<if test="amountBelow12 != null">
+				#{amountBelow12,jdbcType=INTEGER} ,
+			</if>
+			<if test="amountBelow21 != null">
+				#{amountBelow21,jdbcType=INTEGER} ,
+			</if>
+			<if test="arriveDate != null">
+				#{arriveDate,jdbcType=DATE} ,
+			</if>
+			<if test="shoppingOption != null">
+				#{shoppingOption,jdbcType=VARCHAR} ,
+			</if>
+			<if test="specialRequirment != null">
+				#{specialRequirment,jdbcType=VARCHAR} ,
+			</if>
+			<if test="commentOfTour != null">
+				#{commentOfTour,jdbcType=VARCHAR} ,
+			</if>
+			<if test="privateTravelDetails !=null">
+				#{privateTravelDetails,jdbcType=VARCHAR} ,
+			</if>
+			<if test="hotelStandard !=null">
+				#{hotelStandard,jdbcType=VARCHAR} ,
+			</if>
+			<if test="remarks !=null">
+				#{remarks,jdbcType=VARCHAR} ,
+			</if>
+			<if test="userId !=null">
+				#{userId,jdbcType=VARCHAR} ,
+			</if>
+			<if test="deptId !=null">
+				#{deptId,jdbcType=VARCHAR} ,
+			</if>
+			<if test="humanRaceId !=null">
+				#{humanRaceId,jdbcType=VARCHAR} ,
+			</if>
+			<if test="languageId !=null">
+				#{languageId,jdbcType=VARCHAR} ,
+			</if>
+			<if test="stateId !=null">
+				#{stateId,jdbcType=VARCHAR} ,
+			</if>
+			<if test="countryId !=null">
+				#{countryId,jdbcType=VARCHAR} ,
+			</if>
+			<if test="enquiryDocs !=null">
+				#{enquiryDocs,jdbcType=VARCHAR} ,
+			</if>
+			<if test="enState !=null">
+				#{enState,jdbcType=TINYINT} ,
+			</if>
+			<if test="type !=null">
+				#{type,jdbcType=TINYINT} ,
+			</if>
+			<if test="isAvailable !=null">
+				#{isAvailable,jdbcType=TINYINT} ,
+			</if>
+			<if test="serverIp !=null">
+				#{serverIp,jdbcType=VARCHAR},
+			</if>
+			<if test="brand !=null">
+				#{brand,jdbcType=VARCHAR},
+			</if>
+			<if test="tourTypeId !=null">
+				#{tourTypeId,jdbcType=VARCHAR}
+			</if>
+		</trim>
+		FROM enquirys
+	</insert>
+
+
+	<sql id="findForPage_sql">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM enquirys
+		<where>
+			<trim suffixOverrides="AND">
+				<if test="record.enquiryId != null">
+					EnquiryId= #{record.enquiryId} AND
+				</if>
+				<if test="record.enquiryNo != null">
+					EnquiryNo LIKE CONCAT('%','${record.enquiryNo}','%') AND
+				</if>
+				<if test="record.firstName != null">
+					FirstName LIKE CONCAT('%','${record.firstName}','%') AND
+				</if>
+				<if test="record.lastName !=null">
+					LastName LIKE CONCAT('%','${record.lastName}','%') AND
+				</if>
+				<if test="record.createDate !=null">
+					CreateDate= #{record.createDate} AND
+				</if>
+				<if test="record.contactPhone !=null">
+					ContactPhone= #{record.contactPhone} AND
+				</if>
+				<if test="record.email != null">
+					Email= #{record.cmail} AND
+				</if>
+				<if test="record.teamPopulation !=null">
+					TeamPopulation= #{record.teamPopulation} AND 
+				</if>
+				<if test="record.amountOfAdult !=null">
+					AmountOfAdult= #{record.amountOfAdult} AND
+				</if>
+				<if test="record.amountBelow12 != null">
+					AmountBelow12= #{record.amountBelow12} AND
+				</if>
+				<if test="record.amountBelow21 != null">
+					AmountBelow21= #{record.amountBelow21} AND
+				</if>
+				<if test="record.arriveDate != null">
+					ArriveDate= #{record.arriveDate} AND,
+				</if>
+				<if test="record.shoppingOption != null">
+					ShoppingOption= #{record.shoppingOption} AND
+				</if>
+				<if test="record.specialRequirment != null">
+					SpecialRequirment= #{record.specialRequirment} AND
+				</if>
+				<if test="record.commentOfTour != null">
+					CommentOfTour= #{record.commentOfTour} AND
+				</if>
+				<if test="record.privateTravelDetails !=null">
+					PrivateTravelDetails= #{record.privateTravelDetails} AND
+				</if>
+				<if test="record.hotelStandard !=null">
+					HotelStandard= #{record.hotelStandard} AND
+				</if>
+				<if test="record.remarks !=null">
+					Remarks= #{record.remarks} AND
+				</if>
+				<if test="record.userId !=null">
+					UserId= #{record.userId} AND
+				</if>
+				<if test="record.deptId !=null">
+					DeptId= #{record.deptId} AND
+				</if>
+				<if test="record.humanRaceId !=null">
+					HumanRaceId= #{record.humanRaceId} AND
+				</if>
+				<if test="record.languageId !=null">
+					LanguageId= #{record.languageId} AND
+				</if>
+				<if test="record.stateId !=null">
+					StateId= #{record.stateId} AND
+				</if>
+				<if test="record.countryId !=null">
+					CountryId= #{record.countryId} AND
+				</if>
+				<if test="record.enquiryDocs !=null">
+					EnquiryDocs= #{record.enquiryDocs} AND
+				</if>
+				<if test="record.enState !=null">
+					EnState= #{record.enState} AND
+				</if>
+				<if test="record.type !=null">
+					Type= #{record.type} AND
+				</if>
+				<if test="record.isAvailable !=null">
+					IsAvailable =#{record.isAvailable} AND
+				</if>
+				<if test="record.brand !=null">
+					Brand =#{record.brand} AND
+				</if>
+				<if test="record.tourTypeId !=null">
+					tourTypeId =#{record.tourTypeId} 
+				</if>
+			</trim>
+		</where>
+		Order By CreateDate DESC
+	</sql>
+
+	<select id="findForPage" resultMap="ResultMapForAdmin">
+		<include refid="Pager.paginationStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findForPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+	
+	<sql id="findByDeptIdPage_sql">
+		SELECT
+			e.enquiryId, e.enquiryNo, e.firstName,
+			e.lastName, e.createDate,
+			e.contactPhone,e.privateTravelDetails, e.hotelStandard,
+			e.remarks,e.userId,e.deptId,e.enquiryDocs,e.serverIp,
+			e.enState, e.type, e.isAvailable,e.brand,e.tourTypeId
+		FROM enquirys e,tour_type_of_dept td
+		<where>
+			<trim suffixOverrides="AND">
+				e.TourTypeId=td.TourTypeId AND
+				IF(td.StartTime IS NULL,'1=1',e.createDate <![CDATA[>=]]> td.StartTime) AND
+				IF(td.EndTime IS NULL,'1=1',e.createDate <![CDATA[<=]]> td.EndTime) AND
+				<if test="record.enquiryId != null">
+					e.EnquiryId= #{record.enquiryId} AND
+				</if>
+				<if test="record.enquiryNo != null">
+					e.EnquiryNo LIKE CONCAT('%','${record.enquiryNo}','%') AND
+				</if>
+				<if test="record.firstName != null">
+					e.FirstName LIKE CONCAT('%','${record.firstName}','%') AND
+				</if>
+				<if test="record.lastName !=null">
+					e.LastName LIKE CONCAT('%','${record.lastName}','%') AND
+				</if>
+				<if test="record.createDate !=null">
+					e.CreateDate= #{record.createDate} AND
+				</if>
+				<if test="record.contactPhone !=null">
+					e.ContactPhone= #{record.contactPhone} AND
+				</if>
+				<if test="record.email != null">
+					e.Email= #{record.cmail} AND
+				</if>
+				<if test="record.teamPopulation !=null">
+					e.TeamPopulation= #{record.teamPopulation} AND 
+				</if>
+				<if test="record.amountOfAdult !=null">
+					e.AmountOfAdult= #{record.amountOfAdult} AND
+				</if>
+				<if test="record.amountBelow12 != null">
+					e.AmountBelow12= #{record.amountBelow12} AND
+				</if>
+				<if test="record.amountBelow21 != null">
+					e.AmountBelow21= #{record.amountBelow21} AND
+				</if>
+				<if test="record.arriveDate != null">
+					e.ArriveDate= #{record.arriveDate} AND,
+				</if>
+				<if test="record.shoppingOption != null">
+					e.ShoppingOption= #{record.shoppingOption} AND
+				</if>
+				<if test="record.specialRequirment != null">
+					e.SpecialRequirment= #{record.specialRequirment} AND
+				</if>
+				<if test="record.commentOfTour != null">
+					e.CommentOfTour= #{record.commentOfTour} AND
+				</if>
+				<if test="record.privateTravelDetails !=null">
+					e.PrivateTravelDetails= #{record.privateTravelDetails} AND
+				</if>
+				<if test="record.hotelStandard !=null">
+					e.HotelStandard= #{record.hotelStandard} AND
+				</if>
+				<if test="record.remarks !=null">
+					e.Remarks= #{record.remarks} AND
+				</if>
+				<if test="record.userId !=null">
+					e.UserId= #{record.userId} AND
+				</if>
+				<if test="record.deptId !=null">
+					td.DeptId= #{record.deptId} AND
+				</if>
+				<if test="record.humanRaceId !=null">
+					e.HumanRaceId= #{record.humanRaceId} AND
+				</if>
+				<if test="record.languageId !=null">
+					e.LanguageId= #{record.languageId} AND
+				</if>
+				<if test="record.stateId !=null">
+					e.StateId= #{record.stateId} AND
+				</if>
+				<if test="record.countryId !=null">
+					e.CountryId= #{record.countryId} AND
+				</if>
+				<if test="record.enquiryDocs !=null">
+					e.EnquiryDocs= #{record.enquiryDocs} AND
+				</if>
+				<if test="record.enState !=null">
+					e.EnState= #{record.enState} AND
+				</if>
+				<if test="record.type !=null">
+					e.Type= #{record.type} AND
+				</if>
+				<if test="record.isAvailable !=null">
+					e.IsAvailable =#{record.isAvailable} AND
+				</if>
+				<if test="record.brand !=null">
+					e.Brand =#{record.brand} AND
+				</if>
+				<if test="record.tourTypeId !=null">
+					e.tourTypeId =#{record.tourTypeId} 
+				</if>
+			</trim>
+			Order By e.CreateDate DESC
+		</where>
+	</sql>
+
+	<select id="findByDeptIdPage" resultMap="ResultMapForAdmin">
+		<include refid="Pager.paginationStart" />
+		<include refid="findByDeptIdPage_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findByDeptIdPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findByDeptIdPage_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+</mapper>

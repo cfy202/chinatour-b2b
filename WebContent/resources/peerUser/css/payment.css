@@ -1,0 +1,176 @@
+@charset "utf-8";
+/* CSS Document */
+.tourinfo_leftbox{
+	width:818px;
+	border:1px solid #ddd;
+	background:#fff;
+	box-shadow: 0 0 3px #dddddd;
+	padding-bottom:10px;
+	}
+.tourinfo_box{
+	padding:20px 20px;
+	}
+.tourinfo_name{
+	height:60px;
+	background:#f5fbff;
+	line-height:60px;
+	padding:0 0 0 20px;
+	color:#0081cc;
+	font-size:18px;
+	}
+.tourinfo_date{
+	margin:0 0 30px 0;
+	}
+.tourinfo_date label{
+	width:100px;
+	display:inline-block;
+	}
+.tourinfo_date input {
+	border: 1px solid #c4c4c4;
+	border-radius: 4px;
+	padding: 3px 4px;
+	margin: 0 5px;
+	outline: none;
+	}
+.tourinfo_date input:focus{
+	border: 1px solid #0081cc;
+	box-shadow: 0 0 4px #0081cc;
+	outline: none;
+	transition: box-shadow 0.25s linear 0s;
+	-webkit-transition: box-shadow 0.25s linear 0s;
+	}
+.date_d{
+	margin-right:60px;
+	}
+.tourDate_d{
+	width:150px;
+	height: 21px;
+	line-height: 27px;
+	font-size: 12px;
+	-moz-box-shadollw: 1px 1px 3px #dddddd inset;
+	-webkit-box-shadow: 1px 1px 3px #dddddd inset;
+	box-shadow: 1px 1px 3px #dddddd inset;
+	}
+.tourinfo_date{
+	margin:0 0 30px 0;
+	}
+.tourinfo_date label{
+	width:100px;
+	display:inline-block;
+	}
+.line_s{
+	height:1px;
+	background:#e9e9e9;
+	margin:0 0 30px 0;
+	}
+.customer_p{
+	text-align:center;
+	}
+.payment_btn{
+	border:0;
+	border-radius:4px;
+	background:#ed6f42;
+	padding:5px 20px;
+	color:#fff;
+	cursor:pointer;
+	
+	}
+.paymethod{
+	border: 1px solid #c4c4c4;
+	border-radius: 4px;
+	padding: 3px 4px;
+	margin: 0 5px;
+	outline: none;
+	width: 160px;
+	height: 27px;
+	line-height: 27px;
+	font-size: 12px;
+	-moz-box-shadollw: 1px 1px 3px #dddddd inset;
+	-webkit-box-shadow: 1px 1px 3px #dddddd inset;
+	box-shadow: 1px 1px 3px #dddddd inset;
+	}
+.tourinfo_leftbox_down{
+	margin-top:20px;
+	padding-bottom:10px;
+	}
+.payment_tab{
+	background:#fff;
+	box-shadow: 0 0 3px #dddddd;
+	}
+.payment_tab{
+	border-left:1px solid #e9e9e9;
+	border-top:1px solid #e9e9e9;
+	}
+.payment_tab tr td,th{
+	border-right:1px solid #e9e9e9;
+	border-bottom:1px solid #e9e9e9;
+	padding: 0 10px;
+	}
+.payment_tab_1 td{
+	background:#f7f7f7;
+	height:50px;
+	text-align:center;
+	}
+.payment_span_1{
+	margin-right:5px;
+	cursor:pointer;
+	}
+.tourinfo_summary{
+	width:260px;
+	border: 1px solid #ddd;
+	background: -webkit-linear-gradient(#fff, #edf8ff); /* Safari 5.1 - 6.0 */
+  	background: -o-linear-gradient(#fff, #edf8ff); /* Opera 11.1 - 12.0 */
+ 	background: -moz-linear-gradient(#fff, #edf8ff); /* Firefox 3.6 - 15 */
+  	background: linear-gradient(#fff, #edf8ff); /* 标准的语法 */
+	box-shadow: 0 0 3px #dddddd;
+	}
+.summary_tit{
+	height:60px;
+	background:#0081cc;
+	text-align:center;
+	font-size:30px;
+	font-weight:bold;
+	line-height:60px;
+	}
+.summary_tit span{
+	display:inline-block;
+	background: url(../background/summary_bg1.png) 0 3px no-repeat;
+	padding-left:25px;
+	height:25px;
+	line-height:25px;
+	color:#fff;
+	}	
+.summary_box{
+	margin-top:20px;
+	padding:0 20px;
+	}
+.summary_box1{
+	margin-bottom:15px;
+	}
+.summary_box1 span{
+	}
+.summary_zhekou{
+	border: 1px solid #c4c4c4;
+	border-radius: 4px;
+	padding: 3px 4px;
+	margin: 0 5px;
+	outline: none;
+	width: 140px;
+	height: 21px;
+	line-height: 27px;
+	font-size: 12px;
+	-moz-box-shadow: 1px 1px 3px #dddddd inset;
+	-webkit-box-shadow: 1px 1px 3px #dddddd inset;
+	box-shadow: 1px 1px 3px #dddddd inset;
+	}
+.summary_box2{
+	font-size:18px;
+	font-weight:bold;
+	text-align:right;
+	padding:30px 0 20px 0;
+	}
+.line_2s{
+	height:1px;
+	background:#eeeeee;
+	margin:0 0 15px 0;
+	}

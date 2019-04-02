@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.AccountRecordMapper">
+	<sql id="Base_Column_List">
+		AccountRecordId,
+		InvoiceAndCreditId,
+		BusinessNo,
+		BillToDeptId,
+		DeptId,
+		TourCode,
+		ReceivableCurrency,
+		ReceivableAmount,
+		ReceivedAmount,
+		BillToReceiver,
+		CreateDate,
+		Month,
+		IfBeginningValue,
+		Remarks
+	</sql>
+	<resultMap id="BaseResultMap" type="AccountRecord">
+		<result column="AccountRecordId" property="accountRecordId" jdbcType="VARCHAR" />
+		<result column="InvoiceAndCreditId" property="invoiceAndCreditId" jdbcType="VARCHAR" />
+		<result column="BusinessNo" property="businessNo" jdbcType="INTEGER" />
+		<result column="BillToDeptId" property="billToDeptId" jdbcType="VARCHAR" />
+		<result column="DeptId" property="deptId" jdbcType="VARCHAR" />
+		<result column="TourCode" property="tourCode" jdbcType="VARCHAR" />
+		<result column="ReceivableAmount" property="receivableAmount" jdbcType="DECIMAL" />
+		<result column="ReceivedAmount" property="receivedAmount" jdbcType="DECIMAL" />
+		<result column="BillToReceiver" property="billToReceiver" jdbcType="VARCHAR" />
+		<result column="CreateDate" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="Month" property="month" jdbcType="VARCHAR" />
+		<result column="IfBeginningValue" property="ifBeginningValue" jdbcType="INTEGER" />
+		<result column="Remarks" property="remarks" jdbcType="VARCHAR" />
+		<result column="ReceivableCurrency" property="receivableCurrency" jdbcType="DECIMAL" />
+	</resultMap>
+	
+	<insert id="save" parameterType="AccountRecord">
+		INSERT INTO account_record
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="accountRecordId != null">
+				AccountRecordId,
+			</if>
+			<if test="invoiceAndCreditId != null">
+				InvoiceAndCreditId,
+			</if>
+			<if test="businessNo != null">
+				BusinessNo,
+			</if>
+			<if test="billToDeptId != null">
+				BillToDeptId,
+			</if>
+			<if test="deptId != null">
+				DeptId,
+			</if>
+			<if test="tourCode != null">
+				TourCode,
+			</if>
+			<if test="receivableAmount != null">
+				ReceivableAmount,
+			</if>
+			<if test="receivedAmount != null">
+				ReceivedAmount,
+			</if>
+			<if test="billToReceiver != null">
+				BillToReceiver,
+			</if>
+			<if test="createDate != null">
+				CreateDate,
+			</if>
+			<if test="month != null">
+				Month,
+			</if>
+			<if test="ifBeginningValue != null">
+				IfBeginningValue,
+			</if>
+			<if test="remarks != null">
+				Remarks,
+			</if>
+			<if test="receivableCurrency != null">
+				ReceivableCurrency
+			</if>
+		</trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="accountRecordId != null">
+				#{accountRecordId,jdbcType=VARCHAR},
+			</if>
+			<if test="invoiceAndCreditId != null">
+				#{invoiceAndCreditId,jdbcType=VARCHAR},
+			</if>
+			<if test="businessNo != null">
+				#{businessNo,jdbcType=INTEGER},
+			</if>
+			<if test="billToDeptId != null">
+				#{billToDeptId,jdbcType=VARCHAR},
+			</if>
+			<if test="deptId != null">
+				#{deptId,jdbcType=VARCHAR},
+			</if>
+			<if test="tourCode != null">
+				#{tourCode,jdbcType=VARCHAR},
+			</if>
+			<if test="receivableAmount != null">
+				#{receivableAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="receivedAmount != null">
+				#{receivedAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="billToReceiver != null">
+				#{billToReceiver,jdbcType=VARCHAR},
+			</if>
+			<if test="createDate != null">
+				#{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="month != null">
+				#{month,jdbcType=VARCHAR},
+			</if>
+			<if test="ifBeginningValue != null">
+				#{ifBeginningValue,jdbcType=INTEGER},
+			</if>
+			<if test="remarks != null">
+				#{remarks,jdbcType=VARCHAR},
+			</if>
+			<if test="receivableCurrency != null">
+				#{receivableCurrency,jdbcType=DECIMAL},
+			</if>
+		</trim>
+	</insert>
+	
+	<select id="getAccountRow" parameterType="AccountRecord" resultType="com.chinatour.entity.AccountRow">
+		SELECT 	SUM(ReceivableAmount) AS Balance,
+				Month ,
+				BillToDeptId,
+				BillToReceiver,
+				DeptId
+		FROM account_record 
+		<where>
+            <trim suffixOverrides="AND">
+            IfBeginningValue!=2
+			<if test="record.accountRecordId!= null">
+				AND AccountRecordId=#{record.accountRecordId}
+			</if>
+			<if test="record.invoiceAndCreditId!= null">
+				AND InvoiceAndCreditId=#{record.invoiceAndCreditId}
+			</if>
+			<if test="record.businessNo!= null">
+				AND BusinessNo=#{record.businessNo}
+			</if>
+			<if test="record.deptId!=null">
+			   	AND DeptId=#{record.deptId} 
+			</if>
+			<if test="record.tourCode!=null">
+			  	AND TourCode=#{record.tourCode}
+			</if>
+			<if test="record.receivableAmount !=null">
+				AND ReceivableAmount=#{record.receivableAmount}
+			</if>
+			<if test="record.billToReceiver!=null">
+				AND BillToReceiver=#{record.billToReceiver}
+			</if>
+			<if test="record.startMonth!=null">
+				AND Month=#{record.month}
+			</if>
+			<if test="record.remarks!=null">
+				AND Remarks=#{record.remarks}
+			</if>
+			<if test="record.year!=null">
+				AND SUBSTRING(`Month`,1,4)=#{record.year}
+			</if>
+		</trim>
+	</where>
+			  
+		GROUP BY `Month`,BillToDeptId
+	</select>
+	
+	<select id="getBeginningVal" parameterType="AccountRecord" resultType="com.chinatour.entity.AccountRow">
+		SELECT 	ReceivableAmount AS Balance,
+				BillToDeptId,
+				BillToReceiver,
+				DeptId
+		FROM account_record 
+		<where>
+            <trim suffixOverrides="AND">
+	            IfBeginningValue=2
+				<if test="record.accountRecordId!= null">
+					AND AccountRecordId=#{record.accountRecordId}
+				</if>
+				<if test="record.invoiceAndCreditId!= null">
+					AND InvoiceAndCreditId=#{record.invoiceAndCreditId}
+				</if>
+				<if test="record.businessNo!= null">
+					AND BusinessNo=#{record.businessNo}
+				</if>
+				<if test="record.deptId!=null">
+				   AND DeptId=#{record.deptId} 
+				</if>
+				<if test="record.tourCode!=null">
+				  AND TourCode=#{record.tourCode}
+				</if>
+				<if test="record.receivableAmount!=null">
+					AND ReceivableAmount=#{record.receivableAmount}
+				</if>
+				<if test="record.billToReceiver!=null">
+					AND BillToReceiver=#{record.billToReceiver}
+				</if>
+				<if test="record.month!=null">
+					AND Month=#{record.month}
+				</if>
+				<if test="record.remarks!=null">
+					AND Remarks=#{record.remarks}
+				</if>
+				<if test="record.year!=null">
+					AND SUBSTRING(`Month`,1,4)=#{record.year}
+				</if>	
+			</trim>
+		</where>		  
+	</select>
+	
+		<select id="getBeginningValueOfYear" parameterType="accountRecord" resultType="accountRecord">
+		SELECT 	a.AccountRecordId,   
+				a.InvoiceAndCreditId,
+				a.BusinessNo,        
+				a.BillToDeptId,      
+				a.DeptId,            
+				a.TourCode, 
+				a.ReceivableCurrency,         
+				a.ReceivableAmount,
+				a.ReceivedAmount,  
+				a.BillToReceiver,    
+				a.CreateDate,        
+				a.Month,             
+				a.IfBeginningValue,  
+				a.Remarks,
+				i.Prefix AS BusinessName      
+		FROM account_record a,invoice_and_credit i 
+		WHERE 	a.IfBeginningValue=2
+				AND
+				a.InvoiceAndCreditId=i.InvoiceAndCreditId
+		<if test="accountRecordId!= null">
+			AND a.AccountRecordId=#{accountRecordId}
+		</if>
+		<if test="invoiceAndCreditId!= null">
+			AND a.InvoiceAndCreditId=#{invoiceAndCreditId}
+		</if>
+		<if test="businessNo!= null">
+			AND a.BusinessNo=#{businessNo}
+		</if>
+		<if test="deptId!=null">
+		   AND a.DeptId=#{deptId} 
+		</if>
+		<if test="tourCode!=null">
+		  AND a.TourCode=#{tourCode}
+		</if>
+		<if test="receivableAmount!=null">
+			AND a.ReceivableAmount=#{receivableAmount}
+		</if>
+		<if test="billToDeptId!=null">
+			AND a.BillToDeptId=#{billToDeptId}
+		</if>
+		<if test="billToReceiver!=null">
+			AND a.BillToReceiver=#{billToReceiver}
+		</if>
+		<if test="month!=null">
+			AND a.Month=#{month}
+		</if>
+		<if test="remarks!=null">
+			AND a.Remarks=#{remarks}
+		</if>
+		<if test="year!=null">
+			AND SUBSTRING(a.`Month`,1,4)=#{year}
+		</if>
+		LIMIT 1		  
+	</select>
+	
+	<select id="find" parameterType="accountRecord" resultType="accountRecord">
+		SELECT	a.AccountRecordId,   
+				a.InvoiceAndCreditId,
+				a.BusinessNo,        
+				a.BillToDeptId,      
+				a.DeptId,            
+				a.TourCode, 
+				a.ReceivableCurrency,         
+				a.ReceivableAmount,  
+				a.ReceivedAmount,
+				a.BillToReceiver,    
+				a.CreateDate,        
+				a.Month,             
+				a.IfBeginningValue,  
+				a.Remarks,
+				i.Prefix AS BusinessName
+		FROM 	account_record a,invoice_and_credit i
+		WHERE 
+		a.InvoiceAndCreditId=i.InvoiceAndCreditId 
+		<if test="accountRecordId!= null">
+			AND a.AccountRecordId=#{accountRecordId}
+		</if>
+		<if test="invoiceAndCreditId!= null">
+			AND a.InvoiceAndCreditId=#{invoiceAndCreditId}
+		</if>
+		<if test="businessNo!= null">
+			AND a.BusinessNo=#{businessNo}
+		</if>
+		<if test="billToDeptId!=null">
+			AND a.BillToDeptId=#{billToDeptId}
+		</if>
+		<if test="deptId!=null">
+		   AND a.DeptId=#{deptId}
+		</if>
+		<if test="tourCode!=null">
+		  AND a.TourCode=#{tourCode}
+		</if>
+		<if test="receivableAmount!=null">
+			AND a.ReceivableAmount=#{receivableAmount}
+		</if>
+		<if test="billToReceiver!=null">
+			AND a.BillToReceiver=#{billToReceiver}
+		</if>
+		<if test="createDate!=null">
+			AND a.CreateDate=#{createDate}
+		</if>
+		<if test="month!=null">
+			AND a.Month=#{month}
+		</if>
+		<if test="ifBeginningValue!=null">
+			AND a.IfBeginningValue=#{ifBeginningValue}
+		</if>
+		<if test="remarks!=null">
+			AND a.Remarks=#{remarks}
+		</if>
+		<!--<if test="startMonth!=null">
+			AND Month&gt;=#{startMonth}
+		</if>
+		<if test="endMonth!=null">
+			AND Month&lt;=#{endMonth}
+		</if>  -->
+		<if test="year!=null">
+			AND SUBSTRING(a.`Month`,1,4)=#{year}
+		</if>
+		ORDER BY a.BusinessNo ASC
+	</select>
+	
+	<select id="findForPage" resultMap="BaseResultMap">
+        <include refid="Pager.paginationStart"/>
+        <include refid="Pager.paginationEnd"/>
+    </select>
+    
+    <select id="findForPageCount" resultType="int">
+        <include refid="Pager.countStart"/>
+        <include refid="Pager.countEnd"/>
+    </select>
+    <select id="querySumYearly" resultMap="BaseResultMap">
+    	SELECT 
+    	SUM(ReceivableAmount) AS ReceivableAmount,SUM(ReceivableCurrency) AS  ReceivableCurrency
+    	FROM 
+    	account_record
+    	WHERE 1=1 
+		<if test="accountRecordId!= null">
+			AND AccountRecordId=#{accountRecordId}
+		</if>
+		<if test="invoiceAndCreditId!= null">
+			AND InvoiceAndCreditId=#{invoiceAndCreditId}
+		</if>
+		<if test="businessNo!= null">
+			AND BusinessNo=#{businessNo}
+		</if>
+		<if test="billToDeptId!=null">
+			AND BillToDeptId=#{billToDeptId}
+		</if>
+		<if test="deptId!=null">
+		   AND DeptId=#{deptId}
+		</if>
+		<if test="tourCode!=null">
+		  AND TourCode=#{tourCode}
+		</if>
+		<if test="receivableAmount!=null">
+			AND ReceivableAmount=#{receivableAmount}
+		</if>
+		<if test="billToReceiver!=null">
+			AND BillToReceiver=#{billToReceiver}
+		</if>
+		<if test="createDate!=null">
+			AND CreateDate=#{createDate}
+		</if>
+		<if test="month!=null">
+			AND Month=#{month}
+		</if>
+		<if test="ifBeginningValue!=null">
+			AND IfBeginningValue=#{ifBeginningValue}
+		</if>
+		<if test="remarks!=null">
+			AND Remarks=#{remarks}
+		</if>
+		<if test="year!=null">
+			AND SUBSTRING(`Month`,1,4)=#{year}
+		</if>
+    </select>
+</mapper>

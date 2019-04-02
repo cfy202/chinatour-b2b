@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.SupplierPriceInfoMapper">
+	<resultMap id="BaseResultMap" type="com.chinatour.entity.SupplierPriceInfo">
+		<id column="SupplierPriceInfoId" property="supplierPriceInfoId"
+			jdbcType="VARCHAR" />
+		<result column="CustomerNo" property="customerNo" jdbcType="INTEGER" />
+		<result column="TourPrice" property="tourPrice" jdbcType="DECIMAL" />
+		<result column="SinglePrice" property="singlePrice" jdbcType="DECIMAL" />
+		<result column="FlyPrice" property="flyPrice" jdbcType="DECIMAL" />
+		<result column="ChildrenPrice" property="childrenPrice"
+			jdbcType="DECIMAL" />
+		<result column="SupplierOfAgentId" property="supplierOfAgentId"
+			jdbcType="VARCHAR" />
+		<result column="CustomerId" property="customerId" jdbcType="VARCHAR" />
+		<result column="DelayPrice" property="delayPrice" jdbcType="DECIMAL" />
+		<result column="PreferentialPrice" property="preferentialPrice"
+			jdbcType="DECIMAL" />
+		<result column="SpecialPrice" property="specialPrice" jdbcType="DECIMAL" />
+		<result column="BedPrice" property="bedPrice" jdbcType="DECIMAL" />
+		<result column="IsCalculate" property="isCalculate" jdbcType="INTEGER" />
+		<result column="OrderId" property="orderId" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap id="ResultCustomerMap" type="com.chinatour.entity.SupplierPriceInfo">
+		<id column="SupplierPriceInfoId" property="supplierPriceInfoId"
+			jdbcType="VARCHAR" />
+		<result column="CustomerNo" property="customerNo" jdbcType="INTEGER" />
+		<result column="TourPrice" property="tourPrice" jdbcType="DECIMAL" />
+		<result column="SinglePrice" property="singlePrice" jdbcType="DECIMAL" />
+		<result column="FlyPrice" property="flyPrice" jdbcType="DECIMAL" />
+		<result column="ChildrenPrice" property="childrenPrice"
+			jdbcType="DECIMAL" />
+		<result column="SupplierOfAgentId" property="supplierOfAgentId"
+			jdbcType="VARCHAR" />
+		<result column="CustomerId" property="customerId" jdbcType="VARCHAR" />
+		<result column="DelayPrice" property="delayPrice" jdbcType="DECIMAL" />
+		<result column="PreferentialPrice" property="preferentialPrice"
+			jdbcType="DECIMAL" />
+		<result column="SpecialPrice" property="specialPrice" jdbcType="DECIMAL" />
+		<result column="BedPrice" property="bedPrice" jdbcType="DECIMAL" />
+		<result column="IsCalculate" property="isCalculate" jdbcType="INTEGER" />
+		<result column="OrderId" property="orderId" jdbcType="VARCHAR" />
+		<result column="userId" property="userId" jdbcType="VARCHAR" />
+		<result column="orderNo" property="orderNo" jdbcType="VARCHAR" />
+		<result column="lastName" property="lastName" jdbcType="VARCHAR" />
+		<result column="firstName" property="firstName" jdbcType="VARCHAR" />
+		<result column="middleName" property="middleName" jdbcType="VARCHAR" />
+		<result column="agent" property="agent" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		SupplierPriceInfoId, CustomerNo, TourPrice, SinglePrice,
+		FlyPrice, ChildrenPrice,
+		SupplierOfAgentId, CustomerId, DelayPrice,
+		PreferentialPrice,
+		SpecialPrice, BedPrice,
+		IsCalculate, OrderId
+	</sql>
+	<select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from supplierpriceinfo
+		where SupplierPriceInfoId =
+		#{supplierPriceInfoId,jdbcType=VARCHAR}
+	</select>
+	<delete id="removeById" parameterType="java.lang.String">
+		delete from
+		supplierpriceinfo
+		where SupplierPriceInfoId =
+		#{supplierPriceInfoId,jdbcType=VARCHAR}
+	</delete>
+			
+	<select id="removeByIds" resultMap="BaseResultMap">
+		DELETE 
+		FROM supplierpriceinfo
+		<where>
+			<trim suffixOverrides="AND">
+				SupplierPriceInfoId in
+					<foreach item="item" index="index" collection="ids" open="("
+					separator="," close=")">
+						#{item}
+					</foreach>
+				AND
+			</trim>
+		</where>
+	</select>
+	
+	<insert id="save" parameterType="com.chinatour.entity.SupplierPriceInfo">
+		insert into supplierpriceinfo
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="supplierPriceInfoId != null">
+				SupplierPriceInfoId,
+			</if>
+			<if test="customerNo != null">
+				CustomerNo,
+			</if>
+			<if test="tourPrice != null">
+				TourPrice,
+			</if>
+			<if test="singlePrice != null">
+				SinglePrice,
+			</if>
+			<if test="flyPrice != null">
+				FlyPrice,
+			</if>
+			<if test="childrenPrice != null">
+				ChildrenPrice,
+			</if>
+			<if test="supplierOfAgentId != null">
+				SupplierOfAgentId,
+			</if>
+			<if test="customerId != null">
+				CustomerId,
+			</if>
+			<if test="delayPrice != null">
+				DelayPrice,
+			</if>
+			<if test="preferentialPrice != null">
+				PreferentialPrice,
+			</if>
+			<if test="specialPrice != null">
+				SpecialPrice,
+			</if>
+			<if test="bedPrice != null">
+				BedPrice,
+			</if>
+			<if test="isCalculate != null">
+				IsCalculate,
+			</if>
+			<if test="orderId != null">
+				OrderId,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="supplierPriceInfoId != null">
+				#{supplierPriceInfoId,jdbcType=VARCHAR},
+			</if>
+			<if test="customerNo != null">
+				#{customerNo,jdbcType=INTEGER},
+			</if>
+			<if test="tourPrice != null">
+				#{tourPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="singlePrice != null">
+				#{singlePrice,jdbcType=DECIMAL},
+			</if>
+			<if test="flyPrice != null">
+				#{flyPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="childrenPrice != null">
+				#{childrenPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="supplierOfAgentId != null">
+				#{supplierOfAgentId,jdbcType=VARCHAR},
+			</if>
+			<if test="customerId != null">
+				#{customerId,jdbcType=VARCHAR},
+			</if>
+			<if test="delayPrice != null">
+				#{delayPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="preferentialPrice != null">
+				#{preferentialPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="specialPrice != null">
+				#{specialPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="bedPrice != null">
+				#{bedPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="isCalculate != null">
+				#{isCalculate,jdbcType=INTEGER},
+			</if>
+			<if test="orderId != null">
+				#{orderId,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	
+	<insert id="batchSave" parameterType="java.util.List">
+		INSERT INTO supplierpriceinfo
+			(<include refid="Base_Column_List"/>)
+		values 
+			<foreach collection="list" item="item" index="index" separator="," >
+				(
+					#{item.supplierPriceInfoId,jdbcType=VARCHAR},
+					#{item.customerNo,jdbcType=INTEGER},
+					#{item.tourPrice,jdbcType=DECIMAL},
+					#{item.singlePrice,jdbcType=DECIMAL},
+					#{item.flyPrice,jdbcType=DECIMAL},
+					#{item.childrenPrice,jdbcType=DECIMAL},
+					#{item.supplierOfAgentId,jdbcType=VARCHAR},
+					#{item.customerId,jdbcType=VARCHAR},
+					#{item.delayPrice,jdbcType=DECIMAL},
+					#{item.preferentialPrice,jdbcType=DECIMAL},
+					#{item.specialPrice,jdbcType=DECIMAL},
+					#{item.bedPrice,jdbcType=DECIMAL},
+					#{item.isCalculate,jdbcType=INTEGER},
+					#{item.orderId,jdbcType=VARCHAR}
+				)
+			</foreach>
+	</insert>
+	
+	<update id="update" parameterType="com.chinatour.entity.SupplierPriceInfo">
+		update supplierpriceinfo
+		<set>
+			<if test="customerNo != null">
+				CustomerNo = #{customerNo,jdbcType=INTEGER},
+			</if>
+			<if test="tourPrice != null">
+				TourPrice = #{tourPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="singlePrice != null">
+				SinglePrice = #{singlePrice,jdbcType=DECIMAL},
+			</if>
+			<if test="flyPrice != null">
+				FlyPrice = #{flyPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="childrenPrice != null">
+				ChildrenPrice = #{childrenPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="supplierOfAgentId != null">
+				SupplierOfAgentId =
+				#{supplierOfAgentId,jdbcType=VARCHAR},
+			</if>
+			<if test="customerId != null">
+				CustomerId = #{customerId,jdbcType=VARCHAR},
+			</if>
+			<if test="delayPrice != null">
+				DelayPrice = #{delayPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="preferentialPrice != null">
+				PreferentialPrice =
+				#{preferentialPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="specialPrice != null">
+				SpecialPrice = #{specialPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="bedPrice != null">
+				BedPrice = #{bedPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="isCalculate != null">
+				IsCalculate = #{isCalculate,jdbcType=INTEGER},
+			</if>
+			<if test="orderId != null">
+				OrderId = #{orderId,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where SupplierPriceInfoId = #{supplierPriceInfoId,jdbcType=VARCHAR}
+	</update>
+
+	<select id="findSupplierAndCustomer" resultMap="ResultCustomerMap"
+		parameterType="java.lang.String">
+		SELECT
+		sp.SupplierPriceInfoId,
+		sp.CustomerNo,
+		sp.TourPrice,
+		sp.SinglePrice,
+		sp.FlyPrice,
+		sp.ChildrenPrice,
+		sp.DelayPrice,
+		sp.PreferentialPrice,
+		sp.SpecialPrice,
+		sp.BedPrice,
+		sp.IsCalculate,
+		c.lastName As lastName,
+		c.firstName As firstName,
+		c.MiddleName As
+		midlleName,
+		a.UserName As agent,
+		o.UserId As UserId ,
+		sp.SupplierOfAgentId,
+		o.orderNo as orderNo,
+		o.orderId as orderId,
+		o.state
+		FROM
+		supplierpriceinfo sp,
+		supplierofagent s,
+		customer c,
+		suppriceinforel sf,
+		orders o,
+		customer_order_rel cr,
+		zs_admin a
+		WHERE
+		s.SupPriceInfoRelId=sf.SupPriceInfoRelId
+		AND
+		sp.SupplierOfAgentId=s.SupplierOfAgentId
+		AND cr.CustomerId=c.CustomerId
+		AND cr.OrderId=o.OrderId
+		AND o.UserId=a.id
+		AND sf.TourId=o.TourId
+		AND
+		sp.OrderId=o.OrderId
+		AND c.CustomerId=sp.CustomerId
+		
+		<if test="supplierPriceInfoId != null">
+			AND sp.SupplierPriceInfoId=#{supplierPriceInfoId}
+		</if>
+		<if test="supplierOfAgentId!=null">
+			AND sp.SupplierOfAgentId=#{supplierOfAgentId}
+		</if>
+		<if test="orderId!=null">
+			AND o.OrderId=#{orderId}
+		</if>
+		<if test="userId!=null">
+			AND s.userId=#{userId}
+		</if>
+		<if test="supPriceInfoRelId!=null">
+			AND sf.supPriceInfoRelId=#{supPriceInfoRelId}
+		</if>
+		Order By sp.CustomerNo ASC
+	</select>
+	<select id="find" resultMap="BaseResultMap"
+		parameterType="com.chinatour.entity.SupplierPriceInfo">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM supplierpriceinfo
+		<where>
+			<if test="supplierPriceInfoId != null">
+				AND
+				SupplierPriceInfoId=#{supplierPriceInfoId,jdbcType=VARCHAR}
+			</if>
+			<if test="customerNo != null">
+				AND CustomerNo=#{customerNo,jdbcType=INTEGER}
+			</if>
+			<if test="tourPrice != null">
+				AND TourPrice=#{tourPrice,jdbcType=DECIMAL}
+			</if>
+			<if test="singlePrice != null">
+				AND SinglePrice=#{singlePrice,jdbcType=DECIMAL}
+			</if>
+			<if test="flyPrice != null">
+				AND FlyPrice=#{flyPrice,jdbcType=DECIMAL}
+			</if>
+			<if test="childrenPrice != null">
+				AND ChildrenPrice=#{childrenPrice,jdbcType=DECIMAL}
+			</if>
+			<if test="supplierOfAgentId != null">
+				AND
+				SupplierOfAgentId=#{supplierOfAgentId,jdbcType=VARCHAR}
+			</if>
+			<if test="customerId != null">
+				AND CustomerId=#{customerId,jdbcType=VARCHAR}
+			</if>
+			<if test="delayPrice != null">
+				AND DelayPrice=#{delayPrice,jdbcType=DECIMAL}
+			</if>
+			<if test="preferentialPrice != null">
+				AND
+				PreferentialPrice=#{preferentialPrice,jdbcType=DECIMAL}
+			</if>
+			<if test="specialPrice != null">
+				AND SpecialPrice=#{specialPrice,jdbcType=DECIMAL}
+			</if>
+			<if test="bedPrice != null">
+				AND BedPrice=#{bedPrice,jdbcType=DECIMAL}
+			</if>
+			<if test="isCalculate != null">
+				AND IsCalculate=#{isCalculate,jdbcType=INTEGER}
+			</if>
+			<if test="orderId != null">
+				AND OrderId=#{orderId,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+</mapper>

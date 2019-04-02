@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.SmallGroupMapper">
+    <delete id="removeById" parameterType="java.lang.String">
+       DELETE FROM small_group
+        WHERE GroupId = #{groupId,jdbcType=VARCHAR}
+    </delete>
+
+    <sql id="Base_Column_List">
+		GroupId,Name,Remark,deptId,deptName
+    </sql>
+    <resultMap id="BaseResultMap" type="com.chinatour.entity.SmallGroup">
+        <id column="GroupId" property="groupId" jdbcType="VARCHAR"/>
+        <result column="Name" property="name" jdbcType="VARCHAR"/>
+        <result column="Remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="DeptId" property="deptId" jdbcType="VARCHAR"/>
+        <result column="DeptName" property="deptName" jdbcType="VARCHAR"/>
+    </resultMap>
+	<resultMap id="ResultMapForAdmin" type="com.chinatour.entity.SmallGroup">
+	       <id column="GroupId" property="groupId" jdbcType="VARCHAR"/>
+	       <result column="Name" property="name" jdbcType="VARCHAR"/>
+	       <result column="Remark" property="remark" jdbcType="VARCHAR"/>
+           <result column="DeptId" property="deptId" jdbcType="VARCHAR"/>
+           <result column="DeptName" property="deptName" jdbcType="VARCHAR"/>
+	       <collection property="adminGroup" select="com.chinatour.persistence.AdminGroupMapper.findById" ofType="com.chinatour.entity.AdminGroup" javaType="java.util.List"
+                    column="groupId"/>
+	 </resultMap>
+    <select id="findAll" resultMap="BaseResultMap">
+        SELECT
+   		<include refid="Base_Column_List" />
+        FROM 
+        small_group
+    </select>
+    <select id="findById" resultMap="ResultMapForAdmin" parameterType="java.lang.String">
+        SELECT
+          <include refid="Base_Column_List" />
+        FROM
+           small_group
+        where GroupId = #{groupId,jdbcType=VARCHAR}
+    </select>
+    
+     <select id="findByDeptId" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT
+          <include refid="Base_Column_List" />
+        FROM
+           small_group
+        where DeptId = #{deptId,jdbcType=VARCHAR}
+    </select>
+    
+    <sql id="findForPage_sql">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM small_group
+        <where>
+            <trim suffixOverrides="AND">
+                <if test="record.groupId != null">
+                    GroupId = #{record.groupId,jdbcType=VARCHAR} AND
+                </if>
+                <if test="record.name != null">
+                    Name LIKE CONCAT('%','${record.name}','%') AND
+                </if>
+                <if test="record.remark != null">
+                    Remark = #{record.remark,jdbcType=VARCHAR}AND
+                </if>
+                <if test="record.deptId != null">
+                    DeptId = #{record.deptId,jdbcType=VARCHAR}AND
+                </if>
+                  <if test="record.deptName != null">
+                    DeptName LIKE CONCAT('%','${record.deptName}','%')
+                </if>
+            </trim>
+        </where>
+    </sql>
+    <select id="findForPage" resultMap="BaseResultMap">
+        <include refid="Pager.paginationStart"/>
+        <include refid="findForPage_sql"/>
+        <include refid="Pager.paginationEnd"/>
+    </select>
+    <select id="findForPageCount" resultType="int">
+        <include refid="Pager.countStart"/>
+        <include refid="findForPage_sql"/>
+        <include refid="Pager.countEnd"/>
+    </select>
+    <update id="update" parameterType="com.chinatour.entity.SmallGroup">
+        update small_group
+        <set>
+            <if test="groupId != null">
+                GroupId = #{groupId,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                Name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                Remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="deptId != null">
+                DeptId = #{deptId,jdbcType=VARCHAR},
+            </if>
+            <if test="deptName != null">
+                DeptName = #{deptName,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where GroupId = #{groupId,jdbcType=VARCHAR}
+    </update>
+    <insert id="save" parameterType="com.chinatour.entity.SmallGroup">
+        insert into small_group
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="groupId != null">
+                GroupId,
+            </if>
+            <if test="name != null">
+                Name,
+            </if>
+            <if test="remark != null">
+                Remark,
+            </if>
+            <if test="deptId != null">
+                deptId,
+            </if>
+            <if test="deptName != null">
+                deptName
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="groupId != null">
+                #{groupId,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="deptId != null">
+                #{deptId,jdbcType=VARCHAR},
+            </if>
+            <if test="deptName != null">
+                #{deptName,jdbcType=VARCHAR}
+            </if>
+        </trim>
+    </insert>
+</mapper>

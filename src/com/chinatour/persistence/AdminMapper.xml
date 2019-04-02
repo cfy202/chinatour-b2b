@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.AdminMapper">
+    <delete id="removeById" parameterType="java.lang.String">
+        delete from zs_admin
+        where id = #{id,jdbcType=VARCHAR}
+    </delete>
+    <sql id="Base_Column_List">
+        id, create_date, modify_date, deptId, email, is_enabled, name, password, username,address,tel,fax
+    </sql>
+    <resultMap id="BaseResultMap" type="com.chinatour.entity.Admin">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="create_date" property="createDate" jdbcType="TIMESTAMP"/>
+        <result column="modify_date" property="modifyDate" jdbcType="TIMESTAMP"/>
+        <result column="deptId" property="deptId" jdbcType="VARCHAR"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+        <result column="is_enabled" property="isEnabled" jdbcType="BIT"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="password" property="password" jdbcType="VARCHAR"/>
+        <result column="username" property="username" jdbcType="VARCHAR"/>
+        <result column="address" property="address" jdbcType="VARCHAR" />
+        <result column="tel" property="tel" jdbcType="VARCHAR" />
+        <result column="fax" property="fax" jdbcType="VARCHAR" />
+    </resultMap>
+    
+    <resultMap id="ResultMapForRole" type="com.chinatour.entity.Admin">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <collection property="adminRoles" select="com.chinatour.persistence.AdminRoleMapper.findByIdForRole" ofType="com.chinatour.entity.AdminRole" javaType="java.util.HashSet"
+                    column="id"/>
+    </resultMap>
+    
+    <resultMap id="ResultMapAndRole" type="com.chinatour.entity.Admin">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="create_date" property="createDate" jdbcType="TIMESTAMP"/>
+        <result column="modify_date" property="modifyDate" jdbcType="TIMESTAMP"/>
+        <result column="deptId" property="deptId" jdbcType="VARCHAR"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+        <result column="is_enabled" property="isEnabled" jdbcType="BIT"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="password" property="password" jdbcType="VARCHAR"/>
+        <result column="username" property="username" jdbcType="VARCHAR"/>
+       <collection property="adminRoles" select="com.chinatour.persistence.AdminRoleMapper.findByIdForRole" ofType="com.chinatour.entity.AdminRole" javaType="java.util.HashSet"
+                    column="id"/>
+		<collection property="adminRegions" select="com.chinatour.persistence.AdminRegionMapper.findByAdminId" ofType="com.chinatour.entity.AdminRegion" javaType="java.util.List"
+					column="id"/>
+    </resultMap>
+    
+    <select id="findAllOfDeptName" resultMap="BaseResultMap">
+        SELECT za.id, za.email,za.name, za.password, za.username,d.deptName
+        FROM zs_admin za,dept d 
+        WHERE za.deptId=d.deptId
+        AND za.is_enabled=1
+    </select>
+    
+    <select id="findAll" resultMap="BaseResultMap">
+        select id, create_date, modify_date, deptId, email, is_enabled, name, password, username
+        from zs_admin
+    </select>
+    
+    <select id="findById" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from zs_admin
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+    <select id="findByIdForRole" resultMap="ResultMapForRole" parameterType="java.lang.String">
+        select ad.id,ad.name
+        FROM
+        zs_admin ad
+        WHERE id = #{id,jdbcType=VARCHAR}
+    </select>
+    <select id="findByIdAndRole" resultMap="ResultMapAndRole" parameterType="java.lang.String">
+        select ad.id, ad.create_date, ad.modify_date, ad.deptId, ad.email, ad.is_enabled, ad.name, ad.password, ad.username
+        FROM
+        zs_admin ad
+        WHERE id = #{id,jdbcType=VARCHAR}
+    </select>
+    <select id="findByUsername" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from zs_admin
+        where username = #{username,jdbcType=VARCHAR}
+    </select>
+    <select id="find" resultMap="BaseResultMap" parameterType="com.chinatour.entity.Admin">
+        select
+        <include refid="Base_Column_List"/>
+        from zs_admin
+        <where>
+            <trim suffixOverrides="AND">
+                <if test="id != null">
+                    id = #{id,jdbcType=VARCHAR} AND
+                </if>
+                <if test="createDate != null">
+                    create_date = #{createDate,jdbcType=TIMESTAMP} AND
+                </if>
+                <if test="modifyDate != null">
+                    modify_date = #{modifyDate,jdbcType=TIMESTAMP} AND
+                </if>
+                <if test="deptId != null">
+                    deptId = #{deptId,jdbcType=VARCHAR} AND
+                </if>
+                <if test="email != null">
+                    email = #{email,jdbcType=VARCHAR} AND
+                </if>
+                <if test="isEnabled != null">
+                    is_enabled = #{isEnabled,jdbcType=BIT} AND
+                </if>
+                <if test="name != null">
+                    name = #{name,jdbcType=VARCHAR} AND
+                </if>
+                <if test="password != null">
+                    password = #{password,jdbcType=VARCHAR} AND
+                </if>
+                <if test="username != null">
+                    username = #{username,jdbcType=VARCHAR} AND
+                </if>
+            </trim>
+        </where>
+        ORDER BY username
+    </select>
+    <sql id="findForPage_sql">
+        select
+        id,u.email,username,name,d.DeptName
+        from zs_admin u,dept d
+        <where>
+            <trim suffixOverrides="AND">
+                u.DeptId=d.DeptId AND
+                <if test="record.id != null">
+                    u.id = #{record.id,jdbcType=VARCHAR} AND
+                </if>
+                <if test="record.createDate != null">
+                    u.create_date = #{record.createDate,jdbcType=TIMESTAMP} AND
+                </if>
+                <if test="record.modifyDate != null">
+                    u.modify_date = #{record.modifyDate,jdbcType=TIMESTAMP} AND
+                </if>
+                <if test="record.deptName != null">
+                    d.deptName LIKE CONCAT('%','${record.deptName}','%') AND
+                </if>
+                <if test="record.email != null">
+                    u.email LIKE CONCAT('%','${record.email}','%') AND
+                </if>
+                <if test="record.isEnabled != null">
+                    u.is_enabled = #{record.isEnabled,jdbcType=BIT} AND
+                </if>
+                <if test="record.name != null">
+                    u.name LIKE CONCAT('%','${record.name}','%') AND
+                </if>
+                <if test="record.password != null">
+                    u.password = #{record.password,jdbcType=VARCHAR} AND
+                </if>
+                <if test="record.username != null">
+                    u.username LIKE CONCAT('%','${record.username}','%')
+                </if>
+            </trim>
+        </where>
+    </sql>
+    <select id="findForPage" resultMap="BaseResultMap">
+        <include refid="Pager.paginationStart"/>
+        <include refid="findForPage_sql"/>
+        <include refid="Pager.paginationEnd"/>
+    </select>
+    <select id="findForPageCount" resultType="int">
+        <include refid="Pager.countStart"/>
+        <include refid="findForPage_sql"/>
+        <include refid="Pager.countEnd"/>
+    </select>
+    <update id="update" parameterType="com.chinatour.entity.Admin">
+        update zs_admin
+        <set>
+            <if test="createDate != null">
+                create_date = #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyDate != null">
+                modify_date = #{modifyDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deptId != null">
+                deptId = #{deptId,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null">
+                email = #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="isEnabled != null">
+                is_enabled = #{isEnabled,jdbcType=BIT},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="username != null">
+                username = #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="address != null">
+                address = #{address,jdbcType=VARCHAR},
+            </if>
+            <if test="tel != null">
+                tel = #{tel,jdbcType=VARCHAR},
+            </if>
+            <if test="fax != null">
+                fax = #{fax,jdbcType=VARCHAR}
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+    <insert id="save" parameterType="com.chinatour.entity.Admin">
+        insert into zs_admin
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="createDate != null">
+                create_date,
+            </if>
+            <if test="modifyDate != null">
+                modify_date,
+            </if>
+            <if test="deptId != null">
+                deptId,
+            </if>
+            <if test="email != null">
+                email,
+            </if>
+            <if test="isEnabled != null">
+                is_enabled,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="username != null">
+                username,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=VARCHAR},
+            </if>
+            <if test="createDate != null">
+                #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyDate != null">
+                #{modifyDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deptId != null">
+                #{deptId,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null">
+                #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="isEnabled != null">
+                #{isEnabled,jdbcType=BIT},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="username != null">
+                #{username,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <select id="usernameExists" resultType="int">
+        select count(*) from zs_admin where username = #{username,jdbcType=VARCHAR}
+    </select>
+    
+    <select id="findNameById" resultType="String" parameterType="String">
+		SELECT 
+			username
+	    FROM
+	    	zs_admin
+	    WHERE 
+	    	id = #{id,jdbcType=VARCHAR}
+	</select>
+</mapper>

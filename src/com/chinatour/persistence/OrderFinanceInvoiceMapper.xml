@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.OrderFinanceInvoiceMapper">
+	<!-- 收客统计 Month -->
+	<select id="bookingPCStatistical" resultType="com.chinatour.entity.OrderFinanceInvoice" parameterType="java.lang.String">
+	
+		SELECT 
+			tt.CheckTime, 
+			tt.OrderId, 
+			tt.OrderNo, 
+			tt.UserName, 
+			sum(tt.PeopleNum) AS PeopleNum, 
+			sum(tt.ReceivedMoney) AS ReceivedMoney, 
+			sum(tt.ReceivableMoney) AS ReceivableMoney, 
+			sum(tt.CostMoney) CostMoney, 
+			tt.TourId, 
+			tt.tax, 
+			tt.DeptId, 
+			tt.TourCode,
+			tt.ArriveDateTime
+			FROM( 
+				SELECT 
+					a.CheckTime, 
+					a.OrderId, 
+					a.OrderNo, 
+					a.UserName, 
+					a.DeptId,
+					a.TourId,
+					a.TourCode, 
+					a.PeopleNum, 
+					a.tax,
+ 					a.ArriveDateTime, 
+ 					a.ReceivableMoney,
+ 					IF(p.PayOrCost=1,Sum(p.sum),0) AS ReceivedMoney,
+ 					IF(p.PayOrCost=2,Sum(p.sum),0) AS CostMoney 
+ 					FROM( 
+						SELECT t.TourId,
+						o.CheckTime, 
+						o.OrderId AS OrderId,
+						ot.OrderNumber AS OrderNo,
+						o.TourCode, 
+						o.totalPeople PeopleNum, 
+						o.tax, 
+						u.UserName AS UserName, 
+						o.CommonTourFee AS ReceivableMoney, 
+						u.DeptId AS DeptId,
+						t.ArriveDateTime
+						FROM 
+							receivable_info_of_order r,
+							Orders o,
+							orders_total ot,
+							zs_admin u,
+							tour t
+ 						WHERE 
+ 						r.OrderId = o.OrderId 
+ 						AND o.UserId = u.id 
+ 						AND o.TourId = t.TourId 
+						AND ot.OrdersTotalId=o.OrdersTotalId
+						<if test="record.orderNo != null">
+							AND ot.OrderNumber=#{record.orderNo}
+						</if>
+						<if test="record.userId != null">
+							AND u.id=#{record.userId,jdbcType=VARCHAR}
+						</if>
+						<if test="record.tourCode != null">
+							AND t.TourCode LIKE CONCAT(CONCAT('%','${record.tourCode}'),'%' )
+						</if>
+						<if test="record.tax != null">
+							AND o.tax=#{record.tax,jdbcType=INTEGER}
+						</if>
+						<!-- <if test="record.startTime!=null">
+							AND t.ArriveDateTime BETWEEN #{record.startTime} AND #{record.endTime}
+						</if> -->
+						GROUP BY o.OrderId
+					)a LEFT JOIN pay_cost_records p ON p.OrderId = a.orderId GROUP BY a.OrderId 
+				) tt GROUP BY tt.TourId ORDER BY tt.ArriveDateTime DESC
+		
+		
+	</select>
+</mapper>

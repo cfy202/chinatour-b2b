@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.HotelPriceInfoMapper">
+	<resultMap id="BaseResultMap" type="com.chinatour.entity.HotelPriceInfo">
+		<id column="HotelPriceInfoId" property="hotelPriceInfoId" jdbcType="VARCHAR" />
+		<result column="CustomerNo" property="customerNo" jdbcType="INTEGER" />
+		<result column="RoomPrice" property="roomPrice" jdbcType="DECIMAL" />
+		<result column="WithBed" property="withBed" jdbcType="DECIMAL" />
+		<result column="WithOutBed" property="withOutBed" jdbcType="DECIMAL" />
+		<result column="WithBreakFirstPrice" property="withBreakFirstPrice"
+			jdbcType="DECIMAL" />
+		<result column="SinglePrice" property="singlePrice" jdbcType="DECIMAL" />
+		<result column="SupplierOfAgentId" property="supplierOfAgentId"
+			jdbcType="VARCHAR" />
+		<result column="CustomerId" property="customerId" jdbcType="VARCHAR" />
+		<result column="IsCalculate" property="isCalculate" jdbcType="INTEGER" />
+		<result column="OrderId" property="orderId" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<resultMap id="ResultCustomerMap" type="com.chinatour.entity.HotelPriceInfo">
+		<id column="HotelPriceInfoId" property="hotelPriceInfoId" jdbcType="VARCHAR" />
+		<result column="CustomerNo" property="customerNo" jdbcType="INTEGER" />
+		<result column="RoomPrice" property="roomPrice" jdbcType="DECIMAL" />
+		<result column="WithBed" property="withBed" jdbcType="DECIMAL" />
+		<result column="WithOutBed" property="withOutBed" jdbcType="DECIMAL" />
+		<result column="WithBreakFirstPrice" property="withBreakFirstPrice"
+			jdbcType="DECIMAL" />
+		<result column="SinglePrice" property="singlePrice" jdbcType="DECIMAL" />
+		<result column="SupplierOfAgentId" property="supplierOfAgentId"
+			jdbcType="VARCHAR" />
+		<result column="CustomerId" property="customerId" jdbcType="VARCHAR" />
+		<result column="IsCalculate" property="isCalculate" jdbcType="INTEGER" />
+		<result column="OrderId" property="orderId" jdbcType="VARCHAR" />
+		<result column="userId" property="userId" jdbcType="VARCHAR" />
+		<result column="orderNo" property="orderNo" jdbcType="VARCHAR" />
+		<result column="lastName" property="lastName" jdbcType="VARCHAR" />
+		<result column="firstName" property="firstName" jdbcType="VARCHAR" />
+		<result column="middleName" property="middleName" jdbcType="VARCHAR" />
+		<result column="agent" property="agent" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		HotelPriceInfoId, CustomerNo, RoomPrice, WithBed,
+		WithOutBed, WithBreakFirstPrice,
+		SinglePrice, SupplierOfAgentId,
+		CustomerId, IsCalculate, OrderId
+	</sql>
+	<select id="findById" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from hotelpriceinfo
+		where HotelPriceInfoId =
+		#{hotelPriceInfoId,jdbcType=VARCHAR}
+	</select>
+	<delete id="removeById" parameterType="java.lang.String">
+		delete from
+		hotelpriceinfo
+		where HotelPriceInfoId =
+		#{hotelPriceInfoId,jdbcType=VARCHAR}
+	</delete>
+		
+	<select id="removeByIds" resultMap="BaseResultMap">
+		DELETE 
+		FROM hotelpriceinfo
+		<where>
+			<trim suffixOverrides="AND">
+				HotelPriceInfoId in
+					<foreach item="item" index="index" collection="ids" open="("
+					separator="," close=")">
+						#{item}
+					</foreach>
+				AND
+			</trim>
+		</where>
+	</select>
+	
+	<insert id="save" parameterType="com.chinatour.entity.HotelPriceInfo">
+		insert into hotelpriceinfo
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="hotelPriceInfoId != null">
+				HotelPriceInfoId,
+			</if>
+			<if test="customerNo != null">
+				CustomerNo,
+			</if>
+			<if test="roomPrice != null">
+				RoomPrice,
+			</if>
+			<if test="withBed != null">
+				WithBed,
+			</if>
+			<if test="withOutBed != null">
+				WithOutBed,
+			</if>
+			<if test="withBreakFirstPrice != null">
+				WithBreakFirstPrice,
+			</if>
+			<if test="singlePrice != null">
+				SinglePrice,
+			</if>
+			<if test="supplierOfAgentId != null">
+				SupplierOfAgentId,
+			</if>
+			<if test="customerId != null">
+				CustomerId,
+			</if>
+			<if test="isCalculate != null">
+				IsCalculate,
+			</if>
+			<if test="orderId != null">
+				OrderId,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="hotelPriceInfoId != null">
+				#{hotelPriceInfoId,jdbcType=VARCHAR},
+			</if>
+			<if test="customerNo != null">
+				#{customerNo,jdbcType=INTEGER},
+			</if>
+			<if test="roomPrice != null">
+				#{roomPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="withBed != null">
+				#{withBed,jdbcType=DECIMAL},
+			</if>
+			<if test="withOutBed != null">
+				#{withOutBed,jdbcType=DECIMAL},
+			</if>
+			<if test="withBreakFirstPrice != null">
+				#{withBreakFirstPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="singlePrice != null">
+				#{singlePrice,jdbcType=DECIMAL},
+			</if>
+			<if test="supplierOfAgentId != null">
+				#{supplierOfAgentId,jdbcType=VARCHAR},
+			</if>
+			<if test="customerId != null">
+				#{customerId,jdbcType=VARCHAR},
+			</if>
+			<if test="isCalculate != null">
+				#{isCalculate,jdbcType=INTEGER},
+			</if>
+			<if test="orderId != null">
+				#{orderId,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	
+	<insert id="batchSave" parameterType="java.util.List">
+		INSERT INTO hotelpriceinfo
+			(<include refid="Base_Column_List"/>)
+		values 
+			<foreach collection="list" item="item" index="index" separator="," >
+				(
+					#{item.hotelPriceInfoId,jdbcType=VARCHAR},
+					#{item.customerNo,jdbcType=INTEGER},
+					#{item.roomPrice,jdbcType=DECIMAL},
+					#{item.withBed,jdbcType=DECIMAL},
+					#{item.withOutBed,jdbcType=DECIMAL},
+					#{item.withBreakFirstPrice,jdbcType=DECIMAL},
+					#{item.singlePrice,jdbcType=DECIMAL},
+					#{item.supplierOfAgentId,jdbcType=VARCHAR},
+					#{item.customerId,jdbcType=VARCHAR},
+					#{item.isCalculate,jdbcType=INTEGER},
+					#{item.orderId,jdbcType=VARCHAR}
+				)
+			</foreach>
+	</insert>
+	
+	<update id="update" parameterType="com.chinatour.entity.HotelPriceInfo">
+		update hotelpriceinfo
+		<set>
+			<if test="customerNo != null">
+				CustomerNo = #{customerNo,jdbcType=INTEGER},
+			</if>
+			<if test="roomPrice != null">
+				RoomPrice = #{roomPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="withBed != null">
+				WithBed = #{withBed,jdbcType=DECIMAL},
+			</if>
+			<if test="withOutBed != null">
+				WithOutBed = #{withOutBed,jdbcType=DECIMAL},
+			</if>
+			<if test="withBreakFirstPrice != null">
+				WithBreakFirstPrice =
+				#{withBreakFirstPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="singlePrice != null">
+				SinglePrice = #{singlePrice,jdbcType=DECIMAL},
+			</if>
+			<if test="supplierOfAgentId != null">
+				SupplierOfAgentId =
+				#{supplierOfAgentId,jdbcType=VARCHAR},
+			</if>
+			<if test="customerId != null">
+				CustomerId = #{customerId,jdbcType=VARCHAR},
+			</if>
+			<if test="isCalculate != null">
+				IsCalculate = #{isCalculate,jdbcType=INTEGER},
+			</if>
+			<if test="orderId != null">
+				OrderId = #{orderId,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where HotelPriceInfoId = #{hotelPriceInfoId,jdbcType=VARCHAR}
+	</update>
+	
+	<select id="findHotelAndCustomer" resultMap="ResultCustomerMap"
+		parameterType="java.lang.String">
+		SELECT
+			hh.HotelPriceInfoId,
+			hh.CustomerId,
+			hh.CustomerNo,
+			hh.RoomPrice,
+			hh.WithBed,
+			hh.WithOutBed,
+			hh.WithBreakFirstPrice,
+			hh.SinglePrice,
+			hh.IsCalculate,
+			c.lastName As lastName,
+			c.firstName As firstName,
+			c.MiddleName As midlleName,
+			a.UserName As agent,
+			o.UserId As UserId ,
+			hh.SupplierOfAgentId,
+			o.orderNo as orderNo,
+			o.orderId as orderId,
+			o.state
+		FROM
+			hotelpriceinfo hh,
+			supplierofagent s,
+			customer c,
+			suppriceinforel sf,
+			orders o,
+			customer_order_rel cr,
+			zs_admin a
+		WHERE
+			s.SupPriceInfoRelId=sf.SupPriceInfoRelId 
+			AND hh.SupplierOfAgentId=s.SupplierOfAgentId 
+			AND cr.CustomerId=c.CustomerId 
+			AND cr.OrderId=o.OrderId 
+			AND o.UserId=a.id 
+			AND sf.TourId=o.TourId 
+			AND hh.OrderId=o.OrderId 
+			AND c.CustomerId=hh.CustomerId
+		
+		<if test="hotelPriceInfoId != null">
+			AND	hh.HotelPriceInfoId=#{hotelPriceInfoId},
+		</if>
+		<if test="supplierOfAgentId!=null">
+			AND hh.SupplierOfAgentId=#{supplierOfAgentId}
+		</if>
+		<if test="orderId!=null">
+			AND o.OrderId=#{orderId}
+		</if>
+		<if test="userId!=null">
+			AND s.userId=#{userId}
+		</if>
+		<if test="supPriceInfoRelId!=null">
+			AND sf.supPriceInfoRelId=#{supPriceInfoRelId}
+		</if>
+			Order By hh.CustomerNo ASC
+	</select>
+	<select id="find" resultMap="BaseResultMap" parameterType="com.chinatour.entity.HotelPriceInfo">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM hotelpriceinfo
+		<where>
+			<if test="hotelPriceInfoId != null">
+				AND HotelPriceInfoId=#{hotelPriceInfoId,jdbcType=VARCHAR}
+			</if>
+			<if test="customerNo != null">
+				AND CustomerNo=#{customerNo,jdbcType=INTEGER}
+			</if>
+			<if test="roomPrice != null">
+				AND RoomPrice=#{roomPrice,jdbcType=DECIMAL}
+			</if>
+			<if test="withBed != null">
+				AND WithBed=#{withBed,jdbcType=DECIMAL}
+			</if>
+			<if test="withOutBed != null">
+				AND WithOutBed=#{withOutBed,jdbcType=DECIMAL}
+			</if>
+			<if test="withBreakFirstPrice != null">
+				AND WithBreakFirstPrice=#{withBreakFirstPrice,jdbcType=DECIMAL}
+			</if>
+			<if test="singlePrice != null">
+				AND SinglePrice=#{singlePrice,jdbcType=DECIMAL}
+			</if>
+			<if test="supplierOfAgentId != null">
+				AND SupplierOfAgentId=#{supplierOfAgentId,jdbcType=VARCHAR}
+			</if>
+			<if test="customerId != null">
+				AND CustomerId=#{customerId,jdbcType=VARCHAR}
+			</if>
+			<if test="isCalculate != null">
+				AND IsCalculate=#{isCalculate,jdbcType=INTEGER}
+			</if>
+			<if test="orderId != null">
+				AND orderId=#{orderId,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+</mapper>

@@ -1,0 +1,864 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.GroupLineMapper">
+
+	<sql id="Base_Column_List">
+		 GroupLineId, TourCode, TourName, TourNameEn, TripDesc, Brand, TourTypeId,
+		 DepartureDate,IsAvailable, SpecificItems, Contactor,isSystem,
+		 Image,Type,Level,Supplement, Destination,PlaceStart,Attractions,
+		 Ticket,Degree,Remark,Area,Operater,Source,SelfExpense,Tip,PickSendPrice,
+		 Least,Destinationlist,LineNo,TourNo,OtherCol,Vender,isOceania,OpCenter,tourType,addDate
+	</sql>
+
+	<sql id="findForPage_sql">
+		select
+			<include refid="Base_Column_List" />
+		from groupline
+		<where>
+			<if test="record.id != null">
+				GroupLineId = #{record.id,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tourCode != null">
+				AND TourCode LIKE CONCAT('%','${record.tourCode}','%')
+			</if>
+			<if test="record.tourName != null">
+				AND TourName LIKE CONCAT('%','${record.tourName}','%')
+			</if>
+			<if test="record.tourNameEn != null">
+				AND TourNameEn LIKE CONCAT('%','${record.tourNameEn}','%')
+			</if>
+			<if test="record.lineNo != null">
+				AND LineNo LIKE CONCAT('%','${record.lineNo}','%')
+			</if>
+			<if test="record.tourNo != null">
+				AND TourNo LIKE CONCAT('%','${record.tourNo}','%')
+			</if>
+			<if test="record.tripDesc != null">
+				AND TripDesc = #{record.tripDesc,jdbcType=LONGVARCHAR}
+			</if>
+			<if test="record.brand != null">
+				AND Brand LIKE CONCAT('%','${record.brand}','%')
+			</if>
+			<if test="record.tourTypeId != null">
+				AND TourTypeId = #{record.tourTypeId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.operater != null">
+				AND Operater = #{record.operater,jdbcType=VARCHAR}
+			</if>
+			<if test="record.source != null">
+				AND Source LIKE CONCAT('%','${record.source}','%')
+			</if>
+			<if test="record.departureDate != null">
+				AND DepartureDate = #{record.departureDate,jdbcType=VARCHAR}
+			</if>
+			<if test="record.specificItems != null">
+				AND SpecificItems = #{record.specificItems,jdbcType=LONGVARCHAR}
+			</if>
+			<if test="record.isSystem != null">
+			    <if test="record.isSystem!=5">
+					AND instr(IsSystem,#{record.isSystem})>0
+				</if>
+				<if test="record.isSystem==5">
+					AND IsSystem !=0 AND IsSystem !=2
+				</if>
+			</if>
+			<if test="record.opCenter != null">
+				AND OpCenter = #{record.opCenter,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tourType != null">
+				AND TourType LIKE CONCAT('%','${record.tourType}','%')
+			</if>
+				AND IsAvailable =0
+		</where>
+	</sql>
+	
+	<sql id="findForPage_sqlForOp">
+		select
+			<include refid="Base_Column_List" />
+		from groupline
+		<where>
+			<if test="record.id != null">
+				GroupLineId = #{record.id,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tourCode != null">
+				AND TourCode LIKE CONCAT('%','${record.tourCode}','%')
+			</if>
+			<if test="record.tourName != null">
+				AND TourName LIKE CONCAT('%','${record.tourName}','%')
+			</if>
+			<if test="record.tourNameEn != null">
+				AND TourNameEn LIKE CONCAT('%','${record.tourNameEn}','%')
+			</if>
+			<if test="record.lineNo != null">
+				AND LineNo LIKE CONCAT('%','${record.lineNo}','%')
+			</if>
+			<if test="record.tourNo != null">
+				AND TourNo LIKE CONCAT('%','${record.tourNo}','%')
+			</if>
+			<if test="record.tripDesc != null">
+				AND TripDesc = #{record.tripDesc,jdbcType=LONGVARCHAR}
+			</if>
+			<if test="record.brand != null">
+				AND Brand LIKE CONCAT('%','${record.brand}','%')
+			</if>
+			<if test="record.deptId != null">
+				AND TourTypeId In (SELECT TourTypeId FROM tour_type_of_dept WHERE DeptId=#{record.deptId})
+			</if>
+			<if test="record.operater != null">
+				AND Operater = #{record.operater,jdbcType=VARCHAR}
+			</if>
+			<if test="record.source != null">
+				AND Source LIKE CONCAT('%','${record.source}','%')
+			</if>
+			<if test="record.departureDate != null">
+				AND DepartureDate = #{record.departureDate,jdbcType=VARCHAR}
+			</if>
+			<if test="record.specificItems != null">
+				AND SpecificItems = #{record.specificItems,jdbcType=LONGVARCHAR}
+			</if>
+			<if test="record.isSystem != null">
+				AND instr(IsSystem,#{record.isSystem})>0
+			</if>
+			<if test="record.opCenter != null">
+				AND OpCenter = #{record.opCenter,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tourType != null">
+				AND TourType LIKE CONCAT('%','${record.tourType}','%')
+			</if>
+				AND IsAvailable =0
+		</where>
+	</sql>
+
+	<resultMap type="com.chinatour.entity.GroupLine" id="BaseResultMap">
+		<id property="id" column="GroupLineId" jdbcType="VARCHAR" />
+		<result property="tourCode" column="TourCode" jdbcType="VARCHAR" />
+		<result property="tourName" column="TourName" jdbcType="VARCHAR" />
+		<result property="tourNameEn" column="TourNameEn" jdbcType="VARCHAR" />
+		<result property="tripDesc" column="TripDesc" jdbcType="LONGVARCHAR" />
+		<result property="tourTypeId" column="TourTypeId" jdbcType="VARCHAR" />
+		<result property="brand" column="Brand" jdbcType="VARCHAR" />
+		<result property="departureDate" column="DepartureDate" jdbcType="TIMESTAMP" />
+		<result property="specificItems" column="SpecificItems" jdbcType="VARCHAR" />
+		<result property="contactor" column="Contactor" jdbcType="VARCHAR" />
+		<result property="isAvailable" column="IsAvailable" jdbcType="INTEGER" />
+		<result property="isSystem" column="IsSystem" jdbcType="INTEGER" />
+		<result property="image" column="Image" jdbcType="VARCHAR" />
+		<result property="type" column="Type" jdbcType="INTEGER" />
+		<result property="level" column="Level" jdbcType="VARCHAR" />
+		<result property="selfExpense" column="SelfExpense" jdbcType="DECIMAL" />
+		<result property="tip" column="Tip" jdbcType="DECIMAL" />
+		<result property="pickSendPrice" column="PickSendPrice" jdbcType="DECIMAL" />
+		<result property="least" column="Least" jdbcType="INTEGER" />
+		<result property="supplement" column="Supplement" jdbcType="DECIMAL" />
+		<result property="ticket" column="Ticket" jdbcType="INTEGER" />
+		<result property="destination" column="Destination" jdbcType="VARCHAR" />
+		<result property="placeStart" column="PlaceStart" jdbcType="VARCHAR" />
+		<result property="attractions" column="Attractions" jdbcType="VARCHAR" />
+		<result property="degree" column="Degree" jdbcType="VARCHAR" />
+		<result property="remark" column="Remark" jdbcType="VARCHAR" />
+		<result property="area" column="Area" jdbcType="VARCHAR" />
+		<result property="operater" column="Operater" jdbcType="VARCHAR" />
+		<result property="source" column="Source" jdbcType="VARCHAR" />
+		<result property="destinationlist" column="Destinationlist" jdbcType="VARCHAR" />
+		<result property="lineNo" column="LineNo" jdbcType="VARCHAR" />
+		<result property="tourNo" column="TourNo" jdbcType="VARCHAR" />
+		<result property="otherCol" column="OtherCol" jdbcType="VARCHAR" />
+		<result property="vender" column="Vender" jdbcType="VARCHAR" />
+		<result property="isOceania" column="IsOceania" jdbcType="VARCHAR" />
+		<result property="opCenter" column="OpCenter" jdbcType="VARCHAR"/>
+		<result property="addDate" column="AddDate" jdbcType="INTEGER"/>
+	</resultMap>
+    
+    <resultMap id="ResultMapForHotel" type="com.chinatour.entity.GroupLine">
+      	<id property="id" column="GroupLineId" jdbcType="VARCHAR" />
+      	<result property="tourCode" column="TourCode" jdbcType="VARCHAR" />
+		<result property="tourName" column="TourName" jdbcType="VARCHAR" />
+		<result property="tourNameEn" column="TourNameEn" jdbcType="VARCHAR" />
+		<result property="tripDesc" column="TripDesc" jdbcType="LONGVARCHAR" />
+		<result property="brand" column="Brand" jdbcType="VARCHAR" />
+		<result property="tourTypeId" column="TourTypeId" jdbcType="VARCHAR" />
+		<result property="departureDate" column="DepartureDate" jdbcType="TIMESTAMP" />
+		<result property="specificItems" column="SpecificItems" jdbcType="VARCHAR" />
+		<result property="contactor" column="Contactor" jdbcType="VARCHAR" />
+		<result property="isAvailable" column="IsAvailable" jdbcType="INTEGER" />
+		<result property="isSystem" column="IsSystem" jdbcType="INTEGER" />
+		<result property="image" column="Image" jdbcType="VARCHAR" />
+		<result property="type" column="Type" jdbcType="INTEGER" />
+		<result property="level" column="Level" jdbcType="VARCHAR" />
+		<result property="selfExpense" column="SelfExpense" jdbcType="DECIMAL" />
+		<result property="tip" column="Tip" jdbcType="DECIMAL" />
+		<result property="pickSendPrice" column="PickSendPrice" jdbcType="DECIMAL" />
+		<result property="least" column="Least" jdbcType="INTEGER" />
+		<result property="supplement" column="Supplement" jdbcType="DECIMAL" />
+		<result property="ticket" column="Ticket" jdbcType="INTEGER" />
+		<result property="destination" column="Destination" jdbcType="VARCHAR" />
+		<result property="placeStart" column="PlaceStart" jdbcType="VARCHAR" />
+		<result property="attractions" column="Attractions" jdbcType="VARCHAR" />
+		<result property="degree" column="Degree" jdbcType="VARCHAR" />
+		<result property="remark" column="Remark" jdbcType="VARCHAR" />
+		<result property="area" column="Area" jdbcType="VARCHAR" />
+		<result property="operater" column="Operater" jdbcType="VARCHAR" />
+		<result property="source" column="Source" jdbcType="VARCHAR" />
+		<result property="destinationlist" column="Destinationlist" jdbcType="VARCHAR" />
+        <collection property="groupLineHotelRel" select="com.chinatour.persistence.GroupLineHotelRelMapper.findByGroupLineId" ofType="com.chinatour.entity.GroupLineHotelRel"
+                    javaType="java.util.List" column="GroupLineId"/>
+    </resultMap>
+	
+	<select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from groupline
+		where
+		GroupLineId = #{id,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="findHotelByGroupLineId" parameterType="java.lang.String" resultMap="ResultMapForHotel">
+		select
+			g.GroupLineId, g.TourCode, g.TourName, g.TripDesc,g.Brand, g.TourTypeId, g.DepartureDate, g.IsAvailable, g.SpecificItems, g.Contactor
+        FROM
+        groupline g
+        WHERE g.GroupLineId = #{id,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="findByTourTypeId" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from groupline
+		where TourTypeId = #{tourTypeId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="findAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from groupline
+	</select>
+
+	<select id="findForPage" resultMap="BaseResultMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+	
+
+	<select id="findForPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+	
+	<select id="findForPageForOp" resultMap="BaseResultMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findForPage_sqlForOp" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+	
+	<select id="findForPageCountForOp" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findForPage_sqlForOp" />
+		<include refid="Pager.countEnd" />
+	</select>
+
+	<delete id="removeById" parameterType="java.lang.String">
+		delete from groupline
+		where
+		GroupLineId = #{id,jdbcType=VARCHAR}
+	</delete>
+
+	<update id="update" parameterType="com.chinatour.entity.GroupLine">
+		update groupline
+		<set>
+			<if test="tourCode != null">
+				TourCode = #{tourCode,jdbcType=VARCHAR},
+			</if>
+			<if test="tourName != null">
+				TourName = #{tourName,jdbcType=VARCHAR},
+			</if>
+			<if test="tourNameEn != null">
+				TourNameEn = #{tourNameEn,jdbcType=VARCHAR},
+			</if>
+			<if test="tripDesc != null">
+				TripDesc = #{tripDesc,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="tourTypeId != null">
+				TourTypeId = #{tourTypeId,jdbcType=VARCHAR},
+			</if>
+			<if test="brand != null">
+			    Brand = #{brand,jdbcType=VARCHAR},
+			</if>
+			<if test="departureDate != null">
+				DepartureDate = #{departureDate,jdbcType=VARCHAR},
+			</if>
+			<if test="isAvailable != null">
+				IsAvailable = #{isAvailable,jdbcType=INTEGER},
+			</if>
+			<if test="specificItems != null">
+				SpecificItems = #{specificItems,jdbcType=VARCHAR},
+			</if>
+			<if test="image != null">
+				Image = #{image,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				Type = #{type,jdbcType=INTEGER},
+			</if>
+			<!-- <if test="level != null">
+				#{level,jdbcType=VARCHAR},
+			</if> -->
+			<if test="selfExpense != null">
+				SelfExpense = #{selfExpense,jdbcType=DECIMAL},
+			</if>
+			<if test="tip != null">
+				Tip = #{tip,jdbcType=DECIMAL},
+			</if>
+			<if test="pickSendPrice != null">
+				PickSendPrice = #{pickSendPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="least != null">
+				Least = #{least,jdbcType=INTEGER},
+			</if>
+			<if test="supplement != null">
+				Supplement = #{supplement,jdbcType=DECIMAL},
+			</if>
+			<if test="ticket != null">
+				Ticket = #{ticket,jdbcType=INTEGER},
+			</if>
+			<if test="destination != null">
+				Destination = #{destination,jdbcType=VARCHAR},
+			</if>
+			<if test="placeStart != null">
+				PlaceStart = #{placeStart,jdbcType=VARCHAR},
+			</if>
+			<if test="attractions != null">
+				Attractions = #{attractions,jdbcType=VARCHAR},
+			</if>
+			<if test="degree != null">
+				Degree = #{degree,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="area != null">
+				Area = #{area,jdbcType=VARCHAR},
+			</if>
+			<if test="operater != null">
+				Operater = #{operater,jdbcType=VARCHAR},
+			</if>
+			<if test="source != null">
+				Source = #{source,jdbcType=VARCHAR},
+			</if>
+			<if test="vender != null">
+				Vender = #{vender,jdbcType=VARCHAR},
+			</if>
+			<if test="destinationlist != null">
+				Destinationlist = #{destinationlist,jdbcType=VARCHAR},
+			</if>
+			<if test="lineNo != null">
+				LineNo = #{lineNo,jdbcType=VARCHAR},
+			</if>
+			<if test="tourNo != null">
+				TourNo = #{tourNo,jdbcType=VARCHAR},
+			</if>
+			<if test="otherCol != null">
+				OtherCol = #{otherCol,jdbcType=VARCHAR},
+			</if>
+			<if test="isSystem != null">
+				IsSystem = #{isSystem,jdbcType=VARCHAR},
+			</if>
+			<if test="addDate != null">
+				AddDate = #{addDate,jdbcType=INTEGER},
+			</if>
+			<if test="tourType != null">
+				TourType = #{tourType,jdbcType=VARCHAR}
+			</if>
+		</set>
+		where GroupLineId = #{id,jdbcType=VARCHAR}
+	</update>
+
+	<update id="updateIndependentGroupLine" parameterType="com.chinatour.entity.GroupLine">
+		update groupline
+		<set>
+			<choose>
+				<when test="tourCode != null">
+					TourCode = #{tourCode,jdbcType=VARCHAR},
+				</when>
+				<otherwise>
+					TourCode = '',
+				</otherwise>
+			</choose>
+			<choose>
+				<when test="tourName != null">
+					TourName = #{tourName,jdbcType=VARCHAR},
+				</when>
+				<otherwise>
+					TourName = '',
+				</otherwise>
+			</choose>
+			<choose>
+				<when test="tripDesc != null">
+					TripDesc = #{tripDesc,jdbcType=LONGVARCHAR},
+				</when>
+				<otherwise>
+					TripDesc = '',
+				</otherwise>
+			</choose>
+			<choose>
+				<when test="departureDate != null">
+					DepartureDate = #{departureDate,jdbcType=VARCHAR},
+				</when>
+				<otherwise>
+					DepartureDate = '',
+				</otherwise>
+			</choose>
+		</set>
+		where GroupLineId = #{id,jdbcType=VARCHAR}
+	</update>
+	
+	<insert id="save" parameterType="com.chinatour.entity.GroupLine">
+		insert into groupline
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				GroupLineId,
+			</if>
+			<if test="tourCode != null">
+				TourCode,
+			</if>
+			<if test="tourName != null">
+				TourName,
+			</if>
+			<if test="tourNameEn != null">
+				TourNameEn,
+			</if>
+			<if test="tripDesc != null">
+				TripDesc,
+			</if>
+			<if test="tourTypeId != null">
+				TourTypeId,
+			</if>
+			<if test="brand != null">
+				Brand,
+			</if>
+			<if test="departureDate != null">
+				DepartureDate,
+			</if>
+			<if test="isAvailable != null">
+				IsAvailable,
+			</if>
+			<if test="specificItems != null">
+				SpecificItems,
+			</if>
+			<if test="image != null">
+				Image,
+			</if>
+			<if test="type!= null">
+				Type,
+			</if>
+			<!-- <if test="level != null">
+				Level,
+			</if> -->
+			<if test="selfExpense != null">
+				SelfExpense,
+			</if>
+			<if test="tip != null">
+				Tip,
+			</if>
+			<if test="pickSendPrice != null">
+				PickSendPrice,
+			</if>
+			<if test="least != null">
+				Least,
+			</if>
+			<if test="supplement != null">
+				Supplement,
+			</if>
+			<if test="ticket != null">
+				Ticket,
+			</if>
+			<if test="destination != null">
+				Destination,
+			</if>
+			<if test="placeStart != null">
+				PlaceStart,
+			</if>
+			<if test="attractions != null">
+				Attractions,
+			</if>
+			<if test="degree != null">
+				Degree,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+			<if test="area != null">
+				Area,
+			</if>
+			<if test="operater!=null">
+				Operater,
+			</if>
+			<if test="source != null">
+				Source,
+			</if>
+			<if test="vender != null">
+				Vender,
+			</if>
+			<if test="destinationlist != null">
+				Destinationlist,
+			</if>
+			<if test="lineNo != null">
+				LineNo,
+			</if>
+			<if test="tourNo != null">
+				tourNo,
+			</if>
+			<if test="otherCol != null">
+				otherCol,
+			</if>
+			<if test="isSystem != null">
+				IsSystem,
+			</if>
+			<if test="addDate != null">
+				AddDate,
+			</if>
+			<if test="tourType != null">
+				tourType
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="tourCode != null">
+				#{tourCode,jdbcType=VARCHAR},
+			</if>
+			<if test="tourName != null">
+				#{tourName,jdbcType=VARCHAR},
+			</if>
+			<if test="tourNameEn != null">
+				#{tourNameEn,jdbcType=VARCHAR},
+			</if>
+			<if test="tripDesc != null">
+				#{tripDesc,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="tourTypeId != null">
+				#{tourTypeId,jdbcType=VARCHAR},
+			</if>
+			<if test="brand != null">
+			    #{brand,jdbcType=VARCHAR},
+			</if>
+			<if test="departureDate != null">
+				#{departureDate,jdbcType=VARCHAR},
+			</if>
+			<if test="isAvailable != null">
+				#{isAvailable,jdbcType=INTEGER},
+			</if>
+			<if test="specificItems != null">
+				#{specificItems,jdbcType=VARCHAR},
+			</if>
+			<if test="image != null">
+				#{image,jdbcType=VARCHAR},
+			</if>
+			<if test="type!= null">
+				#{type,jdbcType=INTEGER},
+			</if>
+			<!-- <if test="level != null">
+				#{level,jdbcType=VARCHAR},
+			</if> -->
+			<if test="selfExpense != null">
+				#{selfExpense,jdbcType=DECIMAL},
+			</if>
+			<if test="tip != null">
+				#{tip,jdbcType=DECIMAL},
+			</if>
+			<if test="pickSendPrice != null">
+				#{pickSendPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="least != null">
+				#{least,jdbcType=INTEGER},
+			</if>
+			<if test="supplement != null">
+				#{supplement,jdbcType=DECIMAL},
+			</if>
+			<if test="ticket != null">
+				#{ticket,jdbcType=INTEGER},
+			</if>
+			<if test="destination != null">
+				#{destination,jdbcType=VARCHAR},
+			</if>
+			<if test="placeStart != null">
+				#{placeStart,jdbcType=VARCHAR},
+			</if>
+			<if test="attractions != null">
+				#{attractions,jdbcType=VARCHAR},
+			</if>
+			<if test="degree != null">
+				#{degree,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="area != null">
+				#{area,jdbcType=VARCHAR},
+			</if>
+			<if test="operater!=null">
+				#{operater,jdbcType=VARCHAR},
+			</if>
+			<if test="source != null">
+				#{source,jdbcType=VARCHAR},
+			</if>
+			<if test="vender != null">
+				#{vender,jdbcType=VARCHAR},
+			</if>
+			<if test="destinationlist != null">
+				#{destinationlist,jdbcType=VARCHAR},
+			</if>
+			<if test="lineNo != null">
+				#{lineNo,jdbcType=VARCHAR},
+			</if>
+			<if test="tourNo != null">
+				#{tourNo,jdbcType=VARCHAR},
+			</if>
+			<if test="otherCol != null">
+				#{otherCol,jdbcType=VARCHAR},
+			</if>
+			<if test="isSystem != null">
+				#{isSystem,jdbcType=VARCHAR},
+			</if>
+			<if test="addDate != null">
+				#{addDate,jdbcType=INTEGER},
+			</if>
+			<if test="tourType != null">
+				#{tourType,jdbcType=VARCHAR}
+			</if>
+		</trim>
+	</insert>
+	<select id="findGroupLine" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from groupline
+		<where>
+			<if test="record.id != null">
+				GroupLineId = #{record.id,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tourCode != null">
+				AND TourCode LIKE CONCAT('%','${record.tourCode}','%')
+			</if>
+			<if test="record.tourName != null">
+				AND TourName LIKE CONCAT('%','${record.tourName}','%')
+			</if>
+			<if test="record.tourNameEn != null">
+				AND TourNameEn LIKE CONCAT('%','${record.tourNameEn}','%')
+			</if>
+			<if test="record.tripDesc != null">
+				AND TripDesc = #{record.tripDesc,jdbcType=LONGVARCHAR}
+			</if>
+			<if test="record.brand != null">
+				AND Brand LIKE CONCAT('%','${record.brand}','%')
+			</if>
+			<if test="record.tourTypeId != null">
+				AND TourTypeId = #{record.tourTypeId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.isSystem != null">
+				AND IsSystem = #{record.isSystem,jdbcType=VARCHAR}
+			</if>
+			<if test="record.departureDate != null">
+				AND DepartureDate = #{record.departureDate,jdbcType=VARCHAR}
+			</if>
+			<if test="record.specificItems != null">
+				AND SpecificItems = #{record.specificItems,jdbcType=LONGVARCHAR}
+			</if>
+			<if test="record.lineNo != null">
+				AND lineNo = #{record.lineNo,jdbcType=VARCHAR}
+			</if>
+				AND IsAvailable =0
+		</where>
+	</select>
+	 <sql id="findGroupLine_sql">
+		SELECT a.* FROM(
+			select
+				g.*,
+				p.CurrencyId,
+				p.Bed,
+				p.Adult,
+				p.NotBed,
+				p.Children,
+				p.Baby,
+				p.DepartureTime,
+				p.HotelPrice,
+				p.ChildComm,
+				p.Commission,
+				(p.Adult-p.Commission)AS settlePrice,
+				p.Days,
+				p.supplement as price,
+				t.Symbol,
+				t.CurrencyEng
+				from groupline g,age_of_price p,currency_type t
+				<where>
+					g.groupLineId=p.groupLineId
+					<!-- AND r.GroupLineId=g.GroupLineId -->
+					AND t.currencyTypeId=p.currencyId
+					<if test="record.id != null">
+						AND g.GroupLineId = #{record.id,jdbcType=VARCHAR}
+					</if>
+					<if test="record.tourCode != null">
+						AND g.TourCode LIKE CONCAT('%','${record.tourCode}','%')
+					</if>
+					<if test="record.tourName != null">
+						<if test="record.tourName==2017">
+							AND g.TourName NOT LIKE '%2018%'
+						</if>
+						<if test="record.tourName==2018">
+							AND g.TourName LIKE CONCAT('%','${record.tourName}','%')
+						</if>
+					</if>
+					<if test="record.tripDesc != null">
+						AND g.TripDesc = #{record.tripDesc,jdbcType=LONGVARCHAR}
+					</if>
+					<if test="cc != null">
+					    AND
+						<foreach item="bd" index="index" collection="cc" open="(" separator="OR" close=")">
+				           g.Brand LIKE CONCAT('%','${bd}','%') 
+				        </foreach>
+					</if>
+
+					<if test="record.tourTypeId != null">
+						AND g.TourTypeId = #{record.tourTypeId,jdbcType=VARCHAR}
+					</if>
+					<if test="record.isSystem != null">
+						<!-- AND g.IsSystem = #{record.isSystem,jdbcType=VARCHAR} -->
+						<if test="record.isSystem!=5">
+							AND instr(g.IsSystem,#{record.isSystem})>0
+						</if>
+						<if test="record.isSystem==5">
+							AND g.IsSystem !=0 AND g.IsSystem !=2
+						</if>
+					</if>
+					<if test="record.departureDate != null">
+						AND g.DepartureDate = #{record.departureDate,jdbcType=TIMESTAMP}
+					</if>
+					<if test="record.specificItems != null">
+						AND g.SpecificItems = #{record.specificItems,jdbcType=VARCHAR}
+					</if>
+					<if test="record.remark != null">
+						AND g.Remark = #{record.remark,jdbcType=VARCHAR}
+					</if>
+					<if test="record.destinationlist != null">
+						AND g.destinationlist LIKE CONCAT('%','${record.destinationlist}','%')
+					</if>
+					<if test="record.degree != null">
+						AND g.degree LIKE CONCAT('%','${record.degree}','%')
+					</if>
+					<if test="record.area != null">
+						AND g.Area= #{record.area,jdbcType=VARCHAR}
+					</if>
+					<if test="record.departureTime != null">
+						AND DATE_FORMAT(p.departureTime,"%Y-%m-%d") <![CDATA[>=]]>DATE_FORMAT(#{record.departureTime,jdbcType=TIMESTAMP},"%Y-%m-%d")
+					</if>
+					<if test="record.dateTime != null">
+						AND DATE_FORMAT(p.departureTime,"%Y-%m-%d")<![CDATA[>=]]> DATE_FORMAT(#{record.dateTime,jdbcType=TIMESTAMP},"%Y-%m-%d")
+					</if>
+					<if test="record.time != null">
+						AND DATE_FORMAT(p.departureTime,"%Y-%m-%d")<![CDATA[<=]]>DATE_FORMAT(#{record.time,jdbcType=TIMESTAMP},"%Y-%m-%d")
+					</if>
+					<if test="record.currencyId != null">
+						AND p.currencyId = #{record.currencyId,jdbcType=VARCHAR}
+					</if>
+					<if test="record.lineNo != null">
+						AND g.LineNo = #{record.lineNo,jdbcType=VARCHAR}
+					</if>
+						AND g.IsAvailable =0 
+						AND instr(g.IsSystem,'2')>0
+						AND p.TypeNo=0 
+					ORDER BY g.LineNo,p.Adult ASC 
+				</where>
+			)a GROUP BY a.GroupLineId
+	 		<if test="record.role==null and record.days==null">
+				ORDER BY a.LineNo ASC 
+			</if>
+	 		<if test="record.role=='up'">
+				ORDER BY a.Adult ASC
+			</if>
+			<if test="record.role=='down'">
+				ORDER BY a.Adult DESC
+			</if>
+			<if test="record.days ==1">
+				ORDER BY a.remark ASC 
+			</if>
+			<if test="record.days ==2">
+				ORDER BY a.remark DESC 
+			</if>
+			 
+	</sql>
+	<select id="findGroupLineForPage" resultMap="BaseResultMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findGroupLine_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findGroupLineForPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findGroupLine_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+	<!-- 寻找最大的 LineOn-->
+	<select id="lineNoMax" resultType="string" parameterType="java.lang.String">
+		SELECT MAX(LineNo)+1 FROM groupline WHERE LineNo like CONCAT('%',#{tourCode},'%');
+	</select>
+	<select id="operaterByBrand" resultType="string" parameterType="java.lang.String">
+		SELECT 
+			GROUP_CONCAT(DISTINCT g.Operater)AS Operater 
+		FROM 
+			groupline g,tour_type t 
+		WHERE 
+			g.TourTypeId=t.TourTypeId 
+			AND g.Operater!="" 
+			AND instr(IsSystem,1)>0 
+			AND g.IsAvailable=0
+			AND g.Brand=#{brand}
+	</select>
+	<select id="venderByBrand" resultType="string" parameterType="com.chinatour.entity.GroupLine">
+		SELECT 
+			GROUP_CONCAT(DISTINCT g.Source)AS Source 
+		FROM 
+			groupline g,tour_type t 
+		WHERE 
+			g.TourTypeId=t.TourTypeId 
+			AND g.Source!="" 
+			AND instr(IsSystem,1)>0
+			AND g.IsAvailable=0
+			AND g.Brand=#{brand}
+			AND g.Operater=#{operater}
+	</select>
+	<select id="operaterAll" resultType="string">
+		SELECT 
+			GROUP_CONCAT(DISTINCT Operater)AS Operater 
+		FROM 
+			groupline 
+		WHERE 
+			instr(IsSystem,1)>0 
+			AND IsAvailable=0
+	</select>
+	<select id="venderAll" resultType="string">
+		SELECT 
+			GROUP_CONCAT(DISTINCT Source)AS Source 
+		FROM 
+			groupline  
+		WHERE 
+			instr(IsSystem,1)>0
+			AND IsAvailable=0
+	</select>
+	<select id="OpCenterAll" resultType="string">
+		SELECT 
+			GROUP_CONCAT(DISTINCT OpCenter)AS OpCenter 
+		FROM 
+			groupline  
+		WHERE 
+			instr(IsSystem,1)>0
+			AND IsAvailable=0
+	</select>
+	<select id="findByTourCode" resultMap="BaseResultMap">
+		SELECT
+			<include refid="Base_Column_List" />
+		FROM
+			groupline
+		WHERE
+			TourCode = #{tourCode,jdbcType=VARCHAR}		
+	</select>
+</mapper>

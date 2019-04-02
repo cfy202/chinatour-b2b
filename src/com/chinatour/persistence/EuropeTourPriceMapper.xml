@@ -1,0 +1,687 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.EuropeTourPriceMapper">
+	<sql id="Base_Column_List">
+		EuropeTourPriceId,   
+		OrderId,
+		OrderNo,     
+		ReceivableAmount,     
+		ActualCostForTour,      
+		TourId,
+		TourCode,          
+		Remark,
+		RateOfCurrencyId,
+		CreateTime,
+		ApproveRemarkOPAcc,
+		CompleteState,
+		DeptIdForTour,
+		DeptIdForOrder,
+		UserIdForOrder,
+		UserIdForTour,
+		PayOrCost,
+		VenderId,
+		VenderName,
+		InvoiceNo   
+	</sql>
+	<resultMap id="BaseResultMap" type="EuropeTourPrice">
+		<result column="EuropeTourPriceId" property="europeTourPriceId" jdbcType="VARCHAR" />
+		<result column="OrderId" property="orderId" jdbcType="VARCHAR" />
+		<result column="OrderNo" property="orderNo" jdbcType="VARCHAR" />
+		<result column="ReceivableAmount" property="receivableAmount" jdbcType="DECIMAL" />
+		<result column="ActualCostForTour" property="actualCostForTour" jdbcType="DECIMAL" />
+		<result column="TourId" property="tourId" jdbcType="VARCHAR" />
+		<result column="TourCode" property="tourCode" jdbcType="VARCHAR" />
+		<result column="Remark" property="remark" jdbcType="VARCHAR" />
+		<result column="RateOfCurrencyId" property="rateOfCurrencyId" jdbcType="VARCHAR" />
+		<result column="CreateTime" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="ApproveRemarkOPAcc" property="approveRemarkOPAcc" jdbcType="VARCHAR" />
+		<result column="DeptIdForTour" property="deptIdForTour" jdbcType="VARCHAR" />
+		<result column="DeptIdForOrder" property="deptIdForOrder" jdbcType="VARCHAR" />
+		<result column="UserIdForTour" property="userIdForTour" jdbcType="VARCHAR" />
+		<result column="UserIdForOrder" property="userIdForOrder" jdbcType="VARCHAR" />
+		<result column="ApproveRemarkAgent" property="approveRemarkAgent" jdbcType="VARCHAR" />
+		<result column="CompleteState" property="completeState" jdbcType="INTEGER" />
+		<result column="PayOrCost" property="payOrCost" jdbcType="INTEGER" />
+		<result column="VenderId" property="venderId" jdbcType="VARCHAR" />
+		<result column="VenderName" property="venderName" jdbcType="VARCHAR" />
+		<result column="InvoiceNo" property="invoiceNo" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap id="ResultMapForAgentName" type="com.chinatour.entity.EuropeTourPrice"
+		extends="BaseResultMap">
+		<association property="userName" column="UserIdForOrder"
+			select="com.chinatour.persistence.AdminMapper.findNameById" />
+		<association property="deptName" column="DeptIdForOrder"
+			select="com.chinatour.persistence.DeptMapper.findNameById" />
+	</resultMap>
+	
+	<sql id="findForPage_sql">
+		SELECT 
+			t.TourId AS TourId,t.TourCode AS TourCode,t.ArriveDateTime AS ArriveDateTime,t.LineName AS LineName,s.CompleteState AS CompleteState,t.State AS State      
+		FROM 
+			tour t
+			LEFT JOIN (SELECT * FROM europetourprice GROUP BY TourId) s ON t.TourId=s.TourId
+		WHERE 
+			t.IsDel= 0
+		<trim suffixOverrides="AND"> 
+			<if test="record.userIdForTour != null">
+				AND t.UserId = #{record.userIdForTour,jdbcType=VARCHAR}
+			</if>
+			<if test="record.deptIdForTour != null">
+				AND t.DeptId = #{record.deptIdForTour,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tourCode != null">
+				AND t.TourCode  LIKE CONCAT('%','${record.tourCode}','%')
+			</if>
+			<if test="record.venderName != null">
+				AND s.VenderName
+				=#{record.venderName,jdbcType=VARCHAR}
+			</if>
+			<if test="record.invoiceNo != null">
+				AND s.InvoiceNo
+				=#{record.invoiceNo,jdbcType=VARCHAR}
+			</if>
+			<if test="record.lineName != null">
+				AND t.LineName LIKE CONCAT('%','${record.lineName}','%')
+			</if>
+			<if test="record.completeState!= null">
+				AND s.completeState >= #{record.completeState,jdbcType=INTEGER}
+			</if>
+			<if test="record.beginningDate != null">
+				AND t.ArriveDateTime <![CDATA[>=]]> #{record.beginningDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.endingDate != null">
+				AND t.ArriveDateTime <![CDATA[<=]]> #{record.endingDate,jdbcType=TIMESTAMP}
+			</if>
+		ORDER BY t.ArriveDateTime DESC
+		</trim>
+	</sql>
+	<select id="findForPage" resultMap="BaseResultMap">
+        <include refid="Pager.paginationStart"/>
+        <include refid="findForPage_sql"/>
+        <include refid="Pager.paginationEnd"/>    
+    </select>
+    
+    <select id="findForPageCount" resultType="int">
+        <include refid="Pager.countStart"/>
+        <include refid="findForPage_sql"/>
+        <include refid="Pager.countEnd"/>
+    </select>
+    <update id="update" parameterType="EuropeTourPrice">
+		UPDATE europetourprice
+		<set>
+			<if test="europeTourPriceId != null">
+				EuropeTourPriceId=#{europeTourPriceId,jdbcType=VARCHAR},
+			</if>
+			<if test="orderId != null">
+				OrderId=#{orderId,jdbcType=VARCHAR},
+			</if>
+			<if test="receivableAmount != null">
+				ReceivableAmount=#{receivableAmount,jdbcType=VARCHAR},
+			</if>
+			<if test="actualCostForTour != null">
+				ActualCostForTour=#{actualCostForTour,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				Remark=#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="rateOfCurrencyId != null">
+				RateOfCurrencyId=#{rateOfCurrencyId,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				CreateTime=#{createTime,jdbcType=VARCHAR},
+			</if>
+			<if test="orderNo!=null">
+				OrderNo=#{orderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="tourCode!=null">
+				 TourCode=#{tourCode,jdbcType=VARCHAR},
+			</if>
+			<if test="completeState!=null">
+				CompleteState=#{completeState},
+			</if>
+			<if test="payOrCost!=null">
+				PayOrCost=#{payOrCost},
+			</if>
+			<if test="approveRemarkOPAcc!=null">
+				ApproveRemarkOPAcc=#{approveRemarkOPAcc},
+			</if>
+			<if test="approveRemarkAgent!=null">
+				ApproveRemarkAgent=#{approveRemarkAgent},
+			</if>
+			<if test="venderId!=null">
+				VenderId=#{venderId},
+			</if>
+			<if test="venderName!=null">
+				VenderName=#{venderName},
+			</if>
+			<if test="invoiceNo!=null">
+				InvoiceNo=#{invoiceNo}
+			</if>
+		</set>
+		WHERE 
+			EuropeTourPriceId=#{europeTourPriceId,jdbcType=VARCHAR}
+	</update>
+	<delete id="removeById" parameterType="java.lang.String">
+		DELETE FROM 
+			europetourprice 
+		WHERE 
+			EuropeTourPriceId=#{europeTourPriceId,jdbcType=VARCHAR}
+	</delete>
+	
+	<select id="find" resultMap="ResultMapForAgentName" parameterType="com.chinatour.entity.EuropeTourPrice">
+		SELECT
+			EuropeTourPriceId,   
+			OrderId,
+			OrderNo,     
+			ReceivableAmount,     
+			ActualCostForTour,      
+			TourId,
+			TourCode,          
+			Remark,
+			RateOfCurrencyId,
+			CreateTime,
+			CompleteState,
+			DeptIdForTour,
+			DeptIdForOrder,
+			UserIdForTour,
+			UserIdForOrder,
+			PayOrCost,
+			VenderId,
+			VenderName,
+			InvoiceNo       
+		FROM europetourprice
+		WHERE 
+			1=1 
+			<trim suffixOverrides="AND"> 
+				<if test="europeTourPriceId!= null">
+					AND EuropeTourPriceId=#{europeTourPriceId}
+				</if>
+				<if test="orderId!= null">
+					AND OrderId=#{orderId}
+				</if>
+				<if test="receivableAmount!= null">
+					AND ReceivableAmount=#{receivableAmount}
+				</if>
+				<if test="actualCostForTour!=null">
+					AND ActualCostForTour=#{actualCostForTour}
+				</if>
+				<if test="tourId!=null">
+				   	AND TourId=#{tourId}
+				</if>
+				<if test="remark!=null">
+				  	AND Remark=#{remark}
+				</if>
+				<if test="rateOfCurrencyId!=null">
+					AND RateOfCurrencyId=#{rateOfCurrencyId}
+				</if>
+				<if test="orderNo!=null">
+					AND OrderNo=#{orderNo}
+				</if>
+				<if test="tourCode!=null">
+					AND TourCode=#{tourCode}
+				</if>
+				<if test="completeState!=null">
+					AND CompleteState=#{completeState}
+				</if>
+				<if test="deptIdForTour!=null">
+					AND DeptIdForTour=#{deptIdForTour}
+				</if>
+				<if test="deptIdForOrder!=null">
+					AND DeptIdForOrder=#{deptIdForOrder}
+				</if>
+				<if test="userIdForTour!=null">
+					AND UserIdForTour=#{userIdForTour}
+				</if>
+				<if test="userIdForOrder!=null">
+					AND UserIdForOrder=#{userIdForOrder}
+				</if>
+				<if test="payOrCost!=null">
+					AND PayOrCost=#{payOrCost}
+				</if>
+				<if test="venderId!=null">
+					AND VenderId=#{venderId}
+				</if>
+				<if test="venderName!=null">
+					AND VenderName=#{venderName}
+				</if>
+				<if test="invoiceNo!=null">
+					AND InvoiceNo=#{invoiceNo}
+				</if>
+			</trim>
+	</select>
+	
+	<select id = "findById"  resultMap="BaseResultMap"  parameterType="java.lang.String">
+		SELECT
+			<include refid="Base_Column_List" />
+		FROM
+			europetourprice
+		WHERE
+		 EuropeTourPriceId=#{europeTourPriceId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id = "findByTourId"  resultMap="BaseResultMap"  parameterType="java.lang.String">
+		SELECT
+			<include refid="Base_Column_List" />
+		FROM
+			europetourprice
+		WHERE
+		 TourId=#{tourId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id = "findDeptsByTourId"  resultMap="BaseResultMap"  parameterType="java.lang.String">
+		SELECT
+			<include refid="Base_Column_List" />
+		FROM
+			europetourprice
+		WHERE
+			PayOrCost=0
+			AND
+		 	TourId=#{tourId,jdbcType=VARCHAR}
+		GROUP BY
+			DeptIdForOrder
+	</select>
+	
+	<insert id="save" parameterType="com.chinatour.entity.EuropeTourPrice">     
+		INSERT INTO europetourprice
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="europeTourPriceId != null">
+				EuropeTourPriceId,
+			</if>
+			<if test="createTime != null">
+				CreateTime,
+			</if>
+			<if test="receivableAmount != null">
+				ReceivableAmount,
+			</if>
+			<if test="actualCostForTour != null">
+				ActualCostForTour,
+			</if>
+			<if test="orderId != null">
+				OrderId,
+			</if>
+			<if test="orderNo != null">
+				OrderNo,
+			</if>
+			<if test="tourId != null">
+				TourId,
+			</if>
+			<if test="tourCode != null">
+				TourCode,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+			<if test="completeState != null">
+				CompleteState,
+			</if>
+			<if test="deptIdForTour != null">
+				DeptIdForTour,
+			</if>
+			<if test="deptIdForOrder != null">
+				DeptIdForOrder,
+			</if>
+			<if test="userIdForTour != null">
+				UserIdForTour,
+			</if>
+			<if test="userIdForOrder != null">
+				UserIdForOrder,
+			</if>
+			<if test="rateOfCurrencyId != null">
+				RateOfCurrencyId,
+			</if>
+			<if test="payOrCost != null">
+				PayOrCost,
+			</if>
+			<if test="venderId != null">
+				VenderId,
+			</if>
+			<if test="venderName != null">
+				VenderName,
+			</if>
+			<if test="invoiceNo != null">
+				InvoiceNo
+			</if>
+		</trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="europeTourPriceId != null">
+				#{europeTourPriceId,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="receivableAmount != null">
+				#{receivableAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="actualCostForTour != null">
+				#{actualCostForTour,jdbcType=DECIMAL},
+			</if>
+			<if test="orderId != null">
+				#{orderId,jdbcType=VARCHAR},
+			</if>
+			<if test="orderNo != null">
+				#{orderNo,jdbcType=VARCHAR},
+			</if>
+			<if test="tourId != null">
+				#{tourId,jdbcType=VARCHAR},
+			</if>
+			<if test="tourCode != null">
+				#{tourCode,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="completeState != null">
+				#{completeState,jdbcType=INTEGER},
+			</if>
+			<if test="deptIdForTour != null">
+				#{deptIdForTour,jdbcType=VARCHAR},
+			</if>
+			<if test="deptIdForOrder != null">
+				#{deptIdForOrder,jdbcType=VARCHAR},
+			</if>
+			<if test="userIdForTour != null">
+				#{userIdForTour,jdbcType=VARCHAR},
+			</if>
+			<if test="userIdForOrder != null">
+				#{userIdForOrder,jdbcType=VARCHAR},
+			</if>
+			<if test="rateOfCurrencyId != null">
+				#{rateOfCurrencyId,jdbcType=VARCHAR},
+			</if>
+			<if test="payOrCost != null">
+				#{payOrCost,jdbcType=INTEGER},
+			</if>
+			<if test="venderId != null">
+				#{venderId,jdbcType=VARCHAR},
+			</if>
+			<if test="venderName != null">
+				#{venderName,jdbcType=VARCHAR},
+			</if>
+			<if test="invoiceNo != null">
+				#{invoiceNo,jdbcType=VARCHAR}
+			</if>
+		</trim>
+	</insert>
+	
+	<!-- agent审核 -->
+	
+	<sql id="findForAgentPage_sql">
+		SELECT 
+			t.TourId AS TourId,t.TourCode AS TourCode,t.ArriveDateTime AS ArriveDateTime,t.LineName AS LineName,s.CompleteState AS CompleteState,s.receivableAmount AS ReceivableAmount,s.OrderNo AS OrderNo,s.EuropeTourPriceId AS EuropeTourPriceId,s.Remark AS Remark,ROUND(s.ReceivableAmount*r.RateUp/r.RateDown,2) AS CurrencyOfSelf,DeptIdForOrder AS DeptIdForOrder,UserIdForOrder AS UserIdForOrder,s.InvoiceNo AS InvoiceNo,s.VenderName AS VenderName 
+		FROM 
+			europetourprice s,tour t,rateofcurrency r
+			
+		WHERE 
+			t.IsDel= 0 AND s.RateOfCurrencyId = r.Id
+		AND 
+			t.TourId=s.TourId
+		<trim suffixOverrides="AND"> 
+			<if test="record.userIdForTour != null">
+				AND t.UserId = #{record.userIdForTour,jdbcType=VARCHAR}
+			</if>
+			<if test="record.deptIdForTour != null">
+				AND s.DeptIdForTour = #{record.deptIdForTour,jdbcType=VARCHAR}
+			</if>
+			<if test="record.deptIdForOrder != null">
+				AND s.DeptIdForOrder = #{record.deptIdForOrder,jdbcType=VARCHAR}
+			</if>
+			<if test="record.userIdForOrder != null">
+				AND s.UserIdForOrder = #{record.userIdForOrder,jdbcType=VARCHAR}
+			</if>
+			<if test="record.venderName != null">
+				AND s.VenderName = #{record.venderName,jdbcType=VARCHAR}
+			</if>
+			<if test="record.orderNo != null">
+				AND s.orderNo = #{record.orderNo,jdbcType=VARCHAR}
+			</if>
+			<if test="record.invoiceNo != null">
+				AND s.InvoiceNo = #{record.invoiceNo,jdbcType=VARCHAR}
+			</if>
+			<if test="record.payOrCost != null">
+				AND s.PayOrCost = #{record.payOrCost,jdbcType=INTEGER}
+			</if>
+			<if test="record.tourCode != null">
+				AND t.TourCode  LIKE CONCAT('%','${record.tourCode}','%')
+			</if>
+			<if test="record.lineName != null">
+				AND t.LineName LIKE CONCAT('%','${record.lineName}','%')
+			</if>
+			<if test="record.completeState!= null">
+				AND s.completeState >= #{record.completeState,jdbcType=INTEGER}
+			</if>
+			<if test="record.beginningDate != null">
+				AND t.ArriveDateTime <![CDATA[>=]]> #{record.beginningDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.endingDate != null">
+				AND t.ArriveDateTime <![CDATA[<=]]> #{record.endingDate,jdbcType=TIMESTAMP}
+			</if>
+		ORDER BY t.ArriveDateTime DESC
+		</trim>
+	</sql>
+	<select id="findForAgentPage" resultMap="BaseResultMap">
+        <include refid="Pager.paginationStart"/>
+        <include refid="findForAgentPage_sql"/>
+        <include refid="Pager.paginationEnd"/>    
+    </select>
+    
+    <select id="findForAgentPageCount" resultType="int">
+        <include refid="Pager.countStart"/>
+        <include refid="findForAgentPage_sql"/>
+        <include refid="Pager.countEnd"/>
+    </select>
+    <!-- agent审核 (Team)-->
+	
+	<sql id="findForAgentPage_Group">
+		SELECT 
+			t.TourId AS TourId,t.TourCode AS TourCode,t.ArriveDateTime AS ArriveDateTime,t.LineName AS LineName,s.CompleteState AS CompleteState,s.receivableAmount AS ReceivableAmount,s.OrderNo AS OrderNo,s.EuropeTourPriceId AS EuropeTourPriceId,s.Remark AS Remark,ROUND(s.ReceivableAmount*r.RateUp/r.RateDown,2) AS CurrencyOfSelf,DeptIdForOrder AS DeptIdForOrder,UserIdForOrder AS UserIdForOrder,s.InvoiceNo AS InvoiceNo,s.VenderName AS VenderName 
+		FROM 
+			europetourprice s,tour t,rateofcurrency r,admin_group ag
+			
+		WHERE 
+			t.IsDel= 0 AND s.RateOfCurrencyId = r.Id
+		AND 
+			t.TourId=s.TourId
+			AND s.UserIdForOrder=ag.AdminId
+		<trim suffixOverrides="AND"> 
+			<if test="record.groupId != null">
+				AND ag.GroupId = #{record.groupId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.userIdForTour != null">
+				AND t.UserId = #{record.userIdForTour,jdbcType=VARCHAR}
+			</if>
+			<if test="record.deptIdForTour != null">
+				AND s.DeptIdForTour = #{record.deptIdForTour,jdbcType=VARCHAR}
+			</if>
+			<if test="record.deptIdForOrder != null">
+				AND s.DeptIdForOrder = #{record.deptIdForOrder,jdbcType=VARCHAR}
+			</if>
+			<if test="record.userIdForOrder != null">
+				AND s.UserIdForOrder = #{record.userIdForOrder,jdbcType=VARCHAR}
+			</if>
+			<if test="record.venderName != null">
+				AND s.VenderName = #{record.venderName,jdbcType=VARCHAR}
+			</if>
+			<if test="record.invoiceNo != null">
+				AND s.InvoiceNo = #{record.invoiceNo,jdbcType=VARCHAR}
+			</if>
+			<if test="record.payOrCost != null">
+				AND s.PayOrCost = #{record.payOrCost,jdbcType=INTEGER}
+			</if>
+			<if test="record.tourCode != null">
+				AND t.TourCode  LIKE CONCAT('%','${record.tourCode}','%')
+			</if>
+			<if test="record.lineName != null">
+				AND t.LineName LIKE CONCAT('%','${record.lineName}','%')
+			</if>
+			<if test="record.completeState!= null">
+				AND s.completeState >= #{record.completeState,jdbcType=INTEGER}
+			</if>
+			<if test="record.beginningDate != null">
+				AND t.ArriveDateTime <![CDATA[>=]]> #{record.beginningDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.endingDate != null">
+				AND t.ArriveDateTime <![CDATA[<=]]> #{record.endingDate,jdbcType=TIMESTAMP}
+			</if>
+		ORDER BY t.ArriveDateTime DESC
+		</trim>
+	</sql>
+	<select id="findForGroupPage" resultMap="BaseResultMap">
+        <include refid="Pager.paginationStart"/>
+        <include refid="findForAgentPage_Group"/>
+        <include refid="Pager.paginationEnd"/>    
+    </select>
+    
+    <select id="findForGroupPageCount" resultType="int">
+        <include refid="Pager.countStart"/>
+        <include refid="findForAgentPage_Group"/>
+        <include refid="Pager.countEnd"/>
+    </select>
+    
+    <!-- op财务审核income审核 -->
+	
+	<sql id="findForOPAccPage_sql">
+		SELECT 
+			t.TourId AS TourId,t.TourCode AS TourCode,t.ArriveDateTime AS ArriveDateTime,t.LineName AS LineName,s.CompleteState AS CompleteState,s.receivableAmount AS ReceivableAmount,s.OrderNo AS OrderNo,s.EuropeTourPriceId AS EuropeTourPriceId,s.Remark AS Remark,ROUND(s.ReceivableAmount*r.RateUp/r.RateDown,2) AS CurrencyOfSelf,concat(d.deptName,'-',a.userName) AS AgentInfo,s.InvoiceNo AS InvoiceNo
+		FROM 
+			europetourprice s,tour t,rateofcurrency r,dept d,zs_admin a
+			
+		WHERE 
+			t.IsDel= 0 AND s.RateOfCurrencyId = r.Id AND d.DeptId=s.DeptIdForOrder AND a.Id=s.UserIdForOrder
+		AND 
+			t.TourId=s.TourId
+		<trim suffixOverrides="AND"> 
+			<if test="record.userIdForTour != null">
+				AND t.UserId = #{record.userIdForTour,jdbcType=VARCHAR}
+			</if>
+			<if test="record.userIdForOrder != null">
+				AND s.UserIdForOrder = #{record.userIdForOrder,jdbcType=VARCHAR}
+			</if>
+			<if test="record.venderName != null">
+				AND s.VenderName = #{record.venderName,jdbcType=VARCHAR}
+			</if>
+			<if test="record.orderNo != null">
+				AND s.OrderNo = #{record.orderNo,jdbcType=VARCHAR}
+			</if>
+			<if test="record.invoiceNo != null">
+				AND s.InvoiceNo = #{record.invoiceNo,jdbcType=VARCHAR}
+			</if>
+			<if test="record.payOrCost != null">
+				AND s.PayOrCost = #{record.payOrCost,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tourCode != null">
+				AND t.TourCode  LIKE CONCAT('%','${record.tourCode}','%')
+			</if>
+			<if test="record.lineName != null">
+				AND t.LineName LIKE CONCAT('%','${record.lineName}','%')
+			</if>
+			<if test="record.deptIdForTour != null">
+				AND s.DeptIdForTour = #{record.deptIdForTour,jdbcType=VARCHAR}
+			</if>
+			<if test="record.deptIdForOrder != null">
+				AND s.DeptIdForOrder = #{record.deptIdForTour,jdbcType=VARCHAR}
+			</if>
+			<if test="record.completeState!= null">
+				AND s.completeState >= #{record.completeState,jdbcType=INTEGER}
+			</if>
+			<if test="record.beginningDate != null">
+				AND t.ArriveDateTime <![CDATA[>=]]> #{record.beginningDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.endingDate != null">
+				AND t.ArriveDateTime <![CDATA[<=]]> #{record.endingDate,jdbcType=TIMESTAMP}
+			</if>
+		ORDER BY t.ArriveDateTime DESC
+		</trim>
+	</sql>
+	<select id="findForOPAccPage" resultMap="BaseResultMap">
+        <include refid="Pager.paginationStart"/>
+        <include refid="findForOPAccPage_sql"/>
+        <include refid="Pager.paginationEnd"/>    
+    </select>
+    
+    <select id="findForOPAccPageCount" resultType="int">
+        <include refid="Pager.countStart"/>
+        <include refid="findForOPAccPage_sql"/>
+        <include refid="Pager.countEnd"/>
+    </select>
+    
+    <sql id="findForAccOPPage_sql">
+		SELECT 
+			t.TourId AS TourId,t.TourCode AS TourCode,t.ArriveDateTime AS ArriveDateTime,t.LineName AS LineName,s.CompleteState AS CompleteState,s.receivableAmount AS ReceivableAmount,s.OrderNo AS OrderNo,s.EuropeTourPriceId AS EuropeTourPriceId,s.InvoiceNo AS InvoiceNo   
+		FROM 
+			europetourprice s,tour t
+			
+		WHERE 
+			t.IsDel= 0
+		AND 
+			t.TourId=s.TourId
+		<trim suffixOverrides="AND"> 
+			<if test="record.userIdForTour != null">
+				AND t.UserId = #{record.userIdForTour,jdbcType=VARCHAR}
+			</if>
+			<if test="record.userIdForOrder != null">
+				AND s.UserIdForOrder = #{record.userIdForOrder,jdbcType=VARCHAR}
+			</if>
+			<if test="record.venderName != null">
+				AND s.VenderName = #{record.venderName,jdbcType=VARCHAR}
+			</if>
+			<if test="record.invoiceNo != null">
+				AND s.InvoiceNo = #{record.invoiceNo,jdbcType=VARCHAR}
+			</if>
+			<if test="record.payOrCost != null">
+				AND s.PayOrCost = #{record.payOrCost,jdbcType=INTEGER}
+			</if>
+			<if test="record.tourCode != null">
+				AND t.TourCode  LIKE CONCAT('%','${record.tourCode}','%')
+			</if>
+			<if test="record.lineName != null">
+				AND t.LineName LIKE CONCAT('%','${record.lineName}','%')
+			</if>
+			<if test="record.completeState!= null">
+				AND s.completeState >= #{record.completeState,jdbcType=INTEGER}
+			</if>
+			<if test="record.beginningDate != null">
+				AND t.ArriveDateTime <![CDATA[>=]]> #{record.beginningDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.endingDate != null">
+				AND t.ArriveDateTime <![CDATA[<=]]> #{record.endingDate,jdbcType=TIMESTAMP}
+			</if>
+		GROUP BY s.TourId
+		ORDER BY t.ArriveDateTime DESC
+		</trim>
+	</sql>
+	<select id="findForAccOPPage" resultMap="BaseResultMap">
+        <include refid="Pager.paginationStart"/>
+        <include refid="findForAccOPPage_sql"/>
+        <include refid="Pager.paginationEnd"/>    
+    </select>
+    
+    <select id="findForAccOPPageCount" resultType="int">
+        <include refid="Pager.countStart"/>
+        <include refid="findForAccOPPage_sql"/>
+        <include refid="Pager.countEnd"/>
+    </select>
+    <!-- 查询agent未审核 -->
+    <select id="findSumForAgent" resultType="int" parameterType="java.lang.String">
+    	SELECT 
+    		COUNT(*) 
+    	FROM europetourprice 
+    	WHERE
+    		CompleteState='1'
+    		AND
+    		UserIdForOrder=#{userIdForOrder,jdbcType=VARCHAR}
+    </select>
+    <!-- 查询未分摊成本的订单 -->
+    <select id="findCount" resultType="int" parameterType="com.chinatour.entity.EuropeTourPrice">
+    	SELECT 
+    		COUNT(*) 
+    	FROM europetourprice 
+    	WHERE
+    		1=1
+    		<if test="orderId!= null">
+				AND OrderId=#{orderId}
+			</if>
+    		<if test="completeState!=null">
+				AND CompleteState=#{completeState}
+			</if>
+    </select>
+</mapper>

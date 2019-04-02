@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.NoticeContactMapper">
+	
+    <sql id="Base_Column_List">
+        NoticeContactId,SendUser,ReceiveUser,Type,State,NoticeId
+    </sql>
+    
+	<resultMap type="NoticeContact" id="BaseResultMap">
+	    <result column="NoticeContactId" property="noticeContactId" jdbcType="VARCHAR" />
+		<result column="SendUser" property="sendUser" jdbcType="VARCHAR" />
+		<result column="ReceiveUser" property="receiveUser" jdbcType="VARCHAR" />
+		<result column="Type" property="type" jdbcType="INTEGER" />
+		<result column="State" property="state" jdbcType="INTEGER" />
+		<result column="NoticeId" property="noticeId" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<resultMap type="NoticeContact" id="ResultMapOfNotice">
+	    <result column="NoticeContactId" property="noticeContactId" jdbcType="VARCHAR" />
+		<result column="SendUser" property="sendUser" jdbcType="VARCHAR" />
+		<result column="ReceiveUser" property="receiveUser" jdbcType="VARCHAR" />
+		<result column="Type" property="type" jdbcType="INTEGER" />
+		<result column="State" property="state" jdbcType="INTEGER" />
+		<result column="NoticeId" property="noticeId" jdbcType="VARCHAR" />
+		<association column="SendUser" property="admin" select="com.chinatour.persistence.AdminMapper.findById" />
+		<association column="NoticeId" property="notice" select="com.chinatour.persistence.NoticeMapper.findById" />
+	</resultMap>
+	
+	<select id="findAll" resultMap="BaseResultMap">
+		SELECT 
+			<include refid="Base_Column_List"/>
+	    FROM
+	    	noticecontact
+	</select>
+	
+	
+	<delete id="removeById" parameterType="String">
+	    DELETE FROM 
+		    noticecontact 
+		WHERE 
+		     NoticeContactId=#{noticeContactId}
+	</delete>	
+	
+	
+	<select id="findById" resultMap="ResultMapOfNotice" parameterType="String">
+		SELECT 
+			<include refid="Base_Column_List"/>
+	    FROM
+	    	noticecontact
+	    WHERE 
+	    	NoticeContactId=#{noticeContactId}
+	</select>
+	
+	<update id="update" parameterType="NoticeContact">
+		UPDATE noticecontact
+			<set>
+			    <if test="noticeContactId != null">
+                    NoticeContactId = #{noticeContactId} ,
+                </if>
+                <if test="sendUser != null">
+                    SendUser = #{sendUser} ,
+                </if>
+                <if test="receiveUser !=null">
+	                ReceiveUser = #{receiveUser} ,
+                </if>
+                <if test="type != null">
+                    Type = #{type} ,
+                </if>
+                <if test="state !=null">
+	                State = #{state} ,
+                </if>
+                <if test="noticeId !=null">
+	                NoticeId = #{noticeId} 
+                </if>
+			</set>
+		WHERE 
+            NoticeContactId=#{noticeContactId}
+	</update> 
+	
+	
+	 <insert id="save" parameterType="NoticeContact">
+	     INSERT INTO noticecontact
+	     	<trim prefix="(" suffix=")" suffixOverrides=",">
+	     		<if test="noticeContactId != null">
+                    NoticeContactId ,
+                </if>
+                <if test="sendUser != null">
+                    SendUser ,
+                </if>
+                <if test="receiveUser !=null">
+	                ReceiveUser ,
+                </if>
+                <if test="type != null">
+                    Type ,
+                </if>
+                <if test="state !=null">
+	                State , 
+                </if>
+                <if test="noticeId !=null">
+	                NoticeId 
+                </if>
+	     	</trim> 
+	     		
+	     	<trim prefix="values (" suffix=")" suffixOverrides=",">
+	     		<if test="noticeContactId != null">
+                    #{noticeContactId} ,
+                </if>
+                <if test="sendUser != null">
+                    #{sendUser} ,
+                </if>
+                <if test="receiveUser !=null">
+	                #{receiveUser} ,
+                </if>
+                <if test="type != null">
+                    #{type} ,
+                </if>
+                <if test="state !=null">
+	                #{state}, 
+                </if>
+                <if test="noticeId !=null">
+	                #{noticeId} 
+                </if>
+	     	</trim>
+	</insert>
+	
+	<insert id="batchSave" parameterType="java.util.List">
+	     INSERT INTO noticecontact
+	     (<include refid="Base_Column_List"/>)
+	     values 
+     	<foreach collection="list" item="item" index="index" separator="," >
+     	    (
+                #{item.noticeContactId},
+                #{item.sendUser,jdbcType=VARCHAR} ,
+                #{item.receiveUser,jdbcType=VARCHAR},
+                #{item.type,jdbcType=TINYINT},
+                #{item.state,jdbcType=TINYINT}, 
+                #{item.noticeId,jdbcType=VARCHAR} 
+	         )
+     	</foreach>
+	</insert>
+	 
+	<sql id="findForPage_sql">
+        select
+        	nt.NoticeContactId,nt.SendUser,nt.ReceiveUser,nt.Type,nt.State,nt.NoticeId
+        from noticecontact nt,notice n
+        where
+        	nt.NoticeId=n.NoticeId AND
+            <trim suffixOverrides="AND">
+                <if test="record.noticeContactId != null">
+                    nt.NoticeContactId = #{record.noticeContactId} AND
+                </if>
+                <if test="record.sendUser != null">
+                    nt.SendUser = #{record.sendUser} AND
+                </if>
+                <if test="record.receiveUser !=null">
+	                nt.ReceiveUser = #{record.receiveUser} AND
+                </if>
+                <if test="record.type != null">
+                    nt.Type = #{record.type} AND
+                </if>
+                <if test="record.state != null">
+                    <if test="record.state == 3">
+                    	nt.State <![CDATA[<>]]> 2 AND
+                    </if>
+                    <if test="record.state != 3">
+                    	nt.State = #{record.state} AND
+                    </if>
+                </if>
+                <if test="record.noticeId != null">
+                    nt.NoticeId = #{record.noticeId} AND
+                </if>
+                 <if test="record.title != null">
+                    n.Title LIKE CONCAT('%','${record.title}','%') AND
+                </if>
+            </trim>
+        ORDER BY nt.CreateDate DESC
+    </sql>
+    
+    <select id="findForPage" resultMap="ResultMapOfNotice">
+        <include refid="Pager.paginationStart"/>
+        <include refid="findForPage_sql"/>
+        <include refid="Pager.paginationEnd"/>
+    </select>
+    
+    <select id="findForPageCount" resultType="int">
+        <include refid="Pager.countStart"/>
+        <include refid="findForPage_sql"/>
+        <include refid="Pager.countEnd"/>
+    </select>
+    
+    <!-- <sql id="findSendBoxForPage_sql">
+        select
+        	<include refid="Base_Column_List"/>
+        from noticecontact
+        <where>
+            <trim suffixOverrides="AND">
+                <if test="record.noticeContactId != null">
+                    NoticeContactId = #{record.noticeContactId} AND
+                </if>
+                <if test="record.sendUser != null">
+                    SendUser = #{record.sendUser} AND
+                </if>
+                <if test="record.receiveUser !=null">
+	                ReceiveUser = #{record.receiveUser} AND
+                </if>
+                <if test="record.type != null">
+                    Type = #{record.type} AND
+                </if>
+                <if test="record.state != null">
+                    <if test="record.state == 3">
+                    	State <![CDATA[<>]]> 2 AND
+                    </if>
+                    <if test="record.state != 3">
+                    	State = #{record.state} AND
+                    </if>
+                </if>
+                <if test="record.noticeId != null">
+                    NoticeId = #{record.noticeId} AND
+                </if>
+            </trim>
+        </where>
+        GROUP BY NoticeId ORDER BY CreateDate DESC
+    </sql> -->
+    <sql id="findSendBoxForPage_sql">
+        select
+        	n.NoticeContactId,n.SendUser,n.ReceiveUser,n.Type,n.State,n.NoticeId
+        from noticecontact n,notice c
+        <where>
+            <trim suffixOverrides="AND">
+            	n.NoticeId=c.NoticeId AND
+                <if test="record.noticeContactId != null">
+                    n.NoticeContactId = #{record.noticeContactId} AND
+                </if>
+                <if test="record.sendUser != null">
+                    n.SendUser = #{record.sendUser} AND
+                </if>
+                <if test="record.receiveUser !=null">
+	                n.ReceiveUser = #{record.receiveUser} AND
+                </if>
+                <if test="record.type != null">
+                    n.Type = #{record.type} AND
+                </if>
+                <if test="record.state != null">
+                    <if test="record.state == 3">
+                    	n.State <![CDATA[<>]]> 2 AND
+                    </if>
+                    <if test="record.state != 3">
+                    	n.State = #{record.state} AND
+                    </if>
+                </if>
+                <if test="record.noticeId != null">
+                    n.NoticeId = #{record.noticeId} AND
+                </if>
+            </trim>
+        </where>
+        GROUP BY n.NoticeId ORDER BY c.CreateDate DESC
+    </sql>
+    
+    <select id="findSendBoxForPage" resultMap="ResultMapOfNotice">
+        <include refid="Pager.paginationStart"/>
+        <include refid="findSendBoxForPage_sql"/>
+        <include refid="Pager.paginationEnd"/>
+    </select>
+    
+    <select id="findSendBoxForPageCount" resultType="int">
+        <include refid="Pager.countStart"/>
+        <include refid="findSendBoxForPage_sql"/>
+        <include refid="Pager.countEnd"/>
+    </select>
+    
+    <select id="findReceiveUser" resultType="NoticeContact" parameterType="String">
+		SELECT
+			n.NoticeContactId,
+			n.SendUser,
+			n.ReceiveUser,
+			n.Type,
+			a.username as receiveUserName
+	    FROM
+	    	noticecontact n,zs_admin a
+	    WHERE n.ReceiveUser = a.Id
+	    AND	NoticeId=#{id}
+	</select>
+</mapper>

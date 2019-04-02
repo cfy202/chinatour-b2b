@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chinatour.persistence.ModuleMapper">
+    <insert id="save" parameterType="Module" keyProperty="id" keyColumn="id"
+            useGeneratedKeys="false">
+        <selectKey order="BEFORE" keyProperty="id" resultType="string">
+            select UUID()
+        </selectKey>
+        INSERT INTO zs_module
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id,
+            <if test="description != null">
+                description,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="priority != null">
+                priority,
+            </if>
+            <if test="sn != null">
+                sn,
+            </if>
+            <if test="url != null">
+                url,
+            </if>
+            <if test="icons.id != null">
+                iconid,
+            </if>
+            <if test="parent.id != null">
+                parent_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{id},
+            <if test="description != null">
+                #{description},
+            </if>
+            <if test="name != null">
+                #{name},
+            </if>
+            <if test="priority != null">
+                #{priority},
+            </if>
+            <if test="sn != null">
+                #{sn},
+            </if>
+            <if test="url != null">
+                #{url},
+            </if>
+            <if test="icons.id != null">
+                #{icons.id},
+            </if>
+            <if test="parent.id != null">
+                #{parent.id},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="Module">
+        update zs_module
+        <set>
+            <if test="id != null">
+                id=#{id},
+            </if>
+            <if test="description != null">
+                description=#{description},
+            </if>
+            <if test="name != null">
+                name=#{name},
+            </if>
+            <if test="priority != null">
+                priority=#{priority},
+            </if>
+            <if test="sn != null">
+                sn=#{sn},
+            </if>
+            <if test="url != null">
+                url=#{url},
+            </if>
+            <if test="icons.id != null">
+                iconid=#{icons.id},
+            </if>
+            <if test="parent.id != null">
+                parent_id=#{parent.id}
+            </if>
+        </set>
+        <where>
+            <trim suffixOverrides="AND">
+                <if test="id != null">
+                    id = #{id} AND
+                </if>
+            </trim>
+        </where>
+    </update>
+
+    <delete id="remove" parameterType="string">
+        delete from zs_module
+        <where>
+            <trim suffixOverrides="AND">
+                <if test="id != null">
+                    id = #{id} AND
+                </if>
+            </trim>
+        </where>
+    </delete>
+
+    <select id="findAll" resultMap="resultfindByModuleId">
+        select * from
+        zs_module order by priority asc
+    </select>
+
+    <select id="findById" parameterType="string" resultMap="resultfindByModuleForID">
+        select m.id,
+        m.name,
+        m.priority,
+        m.url,
+        m.sn,
+        m.description,
+        m.iconid,
+        m.parent_id,
+        i.id as iid,
+        i.icname,
+        i.icurl,
+        rb.id as rbid,
+        rb.buttonSn,
+        rb.status
+        from zs_module m
+        left join zs_icons i
+        on i.id = m.iconid
+        left join zs_role_button rb
+        on rb.moduleid = m.id
+
+        <where>
+            <trim suffixOverrides="AND">
+                m.id=#{id} AND
+            </trim>
+        </where>
+    </select>
+
+    <resultMap type="Module" id="resultfindByModuleForID">
+        <id property="id" column="id"/>
+        <result property="id" column="id"/>
+        <result property="description" column="description"/>
+        <result property="name" column="name"/>
+        <result property="priority" column="priority"/>
+        <result property="url" column="url"/>
+        <result property="sn" column="sn"/>
+        <association property="icons" column="{id=iconid}"
+                     javaType="Icons">
+            <result property="id" column="iconid"/>
+            <result property="name" column="icname"/>
+            <result property="url" column="icurl"/>
+        </association>
+        <association property="parent" column="{id=parent_id}"
+                     javaType="Module" select="findBySId"></association>
+        <collection property="roleButtonList" column="id"
+                    javaType="ArrayList" ofType="RoleButton">
+            <result property="id" column="rbid"/>
+            <result property="buttonSn" column="buttonSn"/>
+            <result property="status" column="status"/>
+        </collection>
+    </resultMap>
+
+    <select id="findBySId" resultType="Module">
+        select * from
+        zs_module
+        <where>
+            <trim suffixOverrides="AND">
+                id=#{id}
+            </trim>
+        </where>
+    </select>
+
+    <select id="findByPId" resultType="Module">
+        select * from
+        zs_module
+        <where>
+            <trim suffixOverrides="AND">
+                parent_id=#{parent_id}
+            </trim>
+        </where>
+    </select>
+
+    <resultMap type="Module" id="resultfindByModuleId">
+        <id property="id" column="id"/>
+        <result property="id" column="id"/>
+        <result property="description" column="description"/>
+        <result property="name" column="name"/>
+        <result property="priority" column="priority"/>
+        <result property="url" column="url"/>
+        <result property="sn" column="sn"/>
+        <association property="parent" column="{id=parent_id}"
+                     javaType="Module" select="findBySId"></association>
+        <collection property="children" column="{parent_id=id}"
+                    javaType="ArrayList" select="findByPId">
+        </collection>
+    </resultMap>
+
+    <resultMap type="Module" id="resultfindByModuleIxId">
+        <id property="id" column="id"/>
+        <result property="id" column="id"/>
+        <result property="description" column="description"/>
+        <result property="name" column="name"/>
+        <result property="priority" column="priority"/>
+        <result property="url" column="url"/>
+        <result property="sn" column="sn"/>
+        <association property="icons" column="{id=iconid}"
+                     javaType="Icons">
+            <result property="id" column="iconid"/>
+            <result property="icname" column="icname"/>
+            <result property="ictype" column="ictype"/>
+            <result property="icurl" column="icurl"/>
+        </association>
+        <association property="parent" column="{id=parent_id}"
+                     javaType="Module" select="findBySId"></association>
+        <collection property="children" column="{parent_id=id}"
+                    javaType="ArrayList" select="findByPId">
+        </collection>
+    </resultMap>
+    <select id="findByMDP" resultMap="resultfindByModuleIxId">
+        select m.id,
+        m.description,
+        m.name,
+        m.priority,
+        m.sn,
+        m.url,
+        m.iconid,
+        m.parent_id,
+        i.id as iid,
+        i.icname,
+        i.ictype,
+        i.icurl
+        from zs_module m
+        left join zs_icons i
+        on m.iconid = i.id
+        <where>
+            <trim suffixOverrides="AND">
+                m.parent_id=#{parent_id}
+            </trim>
+        </where>
+        order by priority asc
+    </select>
+
+    <select id="findByMD" resultMap="resultfindByModuleIxId">
+        select m.id,
+        m.description,
+        m.name,
+        m.priority,
+        m.sn,
+        m.url,
+        m.iconid,
+        m.parent_id,
+        i.id as iid,
+        i.icname,
+        i.ictype,
+        i.icurl
+        from zs_module m
+        left join zs_icons i
+        on m.iconid = i.id
+        <where>
+            <trim suffixOverrides="AND">
+                parent_id!=#{parent_id}
+            </trim>
+        </where>
+        order by priority asc
+    </select>
+    <!-- 模块分页 begin -->
+    <sql id="findModuleForPage_sql">
+        select id, description, name, priority, sn, url, iconid, parent_id
+        from zs_module
+        <where>
+            <trim suffixOverrides="AND">
+                <if test="name != null and name != ''">
+                    name like CONCAT(CONCAT('%', #{name}),'%') AND
+                </if>
+                <if test="parent!=null and parent.id != null and parent.id != ''">
+                    parent_id = #{parent.id} AND
+                </if>
+            </trim>
+        </where>
+        order by priority asc
+    </sql>
+    <select id="findModulePage" resultType="Module">
+        <include refid="Pager.paginationStart"/>
+        <include refid="findModuleForPage_sql"/>
+        <include refid="Pager.paginationEnd"/>
+    </select>
+
+    <select id="findModuleCount" resultType="int">
+        <include refid="Pager.countStart"/>
+        <include refid="findModuleForPage_sql"/>
+        <include refid="Pager.countEnd"/>
+    </select>
+    <!-- 模块分页 end -->
+
+</mapper>

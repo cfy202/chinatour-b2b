@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.ReceivableInfoOfOrderMapper">
+
+	<resultMap id="BaseResultMap" type="com.chinatour.entity.ReceivableInfoOfOrder">
+		<id column="ReceivableInfoOfOrderId" property="id"
+			jdbcType="VARCHAR" />
+		<result column="TotalCommonTourFee" property="totalCommonTourFee"
+			jdbcType="DECIMAL" />
+		<result column="TotalFeeOfOthers" property="totalFeeOfOthers"
+			jdbcType="DECIMAL" />
+		<result column="SumFee" property="sumFee" jdbcType="DECIMAL" />
+		<result column="OrderId" property="orderId" jdbcType="VARCHAR" />
+		<result column="PeerUserCost" property="peerUserCost" jdbcType="DECIMAL" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		ReceivableInfoOfOrderId, TotalCommonTourFee,
+		TotalFeeOfOthers, SumFee, OrderId, PeerUserCost
+	</sql>
+	
+	<sql id="findForPage_sql">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM receivable_info_of_order
+		<where>
+			<if test="record.id != null">
+				ReceivableInfoOfOrderId = #{record.id,jdbcType=VARCHAR}
+			</if>
+			<if test="record.totalCommonTourFee != null">
+				AND TotalCommonTourFee =
+				#{record.totalCommonTourFee,jdbcType=DECIMAL}
+			</if>
+			<if test="record.totalFeeOfOthers != null">
+				AND TotalFeeOfOthers =
+				#{record.totalFeeOfOthers,jdbcType=DECIMAL}
+			</if>
+			<if test="record.sumFee != null">
+				AND SumFee = #{record.sumFee,jdbcType=DECIMAL}
+			</if>
+			<if test="record.orderId != null">
+				AND OrderId = #{record.orderId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.peerUserCost != null">
+				AND PeerUserCost = #{record.peerUserCost,jdbcType=DECIMAL}
+			</if>
+		</where>
+	</sql>
+
+	<select id="findForPage" resultMap="BaseResultMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findForPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+
+	<select id="find" resultMap="BaseResultMap" parameterType="java.lang.String">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM receivable_info_of_order
+		<where>
+			<if test="id != null">
+				ReceivableInfoOfOrderId = #{id,jdbcType=VARCHAR}
+			</if>
+			<if test="totalCommonTourFee != null">
+				AND TotalCommonTourFee =
+				#{totalCommonTourFee,jdbcType=DECIMAL}
+			</if>
+			<if test="totalFeeOfOthers != null">
+				AND TotalFeeOfOthers =
+				#{totalFeeOfOthers,jdbcType=DECIMAL}
+			</if>
+			<if test="sumFee != null">
+				AND SumFee = #{sumFee,jdbcType=DECIMAL}
+			</if>
+			<if test="orderId != null">
+				AND OrderId = #{orderId,jdbcType=VARCHAR}
+			</if>
+			<if test="peerUserCost != null">
+				AND PeerUserCost = #{peerUserCost,jdbcType=DECIMAL}
+			</if>
+		</where>
+	</select>
+
+	<select id="findAll" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM receivable_info_of_order
+	</select>
+	
+	<select id="findByOrderId" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM receivable_info_of_order
+		WHERE OrderId = #{orderId,jdbcType=VARCHAR}
+	</select>
+
+	<select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM receivable_info_of_order
+		WHERE ReceivableInfoOfOrderId =
+		#{id,jdbcType=VARCHAR}
+	</select>
+
+	<delete id="removeById" parameterType="java.lang.String">
+		DELETE FROM
+		receivable_info_of_order
+		WHERE ReceivableInfoOfOrderId =
+		#{id,jdbcType=VARCHAR}
+	</delete>
+
+	<insert id="save" parameterType="com.chinatour.entity.ReceivableInfoOfOrder">
+		INSERT INTO receivable_info_of_order
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ReceivableInfoOfOrderId,
+			</if>
+			<if test="totalCommonTourFee != null">
+				TotalCommonTourFee,
+			</if>
+			<if test="totalFeeOfOthers != null">
+				TotalFeeOfOthers,
+			</if>
+			<if test="sumFee != null">
+				SumFee,
+			</if>
+			<if test="orderId != null">
+				OrderId,
+			</if>
+			<if test="peerUserCost != null">
+				PeerUserCost,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="totalCommonTourFee != null">
+				#{totalCommonTourFee,jdbcType=DECIMAL},
+			</if>
+			<if test="totalFeeOfOthers != null">
+				#{totalFeeOfOthers,jdbcType=DECIMAL},
+			</if>
+			<if test="sumFee != null">
+				#{sumFee,jdbcType=DECIMAL},
+			</if>
+			<if test="orderId != null">
+				#{orderId,jdbcType=VARCHAR},
+			</if>
+			<if test="peerUserCost != null">
+				#{peerUserCost,jdbcType=DECIMAL},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="update" parameterType="com.chinatour.entity.ReceivableInfoOfOrder">
+		UPDATE receivable_info_of_order
+		<set>
+			<if test="totalCommonTourFee != null">
+				TotalCommonTourFee =
+				#{totalCommonTourFee,jdbcType=DECIMAL},
+			</if>
+			<if test="totalFeeOfOthers != null">
+				TotalFeeOfOthers = #{totalFeeOfOthers,jdbcType=DECIMAL},
+			</if>
+			<if test="sumFee != null">
+				SumFee = #{sumFee,jdbcType=DECIMAL},
+			</if>
+			<if test="orderId != null">
+				OrderId = #{orderId,jdbcType=VARCHAR},
+			</if>
+			<if test="peerUserCost != null">
+				PeerUserCost = #{peerUserCost,jdbcType=DECIMAL},
+			</if>
+		</set>
+		WHERE ReceivableInfoOfOrderId = #{id,jdbcType=VARCHAR}
+	</update>
+</mapper>

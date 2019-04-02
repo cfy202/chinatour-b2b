@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.SupplierMapper">
+	
+    <sql id="Base_Column_List">
+        SupplierId,SupplierName,SupplierShortName,Tel,Fax,ContactPerson,Mobile,Address,
+        ZipCode,Email,CityId,Province,City,IsDel,DeptId
+    </sql>
+    
+	<resultMap type="Supplier" id="BaseResultMap">
+	    <result column="SupplierId" property="supplierId" jdbcType="VARCHAR" />
+		<result column="SupplierName" property="supplierName" jdbcType="VARCHAR" />
+		<result column="SupplierShortName" property="supplierShortName" jdbcType="VARCHAR" />
+		<result column="Tel" property="tel" jdbcType="VARCHAR" />
+		<result column="Fax" property="fax" jdbcType="VARCHAR" />
+		<result column="ContactPerson" property="contactPerson" jdbcType="VARCHAR" />
+		<result column="Mobile" property="mobile" jdbcType="VARCHAR" />
+		<result column="Address" property="address" jdbcType="VARCHAR" />
+		<result column="ZipCode" property="zipCode" jdbcType="VARCHAR" />
+		<result column="Email" property="email" jdbcType="VARCHAR" />
+		<result column="CityId" property="cityId" jdbcType="VARCHAR" />
+		<result column="Province" property="province" jdbcType="TIMESTAMP" />
+		<result column="City" property="city" jdbcType="INTEGER" />
+		<result column="CreateDate" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="ModifyDate" property="modifyDate" jdbcType="TIMESTAMP" />
+		<result column="IsDel" property="isDel" jdbcType="INTEGER" />
+		<result column="DeptId" property="deptId" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<select id="findAll" resultMap="BaseResultMap">
+		SELECT 
+			<include refid="Base_Column_List"/>
+	    FROM
+	    	supplier
+	</select>
+	
+	
+	<delete id="removeById" parameterType="String">
+	    DELETE FROM 
+		    supplier 
+		WHERE 
+		     SupplierId=#{supplierId}
+	</delete>	
+	
+	
+	<select id="findById" resultMap="BaseResultMap" parameterType="String">
+		SELECT 
+			<include refid="Base_Column_List"/>
+	    FROM
+	    	supplier
+	    	where 
+	    	SupplierId=#{supplierId}
+	</select>
+	
+	<update id="update" parameterType="Supplier">
+		UPDATE supplier
+			<set>
+			    <if test="supplierId != null">
+                    SupplierId = #{supplierId} ,
+                </if>
+                <if test="supplierName != null">
+                    SupplierName = #{supplierName} ,
+                </if>
+                <if test="supplierShortName != null">
+                    SupplierShortName = #{supplierShortName} ,
+                </if>
+                <if test="tel != null">
+                    Tel = #{tel} ,
+                </if>
+                <if test="fax != null">
+                    Fax = #{fax} ,
+                </if>
+                <if test="contactPerson !=null">
+	                ContactPerson = #{contactPerson} ,
+                </if>
+                
+                <if test="mobile != null">
+                    Mobile = #{mobile} ,
+                </if>
+                <if test="address != null">
+                    Address = #{address} ,
+                </if>
+                <if test="zipCode !=null">
+	                ZipCode = #{zipCode} ,
+                </if>
+                <if test="email != null">
+                    Email = #{email} ,
+                </if>
+                <if test="cityId !=null">
+	                CityId = #{cityId} ,
+                </if>
+                <if test="province !=null">
+	                Province = #{province} ,
+                </if>
+                <if test="city !=null">
+	                City = #{city} ,
+                </if>
+                <if test="createDate !=null">
+	                CreateDate = #{createDate} ,
+                </if>
+                <if test="modifyDate !=null">
+	                ModifyDate = #{modifyDate} ,
+                </if>
+                <if test="isDel !=null">
+	                    IsDel = #{isDel} 
+                </if>
+			</set>
+		WHERE 
+            SupplierId=#{supplierId}
+	</update> 
+	
+	
+	 <insert id="save" parameterType="Supplier">
+	     INSERT INTO supplier
+	     	<trim prefix="(" suffix=")" suffixOverrides=",">
+	     		<if test="supplierId != null">
+                    SupplierId,
+                </if>
+                <if test="supplierName != null">
+                    SupplierName,
+                </if>
+                <if test="supplierShortName != null">
+                    SupplierShortName,
+                </if>
+                <if test="tel != null">
+                    Tel,
+                </if>
+                <if test="fax != null">
+                    Fax ,
+                </if>
+                <if test="contactPerson !=null">
+	                ContactPerson,
+                </if>
+                
+                <if test="mobile != null">
+                    Mobile,
+                </if>
+                <if test="address != null">
+                    Address,
+                </if>
+                <if test="zipCode !=null">
+	                ZipCode,
+                </if>
+                <if test="email != null">
+                    Email,
+                </if>
+                <if test="cityId !=null">
+	                CityId,
+                </if>
+                <if test="province !=null">
+	                Province,
+                </if>
+                <if test="city !=null">
+	                City,
+                </if>
+                <if test="createDate !=null">
+	                CreateDate,
+                </if>
+                <if test="modifyDate !=null">
+	                ModifyDate,
+                </if>
+                <if test="deptId !=null">
+	                DeptId,
+                </if>
+                <if test="isDel !=null">
+	                IsDel,
+                </if>
+	     	</trim> 
+	     		
+	     	<trim prefix="values (" suffix=")" suffixOverrides=",">
+	     		<if test="supplierId != null">
+                    #{supplierId} ,
+                </if>
+                <if test="supplierName != null">
+                    #{supplierName} ,
+                </if>
+                <if test="supplierShortName != null">
+                    #{supplierShortName} ,
+                </if>
+                <if test="tel != null">
+                    #{tel} ,
+                </if>
+                <if test="fax != null">
+                    #{fax} ,
+                </if>
+                <if test="contactPerson !=null">
+	                #{contactPerson} ,
+                </if>
+                
+                <if test="mobile != null">
+                    #{mobile} ,
+                </if>
+                <if test="address != null">
+                    #{address} ,
+                </if>
+                <if test="zipCode !=null">
+	                #{zipCode} ,
+                </if>
+                <if test="email != null">
+                    #{email} ,
+                </if>
+                <if test="cityId !=null">
+	                #{cityId} ,
+                </if>
+                <if test="province !=null">
+	                #{province} ,
+                </if>
+                <if test="city !=null">
+	                #{city} ,
+                </if>
+                <if test="createDate !=null">
+	                #{createDate} ,
+                </if>
+                <if test="modifyDate !=null">
+	                #{modifyDate} ,
+                </if>
+                <if test="deptId !=null">
+	               #{deptId} ,
+                </if>
+                <if test="isDel !=null">
+	                    #{isDel} ,
+                </if>
+	     	</trim>
+	</insert>
+
+	 
+	<sql id="findForPage_sql">
+        select
+        	<include refid="Base_Column_List"/>
+        from supplier
+        <where>
+            <trim suffixOverrides="AND">
+                <if test="record.supplierId != null">
+                    SupplierId = #{record.supplierId} AND
+                </if>
+                <if test="record.supplierName != null">
+                    SupplierName LIKE CONCAT('%','${record.supplierName}','%') AND
+                </if>
+                <if test="record.supplierShortName != null">
+                    SupplierShortName LIKE CONCAT('%','${record.supplierShortName}','%') AND
+                </if>
+                <if test="record.tel != null">
+                    Tel = #{record.tel} AND
+                </if>
+                <if test="record.contactPerson !=null">
+	                ContactPerson LIKE CONCAT('%','${record.contactPerson}','%') AND
+                </if>
+                
+                <if test="record.mobile != null">
+                    Mobile = #{record.mobile} AND
+                </if>
+                <if test="record.address != null">
+                    Address = #{record.address} AND
+                </if>
+                <if test="record.zipCode !=null">
+	                ZipCode = #{record.zipCode} AND
+                </if>
+                <if test="record.email != null">
+                    Email = #{record.email} AND
+                </if>
+                <if test="record.cityId !=null">
+	                CityId = #{record.cityId} AND
+                </if>
+                <if test="record.province !=null">
+	                Province = #{record.province} AND
+                </if>
+                <if test="record.city !=null">
+	                City = #{record.city} AND
+                </if>
+                <if test="record.deptId !=null">
+					DeptId = #{record.deptId} AND
+				</if>
+                IsDel = 0
+                <!-- <if test="record.isDel !=null">
+                    <if test="record.isDel !=1">
+	                    IsDel = #{record.isDel} 
+                    </if>
+                </if> -->
+            </trim>
+        </where>
+    </sql>
+    
+    <select id="findForPage" resultMap="BaseResultMap">
+        <include refid="Pager.paginationStart"/>
+        <include refid="findForPage_sql"/>
+        <include refid="Pager.paginationEnd"/>
+    </select>
+    
+    <select id="findForPageCount" resultType="int">
+        <include refid="Pager.countStart"/>
+        <include refid="findForPage_sql"/>
+        <include refid="Pager.countEnd"/>
+    </select>
+	<select id="findSelect" resultMap="BaseResultMap" parameterType="Vender">
+		SELECT 
+			SupplierId,SupplierName
+		FROM
+			Supplier
+		<where>
+			<trim suffixOverrides="AND">
+				<if test="supplierId != null">
+					SupplierId = #{supplierId} AND
+				</if>
+				<if test="supplierName != null">
+					SupplierName LIKE CONCAT('%','${supplierName}','%') AND
+				</if>
+				<if test="supplierShortName != null">
+					SupplierShortName LIKE CONCAT('%','${supplierShortName}','%') AND
+				</if>
+				<if test="tel != null">
+					Tel = #{tel} AND
+				</if>
+				<if test="contactPerson !=null">
+					ContactPerson LIKE CONCAT('%','${contactPerson}','%') AND
+				</if>
+				<if test="mobile != null">
+					Mobile = #{mobile} AND
+				</if>
+				<if test="address != null">
+					Address = #{address} AND
+				</if>
+				<if test="zipCode !=null">
+					ZipCode = #{zipCode} AND
+				</if>
+				<if test="email != null">
+					Email = #{email} AND
+				</if>
+				<if test="cityId !=null">
+					CityId = #{cityId} AND
+				</if>
+				<if test="province !=null">
+					Province = #{province} AND
+				</if>
+				<if test="city !=null">
+					City = #{city} AND
+				</if>
+				<if test="createDate !=null">
+					CreateDate = #{createDate} AND
+				</if>
+				<if test="modifyDate !=null">
+					ModifyDate = #{modifyDate} AND
+				</if>
+				<if test="deptId !=null">
+					DeptId = #{deptId} AND
+				</if>
+					IsDel = 0
+			</trim>
+		</where>
+		LIMIT 10
+	</select>
+</mapper>

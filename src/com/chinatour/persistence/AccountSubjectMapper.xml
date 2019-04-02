@@ -1,0 +1,484 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chinatour.persistence.AccountSubjectMapper">
+	<sql id="Base_Column_List">
+		AccountSubjectId,
+		SubjectCode,
+		SubjectName,
+		DeptId,
+		HasChild,
+		CreateTime,
+		ParentSubjectCode,
+		ParentSubjectId,
+		GlobalAccountId,
+		SubjectType,
+		Level,
+		ChildAccDept,
+		ChildAccDeptName,
+		IsDel
+	</sql>
+	
+	<resultMap type="AccountSubject" id="BaseResultMap">
+		<result column="AccountSubjectId" property="accountSubjectId" jdbcType="VARCHAR"/>
+		<result column="SubjectCode" property="subjectCode" jdbcType="VARCHAR" />
+		<result column="SubjectName" property="subjectName" jdbcType="VARCHAR" />
+		<result column="DeptId" property="deptId" jdbcType="VARCHAR" />
+		<result column="HasChild" property="hasChild" jdbcType="INTEGER" />
+		<result column="CreateDate" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="ParentSubjectCode" property="parentSubjectCode" jdbcType="VARCHAR" />
+		<result column="ParentSubjectId" property="parentSubjectId" jdbcType="VARCHAR" />
+		<result column="SubjectType" property="subjectType" jdbcType="INTEGER" />
+		<result column="GlobalAccountId" property="globalAccountId" jdbcType="VARCHAR" />
+		<result column="Level" property="level" jdbcType="INTEGER" />
+		<result column="ChildAccDept" property="childAccDept" jdbcType="VARCHAR" />
+		<result column="IsDel" property="isDel" jdbcType="INTEGER" />
+	</resultMap>
+	
+	<select id="find" parameterType="AccountSubject" resultType="AccountSubject">
+		SELECT 
+			AccountSubjectId,
+			SubjectCode,
+			SubjectName,
+			DeptId,
+			HasChild,
+			CreateTime,
+			ParentSubjectCode,
+			ParentSubjectId,
+			GlobalAccountId,
+			SubjectType,
+			Level,
+			ChildAccDept,
+			IsDel
+		FROM
+			 account_subject
+		WHERE 
+			1=1 
+		<if test="subjectCode!= null">
+			AND SubjectCode=#{subjectCode,jdbcType=VARCHAR}
+		</if>
+		<if test="subjectType!= null">
+			AND SubjectType=#{subjectType,jdbcType=INTEGER}
+		</if>
+		<if test="globalAccountId!= null">
+			AND GlobalAccountId IS NOT NULL
+		</if>
+		<if test="deptId!= null">
+			AND DeptId=#{deptId,jdbcType=VARCHAR}
+		</if>
+		<if test="childAccDept!= null">
+			AND ChildAccDept=#{childAccDept,jdbcType=INTEGER}
+		</if>
+		<if test="isDel!= null">
+			AND IsDel=#{isDel,jdbcType=INTEGER}
+		</if>
+		ORDER BY SubjectCode
+	</select>
+	
+	<select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT 
+			AccountSubjectId,
+			SubjectCode,
+			SubjectName,
+			DeptId,
+			HasChild,
+			CreateTime,
+			ParentSubjectCode,
+			ParentSubjectId,
+			GlobalAccountId,
+			SubjectType,
+			Level,
+			ChildAccDept,
+			IsDel
+		FROM
+			 account_subject
+		WHERE 
+			AccountSubjectId=#{accountSubjectId,jdbcType=VARCHAR}
+	</select>
+	
+	<insert id="addAccountToDept"  parameterType="java.util.List">  
+	    INSERT INTO account_subject 
+	    (
+	    	`AccountSubjectId`,
+			`SubjectCode`,
+			`SubjectName`,
+			`DeptId`,
+			`HasChild`,
+			`CreateTime`,
+			`ParentSubjectCode`,
+			`ParentSubjectId`,
+			`GlobalAccountId`,
+			`SubjectType`,
+			`Level`
+	    )
+	    VALUES  
+		    <foreach collection="list" item="item" index="index" separator=",">  
+			(
+				#{item.accountSubjectId},
+				#{item.subjectCode},
+				#{item.subjectName},
+				#{item.deptId},
+				#{item.hasChild},
+				#{item.createTime},
+				#{item.parentSubjectCode},
+				#{item.parentSubjectId},
+				#{item.globalAccountId},
+				#{item.subjectType},
+				#{item.level}
+			)
+		    </foreach>  
+	</insert>
+	
+	<delete id="removeById" parameterType="java.lang.String">
+		update account_subject set isDel=1
+		where
+		AccountSubjectId = #{id,jdbcType=VARCHAR}
+	</delete>
+	
+	<sql id="findForPage_sql">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM account_subject
+		<where>
+			<trim suffixOverrides="AND">
+				<if test="record.accountSubjectId != null">
+					AccountSubjectId = #{record.accountSubjectId,jdbcType=VARCHAR}
+				</if>
+				<if test="record.subjectCode != null">
+					AND SubjectCode LIKE CONCAT('%','${record.subjectCode}','%')
+				</if>
+				<if test="record.subjectName != null">
+					AND SubjectName LIKE CONCAT('%','${record.subjectName}','%')
+				</if>
+				<if test="record.level != null">
+					AND Level = #{record.level,jdbcType=INTEGER}
+				</if>
+				<if test="record.subjectType != null">
+					AND SubjectType = #{record.subjectType,jdbcType=INTEGER}
+				</if>
+				<if test="record.parentSubjectCode != null">
+					AND ParentSubjectCode = #{record.parentSubjectCode,jdbcType=VARCHAR}
+				</if>
+				<if test="record.parentSubjectId != null">
+					AND ParentSubjectId = #{record.parentSubjectId,jdbcType=VARCHAR}
+				</if>
+				<if test="record.globalAccountId != null">
+					AND GlobalAccountId = #{record.globalAccountId,jdbcType=VARCHAR}
+				</if>
+				<if test="record.hasChild != null">
+					AND HasChild = #{record.hasChild,jdbcType=INTEGER}
+				</if>
+				<if test="record.childAccDept != null">
+					AND ChildAccDept = #{record.childAccDept,jdbcType=VARCHAR}
+				</if>
+				<if test="record.childAccDeptName != null">
+					AND ChildAccDeptName = #{record.childAccDeptName,jdbcType=VARCHAR}
+				</if>
+				<if test="record.deptId != null">
+					AND DeptId = #{record.deptId,jdbcType=VARCHAR}
+				</if>
+				<if test="record.isDel != null">
+					AND IsDel = #{record.isDel,jdbcType=VARCHAR}
+				</if>
+			</trim>
+		</where>
+		ORDER BY  SubjectCode
+	</sql>
+	<select id="findForPage" resultMap="BaseResultMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findForPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+	
+	<update id="update" parameterType="com.chinatour.entity.AccountSubject">
+		UPDATE 
+		account_subject
+		<set>
+			<if test="subjectCode != null">
+				SubjectCode = #{subjectCode,jdbcType=VARCHAR},
+			</if>
+			<if test="subjectName != null">
+				SubjectName = #{subjectName,jdbcType=VARCHAR},
+			</if>
+			<if test="level != null">
+				Level = #{level,jdbcType=INTEGER},
+			</if>
+			<if test="subjectType != null">
+				SubjectType = #{subjectType,jdbcType=INTEGER},
+			</if>
+			<if test="parentSubjectCode != null">
+				ParentSubjectCode = #{parentSubjectCode,jdbcType=VARCHAR},
+			</if>
+			<if test="parentSubjectId != null">
+				ParentSubjectId = #{parentSubjectId,jdbcType=VARCHAR},
+			</if>
+			<if test="globalAccountId != null">
+				GlobalAccountId = #{globalAccountId,jdbcType=VARCHAR},
+			</if>
+			<if test="hasChild != null">
+				HasChild = #{hasChild,jdbcType=INTEGER},
+			</if>
+			<if test="childAccDept != null">
+				ChildAccDept = #{childAccDept,jdbcType=VARCHAR},
+			</if>
+			<if test="childAccDeptName != null">
+				ChildAccDeptName = #{childAccDeptName,jdbcType=VARCHAR},
+			</if>
+			<if test="deptId != null">
+				DeptId = #{deptId,jdbcType=VARCHAR}
+			</if>
+		</set>
+		where AccountSubjectId = #{accountSubjectId,jdbcType=VARCHAR}
+	</update>
+	
+	<insert id="save" parameterType="com.chinatour.entity.AccountSubject">
+		insert into account_subject
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="accountSubjectId != null">
+				AccountSubjectId,
+			</if>
+			<if test="subjectCode != null">
+				SubjectCode,
+			</if>
+			<if test="subjectName != null">
+				SubjectName,
+			</if>
+			<if test="level != null">
+				Level,
+			</if>
+			<if test="subjectType != null">
+				SubjectType,
+			</if>
+			<if test="parentSubjectCode != null">
+				ParentSubjectCode,
+			</if>
+			<if test="parentSubjectId != null">
+				ParentSubjectId,
+			</if>
+			<if test="globalAccountId != null">
+				GlobalAccountId,
+			</if>
+			<if test="hasChild != null">
+				HasChild,
+			</if>
+			<if test="childAccDept != null">
+				ChildAccDept,
+			</if>
+			<if test="childAccDeptName != null">
+				ChildAccDeptName,
+			</if>
+			<if test="deptId != null">
+				DeptId,
+			</if>
+			<if test="createTime != null">
+				CreateTime
+			</if>
+		</trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="accountSubjectId != null">
+				#{accountSubjectId,jdbcType=VARCHAR},
+			</if>
+			<if test="subjectCode != null">
+				#{subjectCode,jdbcType=VARCHAR},
+			</if>
+			<if test="subjectName != null">
+				#{subjectName,jdbcType=VARCHAR},
+			</if>
+			<if test="level != null">
+				#{level,jdbcType=INTEGER},
+			</if>
+			<if test="subjectType != null">
+				#{subjectType,jdbcType=INTEGER},
+			</if>
+			<if test="parentSubjectCode != null">
+				#{parentSubjectCode,jdbcType=VARCHAR},
+			</if>
+			<if test="parentSubjectId != null">
+				#{parentSubjectId,jdbcType=VARCHAR},
+			</if>
+			<if test="globalAccountId != null">
+				#{globalAccountId,jdbcType=VARCHAR},
+			</if>
+			<if test="hasChild != null">
+				#{hasChild,jdbcType=INTEGER},
+			</if>
+			<if test="childAccDept != null">
+				#{childAccDept,jdbcType=VARCHAR},
+			</if>
+			<if test="childAccDeptName != null">
+				#{childAccDeptName,jdbcType=VARCHAR},
+			</if>
+			<if test="deptId != null">
+				#{deptId,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP}
+			</if>
+		</trim>
+	</insert>
+	
+	<select id="query" parameterType="accountSubject" resultType="accountSubject">
+		SELECT 
+			a.AccountSubjectId,
+			a.SubjectCode,
+			a.SubjectName,
+			a.DeptId,
+			a.HasChild,
+			a.CreateTime,
+			a.ParentSubjectCode,
+			a.ParentSubjectId,
+			a.GlobalAccountId,
+			a.SubjectType,
+			a.Level,
+			a.ChildAccDept,
+			d.DeptName AS childAccDeptName
+		FROM
+			 account_subject a
+			 LEFT JOIN 
+			 	dept d 
+			 ON 
+			 	d.DeptId=a.ChildAccDept
+		WHERE 
+			1=1 
+		<if test="subjectCode!= null">
+			AND a.SubjectCode=#{subjectCode}
+		</if>
+		<if test="subjectType!= null">
+			AND a.SubjectType=#{subjectType}
+		</if>
+		<if test="deptId!= null">
+			AND a.DeptId=#{deptId}
+		</if>
+		<if test="childAccDept!= null">
+			AND a.ChildAccDept=#{childAccDept}
+		</if>
+		<if test="isDel!= null">
+			AND a.IsDel=#{isDel}
+		</if>
+		ORDER BY a.SubjectCode
+	</select>
+	
+	<select id="queryDeptBusinessSubject" parameterType="accountSubject" resultType="accountSubject">
+		SELECT 
+			a.AccountSubjectId,
+			a.SubjectCode,
+			a.SubjectName,
+			a.DeptId,
+			a.HasChild,
+			a.CreateTime,
+			a.ParentSubjectCode,
+			a.ParentSubjectId,
+			a.GlobalAccountId,
+			a.SubjectType,
+			a.Level
+		FROM
+			 account_subject a
+		WHERE 
+			1=1 
+		<if test="subjectCode!= null">
+			AND a.SubjectCode LIKE CONCAT(CONCAT('%',#{subjectCode}),'%')
+		</if>
+		<if test="subjectType!= null">
+			AND a.SubjectType=#{subjectType}
+		</if>
+		<if test="deptId!= null">
+			AND a.DeptId=#{deptId}
+		</if>
+		<if test="childAccDept!= null">
+			AND a.ChildAccDept=#{childAccDept}
+		</if>
+		<if test="isDel!= null">
+			AND a.IsDel=#{isDel}
+		</if>
+		ORDER BY a.SubjectCode
+	</select>
+	
+	
+	<select id="queryDeptAccountSubject" parameterType="accountSubject" resultType="accountSubject">
+		SELECT 		
+			a.AccountSubjectId,
+			a.SubjectCode,
+			a.SubjectName,
+			a.DeptId,
+			a.HasChild,
+			a.CreateTime,
+			a.ParentSubjectCode,
+			a.ParentSubjectId,
+			a.GlobalAccountId,
+			a.SubjectType,
+			a.Level
+		FROM	
+			account_subject a,global_account g
+		WHERE 		
+			a.GlobalAccountId=g.GlobalAccountId
+		<if test="subjectType!= null">
+			AND a.SubjectType=#{subjectType}
+		</if>	
+		<if test="deptId!= null">
+			AND a.DeptId=#{deptId}
+		</if>
+		<if test="isDel!= null">
+			AND a.IsDel=#{isDel}
+		</if>
+		ORDER BY g.SubjectCode
+	</select>
+	<select id="queryTotalMonth" resultType="BusinessFlow">
+		SELECT 
+			SUM(b.AccountsSum) AS AccountsSum 
+		FROM business_flow b,account_subject a 
+		WHERE 
+		b.AccountSubjectId=a.AccountSubjectId
+		AND b.IsDel=0
+		AND a.IsDel=0
+		<if test="subjectType!= null">
+			AND a.DeptId=#{deptId}
+		</if>
+		<if test="accountDateStr!=null">
+			AND DATE_FORMAT(b.AccountDate,'%Y')=#{accountDateStr}
+		</if>
+		<if test="subjectType!= null">
+			AND a.SubjectType=#{subjectType} 
+		</if>
+		<if test="childAccDept!= null">
+			AND a.ChildAccDept=#{childAccDept} 
+		</if>
+		GROUP BY DATE_FORMAT(b.AccountDate,'%Y-%m')
+	</select>
+	<select id="queryTotalYear" resultType="BusinessFlow">
+		SELECT 
+			SUM(b.AccountsSum) AS AccountsSum 
+		FROM 
+			business_flow b, account_subject a
+		WHERE 
+			b.AccountSubjectId=a.AccountSubjectId
+		AND
+		b.IsDel=0 
+		<if test="subjectType!= null">
+			AND a.DeptId=#{deptId}
+		</if>
+		<if test="accountDateStr!=null">
+			AND DATE_FORMAT(b.AccountDate,'%Y')=#{accountDateStr}
+		</if>
+		<if test="subjectType!= null">
+			AND a.SubjectType=#{subjectType} 
+		</if>
+		<if test="childAccDept!= null">
+			AND a.ChildAccDept=#{childAccDept} 
+		</if>
+	</select>
+	<select id="likeAccountSubject" parameterType="String" resultType="accountSubject">
+		SELECT 
+			*
+		FROM
+			 account_subject
+		WHERE 
+			SubjectCode LIKE CONCAT(CONCAT(#{subjectCode}),'%') 
+			AND HasChild=1 AND IsDel=0
+		GROUP BY SubjectCode
+	</select>
+</mapper>

@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.TourTypeMapper">
+	<sql id="Base_Column_List">
+		TourTypeId, Code, TypeName, Brand, Type, IsDel,PriceExpression
+	</sql>
+	
+	<resultMap type="com.chinatour.entity.TourType" id="BaseResultMap">
+		<id property="tourTypeId" column="TourTypeId" jdbcType="VARCHAR" />
+		<result property="code" column="Code" jdbcType="VARCHAR" />
+		<result property="typeName" column="TypeName" jdbcType="VARCHAR" />
+		<result property="brand" column="Brand" jdbcType="VARCHAR" />
+		<result property="type" column="Type" jdbcType="INTEGER" />
+		<result property="isDel" column="IsDel" jdbcType="INTEGER" />
+		<result property="priceExpression" column="PriceExpression" jdbcType="DECIMAL" />
+	</resultMap>
+
+	<select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
+	    select
+		<include refid="Base_Column_List" />
+		from tour_type
+		where
+		TourTypeId = #{tourTypeId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="findByCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+	    select
+		<include refid="Base_Column_List" />
+		from tour_type
+		where
+		Code = #{code,jdbcType=VARCHAR}
+	</select>
+
+	<select id="findAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from tour_type
+		WHERE IsDel=0
+		ORDER BY CODE
+	</select>
+	
+	<select id="findByBrand" resultMap="BaseResultMap">
+		SELECT * FROM tour_type 
+		WHERE Brand = #{brand,jdbcType=VARCHAR}
+		AND IsDel=0
+	</select>
+	<!-- 实体查找 -->
+	<select id="findByt" resultMap="BaseResultMap">
+		SELECT * FROM tour_type 
+		<where>
+			<if test="record.tourTypeId != null">
+				TourTypeId = #{record.tourTypeId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.code != null">
+				AND Code LIKE CONCAT('%','${record.code}','%')
+			</if>
+			<if test="record.typeName != null">
+				AND TypeName LIKE CONCAT('%','${record.typeName}','%')
+			</if>
+			<if test="record.brand != null">
+				AND Brand LIKE CONCAT('%','${record.brand}','%')
+			</if>
+			<if test="record.type != null">
+				AND Type  = #{record.type,jdbcType=INTEGER}
+			</if>
+			<if test="record.isDel != null">
+				AND IsDel = #{record.isDel,jdbcType=INTEGER}
+			</if>
+			<if test="record.priceExpression !=null">
+            	 AND PriceExpression = #{record.priceExpression,jdbcType=DECIMAL} 
+            </if>
+		</where>
+	</select>
+	
+	<update id="update" parameterType="com.chinatour.entity.TourType">
+		UPDATE tour_type
+			<set>
+			    <if test="tourTypeId != null">
+                    TourTypeId = #{tourTypeId} ,
+                </if>
+                <if test="code != null">
+                    Code = #{code} ,
+                </if>
+                <if test="typeName != null">
+                    TypeName = #{typeName} ,
+                </if>
+                <if test="brand != null">
+                    Brand = #{brand} ,
+                </if>
+                <if test="type != null">
+                    Type = #{type} ,
+                </if>
+                <if test="isDel !=null">
+	                IsDel = #{isDel} ,
+                </if>
+                 <if test="priceExpression !=null">
+	                PriceExpression = #{priceExpression} 
+                </if>
+			</set>
+		WHERE 
+            TourTypeId = #{tourTypeId}
+	</update> 
+	
+	 <insert id="save" parameterType="com.chinatour.entity.TourType">
+	     INSERT INTO tour_type
+	     	<trim prefix="(" suffix=")" suffixOverrides=",">
+	     		 <if test="tourTypeId != null">
+                    TourTypeId ,
+                </if>
+                <if test="code != null">
+                    Code ,
+                </if>
+                <if test="typeName != null">
+                    TypeName ,
+                </if>
+                <if test="brand != null">
+                    Brand ,
+                </if>
+                <if test="type != null">
+                    Type ,
+                </if>
+                <if test="isDel !=null">
+	                IsDel ,
+                </if>
+                <if test="priceExpression !=null">
+	                PriceExpression 
+                </if>
+	     	</trim> 
+	     		
+	     	<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="tourTypeId != null">
+				#{tourTypeId,jdbcType=VARCHAR},
+			</if>
+			<if test="code != null">
+				#{code,jdbcType=VARCHAR},
+			</if>
+			<if test="typeName != null">
+				#{typeName,jdbcType=VARCHAR},
+			</if>
+			<if test="brand != null">
+				#{brand,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=INTEGER},
+			</if>
+			<if test="isDel != null">
+				#{isDel,jdbcType=INTEGER},
+			</if>
+			<if test="priceExpression !=null">
+                #{priceExpression,jdbcType=DECIMAL} 
+             </if>
+		</trim>
+	</insert>
+	
+	 <sql id="findForPage_sql">
+		select
+		<include refid="Base_Column_List" />
+		from tour_type
+		<where>
+			<if test="record.tourTypeId != null">
+				TourTypeId = #{record.tourTypeId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.code != null">
+				AND Code LIKE CONCAT('%','${record.code}','%')
+			</if>
+			<if test="record.typeName != null">
+				AND TypeName LIKE CONCAT('%','${record.typeName}','%')
+			</if>
+			<if test="record.brand != null">
+				AND Brand LIKE CONCAT('%','${record.brand}','%')
+			</if>
+			<if test="record.type != null">
+				AND Type  = #{record.type,jdbcType=INTEGER}
+			</if>
+			<if test="record.isDel != null">
+				AND IsDel = #{record.isDel,jdbcType=INTEGER}
+			</if>
+			<if test="record.priceExpression !=null">
+            	 AND PriceExpression = #{record.priceExpression,jdbcType=DECIMAL} 
+            </if>
+		</where>
+	</sql>
+	
+	 <select id="findForPage" resultMap="BaseResultMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findForPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+	
+		
+	<select id="findNameById" resultType="String" parameterType="String">
+		SELECT 
+			TypeName
+	    FROM
+	    	tour_type
+	    WHERE 
+	    	TourTypeId=#{tourTypeId,jdbcType=VARCHAR}
+	</select>
+	<select id="findPriceExpressionById" resultType="DECIMAL" parameterType="String">
+		SELECT 
+			PriceExpression
+	    FROM
+	    	tour_type
+	    WHERE 
+	    	TourTypeId=#{tourTypeId,jdbcType=VARCHAR}
+	</select>
+</mapper>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	
+	<settings>
+		<!-- changes from the defaults -->
+		<setting name="lazyLoadingEnabled" value="false" />
+		<setting name="logImpl" value="LOG4J" />
+		<setting name="jdbcTypeForNull" value="OTHER" />
+	</settings>
+	
+	<typeAliases>
+		<typeAlias alias="Country" type="com.chinatour.entity.Country" />
+		<typeAlias alias="State" type="com.chinatour.entity.State" />
+		<typeAlias alias="GroupLine" type="com.chinatour.entity.GroupLine" />
+		<typeAlias alias="City" type="com.chinatour.entity.City" />
+		<typeAlias alias="Hotel" type="com.chinatour.entity.Hotel" />
+		<typeAlias alias="Vender" type="com.chinatour.entity.Vender" />
+		<typeAlias alias="Notice" type="com.chinatour.entity.Notice" />
+		<typeAlias alias="NoticeContact" type="com.chinatour.entity.NoticeContact" />
+		<typeAlias alias="Appendix" type="com.chinatour.entity.Appendix" />
+		<typeAlias alias="GroupRoute" type="com.chinatour.entity.GroupRoute"/>
+		<typeAlias alias="GroupLineHotelRel" type="com.chinatour.entity.GroupLineHotelRel"/>
+		<typeAlias alias="Region" type="com.chinatour.entity.Region" />
+		<typeAlias alias="RegionDeptRel" type="com.chinatour.entity.RegionDeptRel" />
+	</typeAliases>
+    <plugins>
+        <plugin interceptor="com.chinatour.persistence.interceptor.DataEntityInterceptor"></plugin>
+    </plugins>
+    <mappers>
+		<mapper resource="com/chinatour/persistence/identify.xml" />
+	</mappers>
+
+
+</configuration>

@@ -1,0 +1,147 @@
+/*线路表*/
+DROP TABLE IF EXISTS `groupline`;
+CREATE TABLE `groupline` (
+  `GroupLineId` varchar(36) NOT NULL,
+  `TourCode` varchar(45) NOT NULL DEFAULT '',
+  `TourName` varchar(64) NOT NULL DEFAULT '',
+  `TripDesc` longtext,
+  `TourTypeId` varchar(36) NOT NULL DEFAULT '',
+  `DepartureDate` datetime DEFAULT NULL,
+  `IsAvailable` tinyint(2) NOT NULL DEFAULT '0',
+  `Brand` varchar(30) NOT NULL DEFAULT '',
+  PRIMARY KEY (`GroupLineId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+/*国家表*/
+DROP TABLE IF EXISTS `country`;
+CREATE TABLE `country` (
+  `CountryId` varchar(36) NOT NULL,
+  `CountryName` varchar(64) NOT NULL default '',
+  PRIMARY KEY  (`CountryId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+ 
+ /*州表*/
+DROP TABLE IF EXISTS `state`;
+CREATE TABLE `state` (
+  `StateId` varchar(36) NOT NULL,
+  `StateName` varchar(64) NOT NULL default '',
+  `CountryId` varchar(36) NOT NULL,
+  PRIMARY KEY  (`StateId`),
+  KEY `fk_state_country` (`CountryId`),
+  CONSTRAINT `fk_state_country` FOREIGN KEY (`CountryId`) REFERENCES `country` (`CountryId`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ /*城市表*/
+DROP TABLE IF EXISTS `city`;
+CREATE TABLE `city` (
+  `CityId` varchar(36) NOT NULL,
+  `CityName` varchar(85) NOT NULL default '',
+  `CityCode` varchar(32) NOT NULL default '',
+  `CityLevel` int(11) NOT NULL default '0',
+  PRIMARY KEY  (`CityId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ /*酒店表*/
+DROP TABLE IF EXISTS `hotel`;
+CREATE TABLE `hotel` (
+  `HotelId` varchar(36) NOT NULL,
+  `HotelName` varchar(100) NOT NULL default '',
+  `Standard` varchar(36) NOT NULL default '',
+  `CityId` varchar(36) NOT NULL default '',
+  `Address` varchar(56) NOT NULL default '',
+  PRIMARY KEY  (`HotelId`),
+  KEY `fk_hotel_city` (`CityId`),
+  CONSTRAINT `fk_hotel_city` FOREIGN KEY (`CityId`) REFERENCES `city` (`CityId`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*语言表*/
+DROP TABLE IF EXISTS `language`;
+CREATE TABLE `language` (
+  `LanguageId` varchar(36) NOT NULL,
+  `Language` varchar(32) NOT NULL DEFAULT '',
+  `Sort` int(4) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`LanguageId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*收入支出表*/
+DROP TABLE IF EXISTS `pay_cost_records`;
+CREATE TABLE `pay_cost_records` (
+  `RecordsId` varchar(36) NOT NULL,
+  `OrderId` varchar(36) NOT NULL,
+  `Code` varchar(150) NOT NULL DEFAULT '',
+  `Sum` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `Way` varchar(50) NOT NULL DEFAULT '',
+  `Item` varchar(50) NOT NULL DEFAULT '',
+  `Time` date,
+  `Remark` text,
+  `Status` tinyint(2) NOT NULL DEFAULT '0',
+  `ConfirmRemark` varchar(128) NOT NULL DEFAULT '',
+  `BillNo` varchar(36) NOT NULL DEFAULT '',
+  `CreateTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `VenderId` varchar(36) NOT NULL DEFAULT '',
+  `PayOrCost` tinyint(2) NOT NULL DEFAULT '0',
+  `Type` tinyint(2) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`RecordsId`),
+  KEY `payCostRecords_order_orderId` (`OrderId`),
+  CONSTRAINT `payCostRecords_order_orderId` FOREIGN KEY (`OrderId`) REFERENCES `orders` (`OrderId`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*订单总表*/
+DROP TABLE IF EXISTS `orders_total`;
+CREATE TABLE `orders_total` (
+  `OrdersTotalId` varchar(36) NOT NULL,
+  `OrderNumber` varchar(50) NOT NULL DEFAULT '',
+  `TotalPeople` int(11) NOT NULL DEFAULT '0',
+  `DeptId` varchar(36) NOT NULL,
+  `UserId` varchar(36) NOT NULL,
+  `BookingDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `Agent` varchar(50) NOT NULL DEFAULT '',
+  `WR` varchar(50) NOT NULL DEFAULT '',
+  `CompanyId` varchar(36) NOT NULL DEFAULT '',
+  `Company` varchar(50) NOT NULL DEFAULT '',
+  `ContactName` varchar(50) NOT NULL DEFAULT '',
+  `Address` varchar(100) NOT NULL DEFAULT '',
+  `Email` varchar(50) NOT NULL DEFAULT '',
+  `Tel` varchar(30) NOT NULL DEFAULT '',
+  `PostCode` varchar(10) NOT NULL DEFAULT '',
+  `CountryId` varchar(36) NOT NULL DEFAULT '',
+  `StateId` varchar(36) NOT NULL,
+  `CityId` varchar(36) NOT NULL,
+  `CustomerSource` varchar(50) NOT NULL DEFAULT '',
+  PRIMARY KEY (`OrdersTotalId`),
+  KEY `orders_total_admin_id` (`UserId`),
+  KEY `orders_total_dept_deptId` (`DeptId`),
+  CONSTRAINT `orders_total_admin_id` FOREIGN KEY (`UserId`) REFERENCES `zs_admin` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `orders_total_dept_deptId` FOREIGN KEY (`DeptId`) REFERENCES `dept` (`DeptId`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*团队信息表*/
+DROP TABLE IF EXISTS `tour`;
+CREATE TABLE `tour` (
+  `TourId` varchar(36) NOT NULL,
+  `DeptId` varchar(36) NOT NULL,
+  `UserId` varchar(36) NOT NULL,
+  `Type` varchar(36) NOT NULL DEFAULT '',
+  `TourCode` varchar(50) NOT NULL DEFAULT '',
+  `State` int(4) NOT NULL DEFAULT '0',
+  `EnterpriseName` varchar(64) NOT NULL DEFAULT '',
+  `LineName` varchar(180) NOT NULL DEFAULT '',
+  `LineCode` varchar(78) NOT NULL DEFAULT '',
+  `TourQuoteUrl` varchar(150) NOT NULL DEFAULT '',
+  `CreateDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `ModifyDate` datetime DEFAULT NULL,
+  `NewState` int(5) NOT NULL DEFAULT '0',
+  `ArriveDateTime` datetime DEFAULT NULL,
+  `StatisticalArriveTime` datetime DEFAULT NULL,
+  `IsDel` int(5) NOT NULL DEFAULT '0',
+  `TotalNumState` int(2) NOT NULL DEFAULT '0',
+  `TotalPeople` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`TourId`),
+  KEY `Tour_Dept_DeptId` (`DeptId`),
+  KEY `Tour_Admin_Id` (`UserId`),
+  CONSTRAINT `Tour_Admin_Id` FOREIGN KEY (`UserId`) REFERENCES `zs_admin` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `Tour_Dept_DeptId` FOREIGN KEY (`DeptId`) REFERENCES `dept` (`DeptId`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+ 
+	

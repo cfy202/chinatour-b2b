@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.ZipcodeMapper">
+	<resultMap id="BaseResultMap" type="com.chinatour.entity.Zipcode">
+		<id column="Id" property="id" jdbcType="VARCHAR" />
+		<result column="AreaCode" property="areacode" jdbcType="VARCHAR" />
+		<result column="Country" property="country" jdbcType="VARCHAR" />
+		<result column="State" property="state" jdbcType="VARCHAR" />
+		<result column="City" property="city" jdbcType="VARCHAR" />
+		<result column="Code" property="code" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		Id, AreaCode, Country, `State`, City, Code
+	</sql>
+
+	<select id="findById" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from zipcode
+		where Id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="removeById" parameterType="java.lang.Integer">
+		delete from zipcode
+		where
+		Id = #{id,jdbcType=INTEGER}
+	</delete>
+
+	<insert id="insertSelective" parameterType="com.chinatour.entity.Zipcode"
+		useGeneratedKeys="true" keyProperty="id">
+		insert into zipcode
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="areacode != null">
+				AreaCode,
+			</if>
+			<if test="country != null">
+				Country,
+			</if>
+			<if test="state != null">
+				`State`,
+			</if>
+			<if test="city != null">
+				City,
+			</if>
+			<if test="code != null">
+				Code,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="areacode != null">
+				#{areacode,jdbcType=VARCHAR},
+			</if>
+			<if test="country != null">
+				#{country,jdbcType=VARCHAR},
+			</if>
+			<if test="state != null">
+				#{state,jdbcType=VARCHAR},
+			</if>
+			<if test="city != null">
+				#{city,jdbcType=VARCHAR},
+			</if>
+			<if test="code != null">
+				#{code,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.chinatour.entity.Zipcode">
+		update zipcode
+		<set>
+			<if test="areacode != null">
+				AreaCode = #{areacode,jdbcType=VARCHAR},
+			</if>
+			<if test="country != null">
+				Country = #{country,jdbcType=VARCHAR},
+			</if>
+			<if test="state != null">
+				`State` = #{state,jdbcType=VARCHAR},
+			</if>
+			<if test="city != null">
+				City = #{city,jdbcType=VARCHAR},
+			</if>
+			<if test="code != null">
+				Code = #{code,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where Id = #{id,jdbcType=INTEGER}
+	</update>
+	<select id="findSelect" resultMap="BaseResultMap" parameterType="Vender">
+		SELECT
+		Id,Code,Country,State,City
+		FROM
+		zipcode
+		<where>
+			<trim suffixOverrides="AND">
+				<if test="areacode != null">
+					AreaCode = #{areacode} AND
+				</if>
+				<if test="country != null">
+					Country = #{country} AND
+				</if>
+				<if test="state != null">
+					`State` = #{state} AND
+				</if>
+				<if test="city != null">
+					City = #{city} AND
+				</if>
+				<if test="code != null">
+					Code LIKE CONCAT('%','${code}','%') AND
+				</if>
+			</trim>
+		</where>
+		LIMIT 10
+	</select>
+</mapper>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.DestinationMapper">
+
+	<sql id="Base_Column_List">
+		DestinationId, Destination,Area,Year
+	</sql>
+	<resultMap type="Destination" id="BaseResultMap">
+		<id property="id" column="DestinationId" jdbcType="VARCHAR" />
+		<result property="destination" column="Destination" jdbcType="VARCHAR" />
+		<result property="area" column="Area" jdbcType="VARCHAR" />
+		<result property="year" column="Year" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
+	    select
+		<include refid="Base_Column_List" />
+		from destination
+		where
+		DestinationId = #{id,jdbcType=VARCHAR}
+	</select>
+
+	<select id="findAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from destination
+	</select>
+	
+	<select id="findByDes" resultMap="BaseResultMap" parameterType="Destination">
+		select
+		<include refid="Base_Column_List" />
+		from destination
+		<where>
+			1=1
+			<if test="area != null">
+				AND Area =#{area,jdbcType=VARCHAR}
+			</if>
+			<if test="year != null">
+				AND Year =#{year,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+
+	<delete id="removeById" parameterType="java.lang.String">
+		delete from city
+		where
+		CityId = #{id,jdbcType=VARCHAR}
+	</delete>
+
+	<update id="update" parameterType="Destination">
+		update destination
+		<set>
+			<if test="Destination != null">
+				Destination = #{destination,jdbcType=VARCHAR}
+			</if>
+		</set>
+		where DestinationId = #{id,jdbcType=VARCHAR}
+	</update>
+
+	<insert id="save" parameterType="Destination">
+		insert into destination
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				DestinationId,
+			</if>
+			<if test="destination != null">
+				Destination
+			</if>
+		</trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="destination != null">
+				#{destination,jdbcType=VARCHAR}
+			</if>
+		</trim>
+	</insert>
+</mapper>

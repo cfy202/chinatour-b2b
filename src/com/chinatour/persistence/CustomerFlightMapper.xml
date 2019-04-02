@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.CustomerFlightMapper">
+
+	<resultMap id="BaseResultMap" type="com.chinatour.entity.CustomerFlight">
+		<id column="CustomerFlightId" property="id" jdbcType="VARCHAR" />
+		<result column="FlightNumber" property="flightNumber" jdbcType="VARCHAR" />
+		<result column="FlightCode" property="flightCode" jdbcType="VARCHAR" />
+		<result column="ArriveTime" property="arriveTime" jdbcType="VARCHAR" />
+		<result column="ArriveDate" property="arriveDate" jdbcType="DATE" />
+		<result column="IfPickUp" property="ifPickUp" jdbcType="INTEGER" />
+		<result column="IfSendUp" property="ifSendUp" jdbcType="INTEGER" />
+		<result column="OutOrEnter" property="outOrEnter" jdbcType="INTEGER" />
+		<result column="Remark" property="remark" jdbcType="VARCHAR" />
+		<result column="CustomerOrderRelId" property="customerOrderRelId"
+			jdbcType="VARCHAR" />
+		<result column="IsDel" property="isDel" jdbcType="INTEGER" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		CustomerFlightId, FlightNumber, FlightCode, ArriveTime,
+		ArriveDate, IfPickUp, IfSendUp,
+		OutOrEnter, CustomerOrderRelId,Remark, IsDel
+	</sql>
+
+	<sql id="findForPage_sql">
+		SELECT 
+		<include refid="Base_Column_List" />
+		FROM customer_flight
+		WHERE IsDel = 0
+		<if test="record.id != null">
+			AND CustomerFlightId = #{record.id,jdbcType=VARCHAR}
+		</if>
+		<if test="record.flightNumber != null">
+			AND FlightNumber =
+			#{record.flightNumber,jdbcType=VARCHAR}
+		</if>
+		<if test="record.flightCode != null">
+			AND FlightCode = #{record.flightCode,jdbcType=VARCHAR}
+		</if>
+		<if test="record.arriveTime != null">
+			AND ArriveTime = #{record.arriveTime,jdbcType=VARCHAR}
+		</if>
+		<if test="record.arriveDate != null">
+			AND ArriveDate = #{record.arriveDate,jdbcType=DATE}
+		</if>
+		<if test="record.ifPickUp != null">
+			AND IfPickUp = #{record.ifPickUp,jdbcType=INTEGER}
+		</if>
+		<if test="record.ifSendUp != null">
+			AND IfSendUp = #{record.ifSendUp,jdbcType=INTEGER}
+		</if>
+		<if test="record.outOrEnter != null">
+			AND OutOrEnter = #{record.outOrEnter,jdbcType=INTEGER}
+		</if>
+		<if test="record.customerOrderRelId != null">
+			AND CustomerOrderRelId =
+			#{record.customerOrderRelId,jdbcType=VARCHAR}
+		</if>
+	</sql>
+
+	<select id="findForPage" resultMap="BaseResultMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findForPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+
+	<select id="find" resultMap="BaseResultMap"
+		parameterType="com.chinatour.entity.CustomerFlight">
+		SELECT 
+		<include refid="Base_Column_List" />
+		FROM customer_flight
+		WHERE IsDel = 0
+		<if test="id != null">
+			AND CustomerFlightId = #{id,jdbcType=VARCHAR}
+		</if>
+		<if test="flightNumber != null">
+			AND FlightNumber = #{flightNumber,jdbcType=VARCHAR}
+		</if>
+		<if test="flightCode != null">
+			AND FlightCode = #{flightCode,jdbcType=VARCHAR}
+		</if>
+		<if test="arriveTime != null">
+			AND ArriveTime = #{arriveTime,jdbcType=VARCHAR}
+		</if>
+		<if test="arriveDate != null">
+			AND ArriveDate = #{arriveDate,jdbcType=DATE}
+		</if>
+		<if test="ifPickUp != null">
+			AND IfPickUp = #{ifPickUp,jdbcType=INTEGER}
+		</if>
+		<if test="ifSendUp != null">
+			AND IfSendUp = #{ifSendUp,jdbcType=INTEGER}
+		</if>
+		<if test="outOrEnter != null">
+			AND OutOrEnter = #{outOrEnter,jdbcType=INTEGER}
+		</if>
+		<if test="customerOrderRelId != null">
+			AND CustomerOrderRelId =
+			#{customerOrderRelId,jdbcType=VARCHAR}
+		</if>
+		<if test="beginningDate != null">
+			AND ArriveDate <![CDATA[>=]]>#{beginningDate}
+		</if>
+		<if test="endingDate != null">
+			AND ArriveDate <![CDATA[<=]]>#{endingDate}
+		</if>
+		<if test="remark != null">
+			AND Remark = #{remark,jdbcType=VARCHAR}
+		</if>
+		ORDER BY ArriveDate
+	</select>
+
+	<select id="findAll" resultMap="BaseResultMap">
+		SELECT 
+		<include refid="Base_Column_List" />
+		FROM customer_flight
+		WHERE IsDel = 0
+		ORDER BY ArriveDate
+	</select>
+
+	<select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String">
+		SELECT 
+		<include refid="Base_Column_List" />
+		FROM customer_flight
+		WHERE IsDel = 0
+		AND CustomerFlightId = #{id,jdbcType=VARCHAR}
+		ORDER BY ArriveDate
+	</select>
+	
+    <select id="findByCustomerOrderRelId" resultMap="BaseResultMap" parameterType="java.lang.String">
+		SELECT  
+		<include refid="Base_Column_List" />
+		FROM customer_flight
+		WHERE IsDel = 0
+		AND CustomerOrderRelId = #{customerOrderRelId,jdbcType=VARCHAR}
+		ORDER BY OutOrEnter;
+	</select>
+
+	<delete id="removeById" parameterType="java.lang.String">
+		update customer_flight
+		SET IsDel = 1
+		where CustomerFlightId = #{id,jdbcType=VARCHAR}
+	</delete>
+	<delete id="deleteById" parameterType="java.lang.String">
+		delete from customer_flight
+		where CustomerFlightId = #{id,jdbcType=VARCHAR}
+	</delete>
+
+	<insert id="save" parameterType="com.chinatour.entity.CustomerFlight">
+		INSERT INTO customer_flight
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				CustomerFlightId,
+			</if>
+			<if test="flightNumber != null">
+				FlightNumber,
+			</if>
+			<if test="flightCode != null">
+				FlightCode,
+			</if>
+			<if test="arriveTime != null">
+				ArriveTime,
+			</if>
+			<if test="arriveDate != null">
+				ArriveDate,
+			</if>
+			<if test="ifPickUp != null">
+				IfPickUp,
+			</if>
+			<if test="ifSendUp != null">
+				IfSendUp,
+			</if>
+			<if test="outOrEnter != null">
+				OutOrEnter,
+			</if>
+			<if test="customerOrderRelId != null">
+				CustomerOrderRelId,
+			</if>
+			<if test="remark != null">
+				Remark,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="flightNumber != null">
+				#{flightNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="flightCode != null">
+				#{flightCode,jdbcType=VARCHAR},
+			</if>
+			<if test="arriveTime != null">
+				#{arriveTime,jdbcType=VARCHAR},
+			</if>
+			<if test="arriveDate != null">
+				#{arriveDate,jdbcType=DATE},
+			</if>
+			<if test="ifPickUp != null">
+				#{ifPickUp,jdbcType=INTEGER},
+			</if>
+			<if test="ifSendUp != null">
+				#{ifSendUp,jdbcType=INTEGER},
+			</if>
+			<if test="outOrEnter != null">
+				#{outOrEnter,jdbcType=INTEGER},
+			</if>
+			<if test="customerOrderRelId != null">
+				#{customerOrderRelId,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	
+	<insert id="saveCustomerFlights" parameterType="java.util.List">
+		INSERT INTO customer_flight 
+		(CustomerFlightId,FlightNumber,FlightCode,ArriveTime,ArriveDate,IfPickUp,IfSendUp,OutOrEnter,CustomerOrderRelId,Remark)
+		VALUES
+		<foreach collection="customerFlightList" item="item" separator=",">
+			(#{item.id},
+			<choose>
+	            <when test="item.flightNumber != null">
+	               #{item.flightNumber},
+	            </when>
+	            <otherwise>
+	                '',
+	            </otherwise>
+            </choose>
+			<choose>
+	            <when test="item.flightCode != null">
+	               #{item.flightCode,jdbcType=VARCHAR},
+	            </when>
+	            <otherwise>
+	                '',
+	            </otherwise>
+            </choose>
+			<choose>
+	            <when test="item.arriveTime != null">
+	               #{item.arriveTime,jdbcType=VARCHAR},
+	            </when>
+	            <otherwise>
+	                '',
+	            </otherwise>
+            </choose>
+            #{item.arriveDate},
+			<choose>
+	            <when test="item.ifPickUp != null">
+	               #{item.ifPickUp},
+	            </when>
+	            <otherwise>
+	                0,
+	            </otherwise>
+            </choose>
+			<choose>
+	            <when test="item.ifSendUp != null">
+	               #{item.ifSendUp},
+	            </when>
+	            <otherwise>
+	                0,
+	            </otherwise>
+            </choose>
+			 #{item.outOrEnter},
+			 #{item.customerOrderRelId},
+			 #{item.remark})
+		</foreach>
+	</insert>
+
+	<update id="update" parameterType="com.chinatour.entity.CustomerFlight">
+		UPDATE customer_flight
+		<set>
+			<if test="flightNumber != null">
+				FlightNumber = #{flightNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="flightCode != null">
+				FlightCode = #{flightCode,jdbcType=VARCHAR},
+			</if>
+			<if test="arriveTime != null">
+				ArriveTime = #{arriveTime,jdbcType=VARCHAR},
+			</if>
+			<if test="arriveDate != null">
+				ArriveDate = #{arriveDate,jdbcType=DATE},
+			</if>
+			<if test="ifPickUp != null">
+				IfPickUp = #{ifPickUp,jdbcType=INTEGER},
+			</if>
+			<if test="ifSendUp != null">
+				IfSendUp = #{ifSendUp,jdbcType=INTEGER},
+			</if>
+			<if test="outOrEnter != null">
+				OutOrEnter = #{outOrEnter,jdbcType=INTEGER},
+			</if>
+			<if test="customerOrderRelId != null">
+				CustomerOrderRelId =
+				#{customerOrderRelId,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				Remark = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		WHERE CustomerFlightId = #{id,jdbcType=VARCHAR}
+	</update>
+	
+	<update id="updateCustomerFlight" parameterType="com.chinatour.entity.CustomerFlight">
+		UPDATE customer_flight
+		<set>
+			<choose>
+	            <when test="flightNumber != null">
+	               FlightNumber = #{flightNumber,jdbcType=VARCHAR},
+	            </when>
+	            <otherwise>
+	               FlightNumber = '',
+	            </otherwise>
+            </choose>
+			<choose>
+	            <when test="flightCode != null">
+	               FlightCode = #{flightCode,jdbcType=VARCHAR},
+	            </when>
+	            <otherwise>
+	               FlightCode = '',
+	            </otherwise>
+            </choose>
+			<choose>
+	            <when test="arriveTime != null">
+	               ArriveTime = #{arriveTime,jdbcType=VARCHAR},
+	            </when>
+	            <otherwise>
+	               ArriveTime = '',
+	            </otherwise>
+            </choose>
+			ArriveDate = #{arriveDate,jdbcType=DATE},
+			<choose>
+	            <when test="ifPickUp != null">
+	               IfPickUp = #{ifPickUp,jdbcType=INTEGER},
+	            </when>
+	            <otherwise>
+	               IfPickUp = 0,
+	            </otherwise>
+            </choose>
+			<choose>
+	            <when test="ifSendUp != null">
+	               IfSendUp = #{ifSendUp,jdbcType=INTEGER},
+	            </when>
+	            <otherwise>
+	               IfSendUp = 0,
+	            </otherwise>
+            </choose>
+            <choose>
+	            <when test="remark != null">
+	               Remark = #{remark,jdbcType=VARCHAR},
+	            </when>
+	            <otherwise>
+	               Remark = '',
+	            </otherwise>
+            </choose>
+		</set>
+		WHERE CustomerFlightId = #{id,jdbcType=VARCHAR}
+	</update>
+	 
+	<resultMap id="BaseResultMapForTour" type="com.chinatour.entity.CustomerFlight" extends="BaseResultMap" >
+		<result column="TourCode" property="tourCode" jdbcType="VARCHAR" />
+		<result column="LastName" property="lastName" jdbcType="VARCHAR" />
+		<result column="FirstName" property="firstName" jdbcType="VARCHAR" />
+		<result column="MiddleName" property="middleName" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	
+	<sql id="findFlightForOpForPage_sql">
+		SELECT 
+			cf.outOrEnter,cf.CustomerFlightId,t.TourCode as TourCode,DATE_FORMAT(cf.ArriveDate,'%Y-%m-%d') as ArriveDate,cf.ArriveTime,cf.FlightCode,cf.FlightNumber,cf.Remark,c.LastName as LastName,c.FirstName as FirstName,c.MiddleName as MiddleName 
+		FROM 
+			orders o,customer_order_rel cor,customer_flight cf,tour t,customer c 
+		WHERE 
+			o.OrderId=cor.OrderId 
+			AND	cor.CustomerOrderRelId=cf.CustomerOrderRelId 
+			AND	o.TourId = t.TourId 
+			AND	c.CustomerId=cor.CustomerId
+			AND cf.FlightCode!='' 
+			AND	cf.FlightNumber!=''
+			AND	cf.IsDel = 0
+			AND o.State!=5
+			AND o.State!=6
+			AND t.isDel!=1 
+		<if test="record.tourId != null">
+			AND t.TourId = #{record.tourId,jdbcType=VARCHAR}
+		</if>
+		<if test="record.userId != null">
+			AND t.UserId = #{record.userId,jdbcType=VARCHAR}
+		</if>
+		<if test="record.deptId != null">
+			AND t.DeptId = #{record.deptId,jdbcType=VARCHAR}
+		</if>
+		<if test="record.tourCode != null">
+			AND t.TourCode LIKE CONCAT('%','${record.tourCode}','%')
+		</if>
+		<if test="record.outOrEnter != null">
+			AND cf.OutOrEnter = #{record.outOrEnter,jdbcType=INTEGER}
+		</if>
+		<if test="record.beginningDate != null">
+			AND cf.ArriveDate <![CDATA[>=]]> #{record.beginningDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="record.endingDate != null">
+			AND cf.ArriveDate <![CDATA[<=]]> #{record.endingDate,jdbcType=TIMESTAMP}
+		</if>
+		ORDER BY cf.OutOrEnter, cf.ArriveDate DESC
+	</sql>
+	
+	<select id="queryFlightForOp" resultMap="BaseResultMapForTour">
+		SELECT 
+			cf.outOrEnter,cf.CustomerFlightId,t.TourCode as TourCode,DATE_FORMAT(cf.ArriveDate,'%Y-%m-%d') as ArriveDate,cf.ArriveTime,cf.FlightCode,cf.FlightNumber,cf.Remark,c.LastName as LastName,c.FirstName as FirstName,c.MiddleName as MiddleName 
+		FROM 
+			orders o,customer_order_rel cor,customer_flight cf,tour t,customer c 
+		WHERE 
+			o.OrderId=cor.OrderId 
+			AND	cor.CustomerOrderRelId=cf.CustomerOrderRelId 
+			AND	o.TourId = t.TourId 
+			AND	c.CustomerId=cor.CustomerId
+			AND cf.FlightCode!='' 
+			AND	cf.FlightNumber!=''
+			AND	cf.IsDel = 0
+			AND o.State!=5
+			AND o.State!=6
+			AND t.isDel!=1 
+		<if test="tourId != null">
+			AND t.TourId = #{tourId,jdbcType=VARCHAR}
+		</if>
+		<if test="userId != null">
+			AND t.UserId = #{userId,jdbcType=VARCHAR}
+		</if>
+		<if test="deptId != null">
+			AND t.DeptId = #{deptId,jdbcType=VARCHAR}
+		</if>
+		<if test="tourCode != null">
+			AND t.TourCode LIKE CONCAT('%','${tourCode}','%')
+		</if>
+		<if test="outOrEnter != null">
+			AND cf.OutOrEnter = #{outOrEnter,jdbcType=INTEGER}
+		</if>
+		<if test="beginningDate != null">
+			AND cf.ArriveDate <![CDATA[>=]]> #{beginningDate,jdbcType=TIMESTAMP}
+		</if>
+		<if test="endingDate != null">
+			AND cf.ArriveDate <![CDATA[<=]]> #{endingDate,jdbcType=TIMESTAMP}
+		</if>
+		ORDER BY cf.OutOrEnter, cf.ArriveDate ASC, cf.ArriveTime ASC,o.OrderId
+	</select>
+
+	<select id="findFlightForOpForPage" resultMap="BaseResultMapForTour">
+		<include refid="Pager.paginationStart" />
+		<include refid="findFlightForOpForPage_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findFlightForOpForPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findFlightForOpForPage_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+</mapper>

@@ -1,0 +1,1979 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.StatisticalMapper">
+	<resultMap id="BaseResultMap" type="com.chinatour.entity.Statistical">
+		<result column="DeptId" property="deptId" jdbcType="VARCHAR" />
+		<result column="OrderNo" property="orderNo" jdbcType="VARCHAR" />
+		<result column="Sum" property="sum" jdbcType="INTEGER" />
+		<result column="DeptName" property="deptName" jdbcType="VARCHAR" />
+		<result column="Source" property="source" jdbcType="VARCHAR" />
+	</resultMap>
+	<!-- 收客统计 Month -->
+	<select id="queryBookingStatistical" resultType="com.chinatour.entity.Statistical" parameterType="com.chinatour.entity.Statistical">
+		SELECT 
+			SUM(os.TotalPeople) AS sum,
+			SUM(os.CommonTourFee) AS sumFee,
+			DATE_FORMAT(os.CreateTime,'%m') AS time,
+			o.UserId,
+			o.Agent,
+			o.DeptId,
+			d.DeptName
+		FROM 
+			orders_total o,
+			dept d,
+			orders os, 
+			<if test="record.role=='Region'">
+				region_dept_rel rel,
+			</if>
+			<if test="record.role=='Group'">
+				admin_group g,
+			</if>
+			tour_info_for_order t
+		<where>
+			o.DeptId=d.DeptId
+			AND o.OrdersTotalId=os.OrdersTotalId 
+			AND t.OrderId=os.OrderId
+			AND os.State!=5 
+			AND os.State!=6
+			<if test="record.role=='Region'">
+				AND rel.DeptId=d.DeptId
+			</if>
+			<if test="record.role=='Group'">
+				AND os.UserId=g.AdminId
+			</if>
+			<if test="record.role!='CEO'"><!-- 不是CEO才有条件 -->
+				<if test="record.regionId != null">
+					AND rel.RegionId = #{record.regionId,jdbcType=VARCHAR}
+				</if>
+				<if test="record.deptId != null">
+					AND os.DeptId = #{record.deptId,jdbcType=VARCHAR}
+				</if>
+				<if test="record.userId != null">
+					AND os.UserId = #{record.userId,jdbcType=VARCHAR}
+				</if>
+			</if>
+			<if test="record.groupId!=null"> 
+				AND g.GroupId=#{record.groupId}
+			</if> 
+			<if test="record.time != null and record.total == 0"><!-- 根据月条件查询 -->
+				AND DATE_FORMAT(os.CreateTime,'%Y-%m')=#{record.time,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.time != null and record.total == 100"><!-- 根据年条件查询 -->
+				AND DATE_FORMAT(os.CreateTime,'%Y')=#{record.time,jdbcType=TIMESTAMP}
+			</if>
+			GROUP BY DATE_FORMAT(os.CreateTime,'%Y-%m');
+		</where>
+	</select>
+	<!-- 发客统计  Month-->
+	<select id="queryArrivalStatistical" resultType="com.chinatour.entity.Statistical" parameterType="com.chinatour.entity.Statistical">
+		SELECT 
+			SUM(os.TotalPeople) AS sum,
+			SUM(os.CommonTourFee) AS sumFee,
+			DATE_FORMAT(t.ScheduleOfArriveTime,'%m') AS time,
+			o.UserId,
+			o.Agent,
+			o.DeptId,
+			d.DeptName
+		FROM 
+			orders_total o,
+			dept d,
+			orders os, 
+			<if test="record.role=='Region'">
+				region_dept_rel rel,
+			</if>
+			<if test="record.role=='Group'">
+				admin_group g,
+			</if>
+			tour_info_for_order t
+		<where>
+			o.DeptId=d.DeptId
+			AND o.OrdersTotalId=os.OrdersTotalId 
+			AND t.OrderId=os.OrderId
+			AND os.State!=5 
+			AND os.State!=6
+			<if test="record.role=='Region'">
+			AND rel.DeptId=d.DeptId
+			</if>
+			<if test="record.role=='Group'">
+				AND os.UserId=g.AdminId
+			</if>
+			<if test="record.role!='CEO'"><!-- 不是CEO才有条件 -->
+				<if test="record.regionId != null">
+					AND rel.RegionId = #{record.regionId,jdbcType=VARCHAR}
+				</if>
+				<if test="record.deptId != null">
+					AND os.DeptId = #{record.deptId,jdbcType=VARCHAR}
+				</if>
+				<if test="record.userId != null">
+					AND os.UserId = #{record.userId,jdbcType=VARCHAR}
+				</if>
+			</if>
+			<if test="record.groupId!=null"> 
+				AND g.GroupId=#{record.groupId}
+			</if> 
+			<if test="record.time != null and record.total == 0"><!-- 根据月条件查询 -->
+				AND DATE_FORMAT(t.ScheduleOfArriveTime,'%Y-%m')=#{record.time,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.time != null and record.total == 100"><!-- 根据年条件查询 -->
+				AND DATE_FORMAT(t.ScheduleOfArriveTime,'%Y')=#{record.time,jdbcType=TIMESTAMP}
+			</if>
+				GROUP BY DATE_FORMAT(t.ScheduleOfArriveTime,'%Y-%m');
+		</where>
+	</select>
+	<!-- 收客统计 OP -->
+	<select id="queryBookingStatisticalOP" resultType="com.chinatour.entity.Statistical" parameterType="com.chinatour.entity.Statistical">
+		SELECT 
+			SUM(os.TotalPeople) AS sum,
+			SUM(os.CommonTourFee) AS sumFee,
+			DATE_FORMAT(os.CreateTime,'%m') AS time,
+			o.UserId,
+			o.Agent,
+			o.DeptId,
+			d.DeptName
+		FROM 
+			orders_total o,
+			dept d,
+			orders os, 
+			tour tt,
+			<if test="record.role=='Region'">
+				region_dept_rel rel,
+			</if>
+			tour_info_for_order t
+		<where>
+			tt.DeptId=d.DeptId
+			AND o.OrdersTotalId=os.OrdersTotalId 
+			AND t.OrderId=os.OrderId
+			AND tt.tourId=os.tourId
+			AND os.TourId !=""
+			AND os.State!=5
+			<if test="record.role=='Region'">
+			AND rel.DeptId=d.DeptId
+			</if>
+			<if test="record.role!='CEO'"><!-- 不是CEO才有条件 -->
+				<if test="record.regionId != null">
+					AND rel.RegionId = #{record.regionId,jdbcType=VARCHAR}
+				</if>
+				<if test="record.deptId != null">
+					AND tt.DeptId = #{record.deptId,jdbcType=VARCHAR}
+				</if>
+				<if test="record.userId != null">
+					AND tt.UserId = #{record.userId,jdbcType=VARCHAR}
+				</if>
+			</if>
+			<if test="record.isSelfOrganize != null">
+				AND tt.TourType = #{record.isSelfOrganize,jdbcType=TINYINT}
+			</if>
+			<if test="record.time != null"><!-- 根据年条件查询 -->
+				AND DATE_FORMAT(os.CreateTime,'%Y')=#{record.time,jdbcType=TIMESTAMP}
+			</if>
+			GROUP BY DATE_FORMAT(os.CreateTime,'%Y-%m');
+		</where>
+	</select>
+	<!-- 发客统计  OP-->
+	<select id="queryArrivalStatisticalOP" resultType="com.chinatour.entity.Statistical" parameterType="com.chinatour.entity.Statistical">
+		SELECT 
+			SUM(os.TotalPeople) AS sum,
+			SUM(os.CommonTourFee) AS sumFee,
+			DATE_FORMAT(t.ScheduleOfArriveTime,'%m') AS time,
+			o.UserId,
+			o.Agent,
+			o.DeptId,
+			d.DeptName
+		FROM 
+			orders_total o,
+			dept d,
+			orders os, 
+			tour tt,
+			<if test="record.role=='Region'">
+				region_dept_rel rel,
+			</if>
+			tour_info_for_order t
+		<where>
+			tt.DeptId=d.DeptId
+			AND o.OrdersTotalId=os.OrdersTotalId 
+			AND t.OrderId=os.OrderId
+			AND tt.tourId=os.tourId
+			AND os.TourId !=""
+			AND os.State!=5
+			<if test="record.role=='Region'">
+			AND rel.DeptId=d.DeptId
+			</if>
+			<if test="record.role!='CEO'"><!-- 不是CEO才有条件 -->
+				<if test="record.regionId != null">
+					AND rel.RegionId = #{record.regionId,jdbcType=VARCHAR}
+				</if>
+				<if test="record.deptId != null">
+					AND tt.DeptId = #{record.deptId,jdbcType=VARCHAR}
+				</if>
+				<if test="record.userId != null">
+					AND tt.UserId = #{record.userId,jdbcType=VARCHAR}
+				</if>
+			</if>
+			<if test="record.isSelfOrganize != null">
+				AND tt.TourType = #{record.isSelfOrganize,jdbcType=TINYINT}
+			</if>
+			<if test="record.time != null"><!-- 根据年条件查询 -->
+				AND DATE_FORMAT(t.ScheduleOfArriveTime,'%Y')=#{record.time,jdbcType=TIMESTAMP}
+			</if>
+				GROUP BY DATE_FORMAT(t.ScheduleOfArriveTime,'%Y-%m');
+		</where>
+	</select>
+	<!-- Brand CEO -->
+	<select id="queryBookingBrand" resultType="com.chinatour.entity.Statistical" parameterType="com.chinatour.entity.Statistical">
+	SELECT 
+		t.Brand,
+		SUM(o.TotalPeople) AS sum,
+		DATE_FORMAT(o.CreateTime,'%m')AS time 
+	FROM 
+		tour_type t,
+		<if test="record.role=='Region'">
+			region_dept_rel rd,
+		</if>
+		<if test="record.role=='Group'">
+			admin_group g,
+		</if>
+		orders o
+	<where> 
+		o.TourTypeId=t.TourTypeId
+		<if test="record.role=='Region'">
+			AND rd.DeptId=o.DeptId
+		</if> 
+		<if test="record.role=='Group'">
+			AND o.UserId=g.AdminId
+		</if>
+		AND o.State!=5 
+		AND o.State!=6 
+		<if test="record.brand!=null">
+			AND t.Brand=#{record.brand}
+		</if>
+		<if test="record.deptId!=null">
+			AND o.DeptId=#{record.deptId}
+		</if>
+		<if test="record.time!=null"> 
+			AND DATE_FORMAT(o.CreateTime,'%Y')=#{record.time}
+		</if> 
+		<if test="record.regionId!=null"> 
+			AND rd.RegionId=#{record.regionId}
+		</if> 
+		<if test="record.groupId!=null"> 
+			AND g.GroupId=#{record.groupId}
+		</if> 
+		<if test="record.userId!=null"> 
+			AND o.UserId=#{record.userId}
+		</if> 
+		GROUP BY DATE_FORMAT(o.CreateTime,'%y-%m');
+	</where>
+	</select>
+	<select id="queryBookingDept" resultType="com.chinatour.entity.Statistical" parameterType="com.chinatour.entity.Statistical">
+		SELECT 
+			d.DeptId,
+			d.DeptName,
+			SUM(o.TotalPeople) AS sum,
+			DATE_FORMAT(o.CreateTime,'%m')AS time 
+		FROM 
+			dept d,
+			<if test="record.role=='Group'">
+				admin_group g,
+			</if>
+			orders o 
+		<where> 
+			o.DeptId=d.DeptId 
+			AND o.State!=5 
+			AND o.State!=6 
+			<if test="record.role=='Group'">
+				AND o.UserId=g.AdminId
+			</if>
+			<if test="record.deptId!=null">
+				AND d.DeptId=#{record.deptId}
+			</if>
+			<if test="record.userId!=null">
+				AND o.UserId=#{record.userId}
+			</if>
+			<if test="record.time!=null"> 
+				AND DATE_FORMAT(o.CreateTime,'%Y')=#{record.time}
+			</if> 
+			<if test="record.isSelfOrganize!=null">
+				<if test="record.isSelfOrganize==5">
+					AND o.IsSelfOrganize!=2  <!-- 团订单类型标识 -->
+				</if>
+				<if test="record.isSelfOrganize!=5">
+					AND o.IsSelfOrganize=#{record.isSelfOrganize}  <!-- 非团订单类型标识 -->
+				</if>
+			</if>
+			<if test="record.groupId!=null">
+				AND g.GroupId=#{record.groupId}
+			</if>
+			<if test="record.orderType!=null">
+				<if test="record.orderType==2">
+					AND o.TourTypeId=""
+					AND o.OrderType=#{record.orderType}
+				</if>
+				<if test="record.orderType==10"><!-- 入境订单、去除非团队订单 -->
+					AND o.IsSelfOrganize!=2
+				</if>
+				<if test="record.orderType==5">
+					AND o.IsSelfOrganize=2
+				</if>
+			</if>
+			GROUP BY DATE_FORMAT(o.CreateTime,'%y-%m');
+		</where>
+	</select>
+	<!-- Peer -->
+	<select id="queryBookingPeer" resultType="com.chinatour.entity.Vender" parameterType="com.chinatour.entity.Vender">
+		SELECT 
+			a.DeptName, 
+			a.Name, 
+			a.venderId, 
+			a.deptId,
+			Sum(a.TotalPeople)as sum, 
+			a.time,
+			a.PeerId,
+			SUM(a.CommonTourFee)AS CommonTourFee,
+			ROUND(SUM(a.pay),2)AS pay,
+			ROUND(SUM(a.cost),2)AS cost 
+		FROM(
+			SELECT	
+				x.DeptName, 
+				x.Name, 
+				x.venderId, 
+				x.deptId,
+				x.TotalPeople, 
+				x.time,
+				x.CommonTourFee,
+				x.OrderId,
+				x.PeerId,
+				ROUND(Sum(IF(p.PayOrCost=1,p.sum,0)),2)AS pay,
+				ROUND(Sum(IF(p.PayOrCost=2,p.sum,0)),2) AS cost
+			FROM(
+				SELECT 
+					d.DeptName, 
+					v.Name, 
+					v.venderId, 
+					v.deptId,
+					o.TotalPeople, 
+					DATE_FORMAT(o.CreateTime,'%m') AS time,
+					o.CommonTourFee,
+					o.OrderId,
+					o.PeerId 
+				FROM 
+					orders o,
+					vender v,
+					<if test="record.role=='Group'">
+						admin_group g,
+					</if>
+					dept d
+				<where> 
+					v.VenderId=o.PeerId 
+					AND v.DeptId=d.DeptId
+					<!-- AND o.State!=5 
+					AND o.State!=6  --> 
+					AND o.PeerId!=""
+					AND o.OrderType=2
+					<if test="record.role=='Group'">
+						AND o.UserId=g.AdminId
+					</if>
+					<if test="record.groupId!=null">
+						AND g.groupId=#{record.groupId}
+					</if>
+					<if test="record.deptId!=null">
+						AND d.DeptId=#{record.deptId}
+					</if>
+					<if test="record.userId!=null">
+						AND o.UserId=#{record.userId}
+					</if>
+					<if test="record.time!=null"> 
+						AND DATE_FORMAT(o.CreateTime,'%Y-%m')=#{record.time}
+					</if> 
+					<if test="record.year!=null"> 
+						AND DATE_FORMAT(o.CreateTime,'%Y')=#{record.year}
+					</if> 
+					<if test="record.orderType!=null"> 
+						AND o.OrderType=#{record.orderType}
+					</if> 
+					<if test="record.venderId!=null"> 
+						AND v.VenderId=#{record.venderId}
+					</if> 
+					<if test="record.peerType!=null"> 
+						AND v.peerType=#{record.peerType}
+					</if> 
+					<if test="record.isSelfOrganize==1"> 
+						AND o.IsSelfOrganize=#{record.isSelfOrganize}
+					</if> 
+				</where>
+				)x LEFT JOIN pay_cost_records p ON x.OrderId=p.OrderId 
+				GROUP BY x.OrderId
+			)a GROUP BY a.PeerId ORDER BY sum DESC
+	</select>
+	<!-- Product -->
+	<select id="queryBookingProduct" resultType="com.chinatour.entity.GroupLine" parameterType="com.chinatour.entity.GroupLine">
+		SELECT 
+			a.groupId, 
+			a.TourCode, 
+			a.TourName, 
+			a.tripDesc, 
+			SUM(a.TotalPeople)as sum,
+			SUM(a.CommonTourFee)AS CommonTourFee,
+			ROUND(SUM(a.pay),2)AS pay,
+			ROUND(SUM(a.cost),2)AS cost,
+			a.time 
+		FROM(
+			SELECT 
+				x.groupId, 
+				x.TourCode, 
+				x.TourName, 
+				x.tripDesc, 
+				x.TotalPeople,
+				x.CommonTourFee,
+				ROUND(Sum(IF(p.PayOrCost=1,p.sum,0)),2)AS pay,
+				ROUND(Sum(IF(p.PayOrCost=2,p.sum,0)),2) AS cost,
+				x.time 
+			FROM(
+				SELECT 
+					g.GroupLineId AS groupId, 
+					g.TourCode, 
+					g.TourName, 
+					tot.WR AS tripDesc, 
+					o.TotalPeople,
+					o.CommonTourFee,
+					o.OrderId,
+					DATE_FORMAT(o.CreateTime,'%Y-%m')AS time 
+				FROM 
+					orders o,
+					orders_total tot,
+					dept d,
+					<if test="record.role=='Region'">
+						region_dept_rel rd,
+					</if>
+					<if test="record.role=='Group'">
+						admin_group ag,
+					</if>
+					tour_info_for_order ot,
+					groupline g,
+					tour_type tp
+				<where> 
+					o.OrderId=ot.OrderId
+					AND o.OrdersTotalId=tot.OrdersTotalId
+					AND ot.GroupLineId=g.GroupLineId
+					AND tp.TourTypeId=g.TourTypeId
+					AND o.DeptId=d.DeptId
+					<if test="record.role=='Region'">
+						AND rd.DeptId=d.DeptId
+					</if>
+					<if test="record.role=='Group'">
+						AND o.UserId=ag.AdminId
+					</if>
+					AND o.State!=5 
+					AND o.State!=6 
+					<if test="record.groupId!=null">
+						AND ag.groupId=#{record.groupId}
+					</if>
+					<if test="record.deptId!=null">
+						AND o.DeptId=#{record.deptId}
+					</if>
+					<if test="record.userId!=null">
+						AND o.UserId=#{record.userId}
+					</if>
+					<if test="record.brand!=null">
+						AND tp.Brand=#{record.brand}
+					</if>
+					<if test="record.time!=null"> 
+						AND DATE_FORMAT(o.CreateTime,'%Y-%m')=#{record.time}
+					</if> 
+					<if test="record.departureDate!=null"> 
+						AND DATE_FORMAT(o.CreateTime,'%Y')=#{record.departureDate}
+					</if> 
+					<if test="record.tripDesc!=null">
+						AND tot.WR=#{record.tripDesc}
+					</if>
+					<if test="record.contactor!=null">
+						AND rd.RegionId=#{record.contactor}
+					</if>
+					<if test="record.tourCode!=null">
+						AND g.TourCode LIKE CONCAT(CONCAT('%', #{record.tourCode}), '%')
+					</if>
+					<if test="record.tourName!=null">
+						AND g.TourName LIKE CONCAT(CONCAT('%', #{record.tourName}), '%')
+					</if>
+					<if test="record.source!=null">
+						AND g.Source LIKE CONCAT(CONCAT('%', #{record.source}), '%')
+					</if>
+					<if test="record.tourNo!=null">
+						AND g.TourNo LIKE CONCAT(CONCAT('%', #{record.tourNo}), '%')
+					</if>
+						AND g.IsSystem!=0<!-- 去除非系统维护产品 -->
+				</where>
+				)x  LEFT JOIN pay_cost_records p ON x.OrderId=p.OrderId 
+			GROUP BY x.OrderId
+		) a GROUP BY a.groupId ORDER BY sum DESC;
+	</select>
+	<!-- Brand Arrival Statistical -->
+	<select id="queryArrivalBrand" resultType="com.chinatour.entity.Statistical" parameterType="com.chinatour.entity.Statistical">
+		SELECT 
+			t.Brand,
+			SUM(o.TotalPeople) AS sum,
+			DATE_FORMAT(ot.ScheduleOfArriveTime,'%m')AS time 
+		FROM 
+			tour_type t,
+			orders o ,
+			<if test="record.role=='Region'">
+				region_dept_rel rd,
+			</if>
+			<if test="record.role=='Group'">
+				admin_group g,
+			</if>
+			tour_info_for_order ot
+		<where> 
+			o.TourTypeId=t.TourTypeId
+			AND o.OrderId=ot.OrderId
+			<if test="record.role=='Region'">
+				AND o.DeptId=rd.DeptId
+			</if>
+			AND o.State!=5 
+			AND o.State!=6
+			<if test="record.role=='Group'">
+				AND o.UserId=g.AdminId
+			</if>
+			<if test="record.groupId!=null">
+				AND g.groupId=#{record.groupId}
+			</if>
+			<if test="record.brand!=null">
+				AND t.Brand=#{record.brand}
+			</if>
+			<if test="record.deptId!=null">
+				AND o.DeptId=#{record.deptId}
+			</if>
+			<if test="record.userId!=null">
+				AND o.UserId=#{record.userId}
+			</if>
+			<if test="record.time!=null"> 
+				AND DATE_FORMAT(ot.ScheduleOfArriveTime,'%Y')=#{record.time}
+			</if> 
+			<if test="record.regionId!=null"> 
+				AND rd.RegionId=#{record.regionId}
+			</if> 
+			GROUP BY DATE_FORMAT(ot.ScheduleOfArriveTime,'%y-%m');
+		</where>
+	</select>
+	<!-- Office Arrival Statistical -->
+	<select id="queryArrivalDept" resultType="com.chinatour.entity.Statistical" parameterType="com.chinatour.entity.Statistical">
+		SELECT 
+			d.DeptId,
+			d.DeptName,
+			SUM(o.TotalPeople) AS sum,
+			DATE_FORMAT(ot.ScheduleOfArriveTime,'%m')AS time 
+		FROM 
+			dept d,
+			orders o,
+			<if test="record.role=='Group'">
+				admin_group g,
+			</if>
+			tour_info_for_order ot 
+		<where> 
+			o.DeptId=d.DeptId 
+			AND ot.OrderId=o.OrderId
+			AND o.State!=5 
+			AND o.State!=6 
+			<if test="record.role=='Group'">
+				AND o.UserId=g.AdminId
+			</if>
+			<if test="record.groupId!=null">
+				AND g.groupId=#{record.groupId}
+			</if>
+			<if test="record.deptId!=null">
+				AND d.DeptId=#{record.deptId}
+			</if>
+			<if test="record.userId!=null">
+				AND o.UserId=#{record.userId}
+			</if>
+			<if test="record.time!=null"> 
+				AND DATE_FORMAT(ot.ScheduleOfArriveTime,'%Y')=#{record.time}
+			</if> 
+			<if test="record.isSelfOrganize!=null">
+				<if test="record.isSelfOrganize==5">
+					AND o.IsSelfOrganize!=2  <!-- 团订单类型标识 -->
+				</if>
+				<if test="record.isSelfOrganize!=5">
+					AND o.IsSelfOrganize=#{record.isSelfOrganize}  <!-- 非团订单类型标识 -->
+				</if>
+			</if>
+			<if test="record.orderType!=null">
+				<if test="record.orderType==2">
+					AND o.TourTypeId=""
+					AND o.OrderType=#{record.orderType}
+				</if>
+				<if test="record.orderType==10">
+					AND o.IsSelfOrganize!=2
+				</if>
+				<if test="record.orderType==5">
+					AND o.IsSelfOrganize=2
+				</if>
+			</if>
+			GROUP BY DATE_FORMAT(ot.ScheduleOfArriveTime,'%y-%m');
+		</where>
+	</select>
+	
+	<!-- Peer  Arrival Statistical -->
+	<select id="queryArrivalPeer" resultType="com.chinatour.entity.Vender" parameterType="com.chinatour.entity.Vender">
+		SELECT 
+			a.DeptName, 
+			a.Name, 
+			a.venderId, 
+			a.deptId,
+			Sum(a.TotalPeople)as sum, 
+			a.time,
+			a.PeerId,
+			SUM(a.CommonTourFee)AS CommonTourFee,
+			ROUND(SUM(a.pay),2)AS pay,
+			ROUND(SUM(a.cost),2)AS cost 
+		FROM(
+			SELECT	
+				x.DeptName, 
+				x.Name, 
+				x.venderId, 
+				x.deptId,
+				x.TotalPeople, 
+				x.time,
+				x.CommonTourFee,
+				x.OrderId,
+				x.PeerId,
+				ROUND(Sum(IF(p.PayOrCost=1,p.sum,0)),2)AS pay,
+				ROUND(Sum(IF(p.PayOrCost=2,p.sum,0)),2) AS cost
+			FROM(
+				SELECT 
+					d.DeptName, 
+					v.Name, 
+					v.venderId, 
+					v.deptId,
+					o.TotalPeople, 
+					DATE_FORMAT(o.CreateTime,'%m') AS time,
+					o.CommonTourFee,
+					o.OrderId,
+					o.PeerId 
+				FROM 
+					orders o,
+					vender v,
+					tour_info_for_order ot,
+					<if test="record.role=='Group'">
+						admin_group g,
+					</if>
+					dept d
+				<where> 
+					v.VenderId=o.PeerId 
+					AND v.DeptId=d.DeptId
+					AND o.OrderId=ot.OrderId
+					<!-- AND o.State!=5 
+					AND o.State!=6  -->
+					AND o.PeerId!=""
+					AND o.OrderType=2
+					<if test="record.role=='Group'">
+						AND o.UserId=g.AdminId
+					</if>
+					<if test="record.groupId!=null">
+						AND g.groupId=#{record.groupId}
+					</if>
+					<if test="record.deptId!=null">
+						AND d.DeptId=#{record.deptId}
+					</if>
+					<if test="record.userId!=null">
+						AND o.UserId=#{record.userId}
+					</if>
+					<if test="record.time!=null"> 
+						AND DATE_FORMAT(ot.ScheduleOfArriveTime,'%Y-%m')=#{record.time}
+					</if> 
+					<if test="record.year!=null"> 
+						AND DATE_FORMAT(ot.ScheduleOfArriveTime,'%Y')=#{record.year}
+					</if> 
+					<if test="record.isSelfOrganize==0"> 
+						AND o.IsSelfOrganize=#{record.isSelfOrganize}
+					</if> 
+					<if test="record.isSelfOrganize==1"> 
+						AND o.IsSelfOrganize=#{record.isSelfOrganize}
+					</if>
+					<if test="record.peerType!=null"> 
+						AND v.peerType=#{record.peerType}
+					</if> 
+					<if test="record.venderId!=null"> 
+						AND v.VenderId=#{record.venderId}
+					</if> 
+				</where>
+				)x LEFT JOIN pay_cost_records p ON x.OrderId=p.OrderId 
+				GROUP BY x.OrderId
+			)a GROUP BY a.PeerId ORDER BY sum DESC
+	</select>
+	<!-- Product  Arrival Statistical -->
+	<select id="queryArrivalProduct" resultType="com.chinatour.entity.GroupLine" parameterType="com.chinatour.entity.GroupLine">
+		SELECT 
+			a.groupId, 
+			a.TourCode, 
+			a.TourName, 
+			a.tripDesc, 
+			SUM(a.TotalPeople)as sum,
+			SUM(a.CommonTourFee)AS CommonTourFee,
+			ROUND(SUM(a.pay),2)AS pay,
+			ROUND(SUM(a.cost),2)AS cost,
+			a.time 
+		FROM(
+			SELECT 
+				x.groupId, 
+				x.TourCode, 
+				x.TourName, 
+				x.tripDesc, 
+				x.TotalPeople,
+				x.CommonTourFee,
+				ROUND(Sum(IF(p.PayOrCost=1,p.sum,0)),2)AS pay,
+				ROUND(Sum(IF(p.PayOrCost=2,p.sum,0)),2) AS cost,
+				x.time 
+			FROM(
+				SELECT 
+					g.GroupLineId AS groupId, 
+					g.TourCode, 
+					g.TourName, 
+					tot.WR AS tripDesc, 
+					o.TotalPeople,
+					o.CommonTourFee,
+					o.OrderId,
+					DATE_FORMAT(o.CreateTime,'%Y-%m')AS time 
+				FROM 
+					orders o,
+					orders_total tot,
+					dept d,
+					<if test="record.role=='Region'">
+						region_dept_rel rd,
+					</if>
+					tour_info_for_order ot,
+					groupline g,
+					<if test="record.role=='Group'">
+						admin_group ag,
+					</if>
+					tour_type tp
+				<where> 
+					o.OrderId=ot.OrderId
+					AND o.OrdersTotalId=tot.OrdersTotalId
+					AND ot.GroupLineId=g.GroupLineId
+					AND tp.TourTypeId=g.TourTypeId 
+					AND o.DeptId=d.DeptId
+					<if test="record.role=='Region'">
+						AND rd.DeptId=d.DeptId
+					</if>
+					AND o.State!=5 
+					AND o.State!=6 
+					<if test="record.role=='Group'">
+						AND o.UserId=ag.AdminId
+					</if>
+					<if test="record.groupId!=null">
+						AND ag.groupId=#{record.groupId}
+					</if>
+					<if test="record.deptId!=null">
+						AND o.DeptId=#{record.deptId}
+					</if>
+					<if test="record.userId!=null">
+						AND o.UserId=#{record.userId}
+					</if>
+					<if test="record.brand!=null">
+						AND tp.Brand=#{record.brand}
+					</if>
+					<if test="record.time!=null"> 
+						AND DATE_FORMAT(ot.ScheduleOfArriveTime,'%Y-%m')=#{record.time}
+					</if> 
+					<if test="record.departureDate!=null"> 
+						AND DATE_FORMAT(ot.ScheduleOfArriveTime,'%Y')=#{record.departureDate}
+					</if> 
+					<if test="record.tripDesc!=null">
+						AND tot.WR=#{record.tripDesc}
+					</if>
+					<if test="record.contactor!=null">
+						AND rd.RegionId=#{record.contactor}
+					</if>
+					<if test="record.tourCode!=null">
+						AND g.TourCode LIKE CONCAT(CONCAT('%', #{record.tourCode}), '%')
+					</if>
+					<if test="record.tourName!=null">
+						AND g.TourName LIKE CONCAT(CONCAT('%', #{record.tourName}), '%')
+					</if>
+					<if test="record.source!=null">
+						AND g.Source LIKE CONCAT(CONCAT('%', #{record.source}), '%')
+					</if>
+					<if test="record.tourNo!=null">
+						AND g.TourNo LIKE CONCAT(CONCAT('%', #{record.tourNo}), '%')
+					</if>
+						AND g.IsSystem!=0<!-- 去除非系统维护产品 -->
+				</where>
+				)x  LEFT JOIN pay_cost_records p ON x.OrderId=p.OrderId 
+			GROUP BY x.OrderId
+		) a GROUP BY a.groupId ORDER BY sum DESC;
+	</select>
+	<!-- 团订单及同行订单 -->
+	<select id="queryTourBooking" resultType="com.chinatour.entity.Order" parameterType="com.chinatour.entity.Order">
+	SELECT 
+		a.OrderId, 
+		Sum(a.TotalPeople)as TotalPeople, 
+		a.UserName, 
+		a.UserId, 
+		a.DeptName, 
+		a.peerId, 
+		v.Name AS contact,
+		SUM(a.CommonTourFee)AS CommonTourFee,
+		ROUND(SUM(a.pay),2)AS pay,
+		ROUND(SUM(a.cost),2)AS cost 
+	FROM(
+		SELECT 
+			x.OrderId, 
+			x.TotalPeople, 
+			x.UserName, 
+			x.UserId, 
+			x.DeptName,
+			x.peerId,
+			x.CommonTourFee,
+			ROUND(Sum(IF(p.PayOrCost=1,p.sum,0)),2)AS pay,
+			ROUND(Sum(IF(p.PayOrCost=2,p.sum,0)),2) AS cost
+		 FROM(
+			SELECT 
+				o.OrderId,
+				SUM(o.TotalPeople)AS TotalPeople,
+				o.UserName,
+				o.UserId,
+				d.DeptName,
+				o.peerId,
+				o.CommonTourFee  
+			FROM 
+				orders o,
+				tour_info_for_order tfo,
+				<if test="record.role=='Region'">
+					region_dept_rel rd,
+				</if>
+				<if test="record.role=='Group'">
+					admin_group g,
+				</if>
+				dept d
+			<where>
+				o.OrderId=tfo.OrderId 
+				AND o.DeptId=d.DeptId 
+				<if test="record.role=='Region'">
+					AND rd.DeptId=d.DeptId
+				</if>
+				<!-- 
+				AND o.State!=5 
+				AND o.State!=6
+				 -->
+				<if test="record.role=='Group'">
+					AND o.UserId=g.AdminId
+				</if>
+				<if test="record.groupId!=null">
+					AND g.groupId=#{record.groupId}
+				</if>
+				<if test="record.userId!=null">
+					AND o.UserId=#{record.userId}
+				</if>
+				<if test="record.orderType!=null">
+					<if test="record.orderType==2">
+						AND o.PeerId!=""  <!-- 同行订单类型标识 -->
+					</if>
+					<if test="record.orderType==10">
+						AND o.IsSelfOrganize!=2  <!-- 团订单类型标识 -->
+					</if>
+					<if test="record.orderType==5">
+						AND o.IsSelfOrganize=2  <!-- 非团订单类型标识 -->
+					</if>
+					<if test="record.orderType==1">
+						AND o.OrderType=#{record.orderType}  <!-- 同行订单类型标识 -->
+						AND o.IsSelfOrganize!=2
+					</if>
+				</if>
+				<if test="record.orderType==5">
+					<if test="record.time!=null">
+						AND DATE_FORMAT(o.CreateTime,'%Y-%m')=#{record.time}
+					</if>
+					<if test="record.year!=null">
+						AND DATE_FORMAT(o.CreateTime,'%Y')=#{record.year}
+					</if>
+				</if>
+				<if test="record.orderType!=5">
+					<if test="record.time!=null">
+						AND DATE_FORMAT(tfo.ScheduleOfArriveTime,'%Y-%m')=#{record.time}
+					</if>
+					<if test="record.year!=null">
+						AND DATE_FORMAT(tfo.ScheduleOfArriveTime,'%Y')=#{record.year}
+					</if>
+				</if>
+				<if test="record.deptId!=null">
+					AND o.DeptId=#{record.deptId}
+				</if>
+				<if test="record.contactName!=null">
+					AND rd.RegionId=#{record.contactName}
+				</if>
+				<if test="record.isSelfOrganize!=null"> 
+					<if test="record.isSelfOrganize==5">
+						AND o.IsSelfOrganize!=2  <!-- 团订单类型标识 -->
+					</if>
+					<if test="record.isSelfOrganize!=5">
+						AND o.IsSelfOrganize=#{record.isSelfOrganize}  <!-- 非团订单类型标识 -->
+					</if>
+				</if> 
+				<if test="record.userName!=null">
+					AND o.UserName LIKE CONCAT(CONCAT('%', #{record.userName}), '%')
+				</if>
+				<if test="record.peerId!=null"> 
+					AND o.PeerId=#{record.peerId}
+				</if> 
+				GROUP BY o.OrderId
+		</where>
+			)x LEFT JOIN pay_cost_records p ON x.OrderId=p.OrderId 
+			GROUP BY x.OrderId
+		)a LEFT JOIN vender v ON v.VenderId=a.peerId 
+		GROUP BY a.UserId 
+		ORDER BY TotalPeople DESC
+	</select>
+	<!-- 团订单及同行订单 B表示是收客统计-->
+	<select id="queryTourBookingB" resultType="com.chinatour.entity.Order" parameterType="com.chinatour.entity.Order">
+	SELECT 
+		a.OrderId, 
+		Sum(a.TotalPeople)as TotalPeople, 
+		a.UserName, 
+		a.UserId, 
+		a.DeptName, 
+		a.peerId, 
+		v.Name AS contact,
+		SUM(a.CommonTourFee)AS CommonTourFee,
+		ROUND(SUM(a.pay),2)AS pay,
+		ROUND(SUM(a.cost),2)AS cost 
+	FROM(
+		SELECT 
+			x.OrderId, 
+			x.TotalPeople, 
+			x.UserName, 
+			x.UserId, 
+			x.DeptName,
+			x.peerId,
+			x.CommonTourFee,
+			ROUND(Sum(IF(p.PayOrCost=1,p.sum,0)),2)AS pay,
+			ROUND(Sum(IF(p.PayOrCost=2,p.sum,0)),2) AS cost
+	 FROM(
+		SELECT 
+			o.OrderId,
+			SUM(o.TotalPeople)AS TotalPeople,
+			o.UserName,
+			o.UserId,
+			d.DeptName,
+			o.peerId,
+			o.CommonTourFee  
+		FROM 
+			orders o,
+			tour_info_for_order tfo,
+			<if test="record.role=='Region'">
+				region_dept_rel rd,
+			</if>
+			<if test="record.role=='Group'">
+				admin_group g,
+			</if>
+			dept d
+		<where>
+			o.OrderId=tfo.OrderId 
+			AND o.DeptId=d.DeptId 
+			<if test="record.role=='Region'">
+				AND rd.DeptId=d.DeptId
+			</if>
+			AND o.State!=5 
+			AND o.State!=6
+			<if test="record.role=='Group'">
+				AND o.UserId=g.AdminId
+			</if>
+			<if test="record.groupId!=null">
+				AND g.groupId=#{record.groupId}
+			</if>
+			<if test="record.userId!=null">
+				AND o.UserId=#{record.userId}
+			</if>
+			<if test="record.orderType!=null">
+				<if test="record.orderType==2">
+					AND o.PeerId!=""  <!-- 同行订单类型标识 -->
+				</if>
+				<if test="record.orderType==10">
+					AND o.IsSelfOrganize!=2  <!-- 团订单类型标识 -->
+				</if>
+				<if test="record.orderType==5">
+					AND o.IsSelfOrganize=2  <!-- 非团订单类型标识 -->
+				</if>
+				<if test="record.orderType==1">
+					AND o.OrderType=#{record.orderType}  <!-- 同行订单类型标识 -->
+					AND o.IsSelfOrganize!=2
+				</if>
+			</if>
+			<if test="record.time!=null">
+				AND DATE_FORMAT(o.CreateTime,'%Y-%m')=#{record.time}
+			</if>
+			<if test="record.year!=null">
+				AND DATE_FORMAT(o.CreateTime,'%Y')=#{record.year}
+			</if>
+			<if test="record.deptId!=null">
+				AND o.DeptId=#{record.deptId}
+			</if>
+			<if test="record.contactName!=null">
+				AND rd.RegionId=#{record.contactName}
+			</if>
+			<if test="record.isSelfOrganize!=null"> 
+				<if test="record.isSelfOrganize==5">
+					AND o.IsSelfOrganize!=2  <!-- 团订单类型标识 -->
+				</if>
+				<if test="record.isSelfOrganize!=5">
+					AND o.IsSelfOrganize=#{record.isSelfOrganize}  <!-- 非团订单类型标识 -->
+				</if>
+			</if> 
+			<if test="record.userName!=null">
+				AND o.UserName LIKE CONCAT(CONCAT('%', #{record.userName}), '%')
+			</if>
+			<if test="record.peerId!=null"> 
+				AND o.PeerId=#{record.peerId}
+			</if> 
+			GROUP BY o.OrderId
+		</where>
+			)x LEFT JOIN pay_cost_records p ON x.OrderId=p.OrderId 
+			GROUP BY x.OrderId
+		)a LEFT JOIN vender v ON v.VenderId=a.peerId 
+		GROUP BY a.UserId 
+		ORDER BY TotalPeople DESC  
+	</select>
+	<!-- 非团订单 -->
+	<select id="queryOtherTourBooking" resultType="com.chinatour.entity.Order" parameterType="com.chinatour.entity.Order">
+		SELECT 
+			a.OrderId, 
+			Sum(a.TotalPeople)as TotalPeople, 
+			a.UserName, a.UserId, a.DeptName, 
+			SUM(a.CommonTourFee)AS CommonTourFee,
+			ROUND(SUM(a.pay),2)AS pay,
+			ROUND(SUM(a.cost),2)AS cost 
+		FROM(
+			SELECT 
+				x.OrderId, 
+				x.TotalPeople, 
+				x.CommonTourFee, 
+				x.UserName, 
+				x.UserId, 
+				x.DeptName,
+				ROUND(Sum(IF(p.PayOrCost=1,p.sum,0)),2)AS pay,
+				ROUND(Sum(IF(p.PayOrCost=2,p.sum,0)),2) AS cost
+			 FROM(
+				SELECT 
+					o.OrderId, 
+					o.TotalPeople, 
+					o.CommonTourFee, 
+					o.UserName, 
+					o.UserId, 
+					d.DeptName 
+				FROM 
+					orders o,
+					<if test="record.role=='Region'">
+						region_dept_rel rd,
+					</if>
+					<if test="record.role=='Group'">
+						admin_group g,
+					</if>
+					dept d
+				<where>
+					o.DeptId=d.DeptId 
+					<if test="record.role=='Region'">
+						AND rd.DeptId=d.DeptId
+					</if>
+					AND o.State!=5 
+					AND o.State!=6
+					AND o.IsSelfOrganize=2<!-- 非团订单标识 -->
+					<if test="record.role=='Group'">
+						AND o.UserId=g.AdminId
+					</if>
+					<if test="record.groupId!=null">
+						AND g.groupId=#{record.groupId}
+					</if>
+					<if test="record.userId!=null">
+						AND o.UserId=#{record.userId}
+					</if>
+					<if test="record.time!=null">
+						AND DATE_FORMAT(o.CreateTime,'%Y-%m')=#{record.time}
+					</if>
+					<if test="record.year!=null">
+						AND DATE_FORMAT(o.CreateTime,'%Y')=#{record.year}
+					</if>
+					<if test="record.deptId!=null">
+						AND o.DeptId=#{record.deptId}
+					</if>
+					<if test="record.contactName!=null">
+						AND rd.RegionId=#{record.contactName}
+					</if>
+					<if test="record.userName!=null">
+						AND o.UserName LIKE CONCAT(CONCAT('%', #{record.userName}), '%')
+					</if>
+				</where>
+			)x LEFT JOIN pay_cost_records p ON x.OrderId=p.OrderId 
+			GROUP BY x.OrderId
+		)a GROUP BY a.UserId ORDER BY TotalPeople DESC 
+	</select>	
+	<!--booking source  -->
+	<select id="findBookingSource" resultType="com.chinatour.entity.Statistical" parameterType="com.chinatour.entity.Statistical">
+	SELECT 
+		cs.SourceName as source,
+		SUM(o.TotalPeople) AS sum,
+		DATE_FORMAT(o.CreateTime,'%m')AS time 
+	FROM 
+		<if test="role=='Region'">
+			region_dept_rel rd,
+		</if>
+		<if test="role=='Group'">
+			admin_group g,
+		</if>
+		orders_total ot,orders o,customer_source cs
+	<where> 
+		o.ordersTotalId=ot.ordersTotalId and cs.CustomerSourceId=ot.CustomerSourceId 
+		<if test="role=='Region'">
+			AND rd.DeptId=o.DeptId
+		</if> 
+		<if test="role=='Group'">
+			AND o.UserId=g.AdminId
+		</if>
+		<if test="source!=null">
+			AND  cs.SourceName=#{source}
+		</if>
+		<if test="deptId!=null">
+			AND o.DeptId=#{deptId}
+		</if>
+		<if test="regionId!=null"> 
+			AND rd.RegionId=#{regionId}
+		</if> 
+		<if test="groupId!=null"> 
+			AND g.GroupId=#{groupId}
+		</if> 
+		<if test="time!=null"> 
+			AND DATE_FORMAT(o.CreateTime,'%Y')=#{time}
+		</if> 
+		<if test="userId!=null"> 
+			AND o.UserId=#{userId}
+		</if> 
+		GROUP BY DATE_FORMAT(o.CreateTime,'%y-%m');
+	</where>
+	</select>
+	<!--Arrival source  -->
+	<select id="findArrivalSource" resultMap="BaseResultMap" parameterType="com.chinatour.entity.Statistical">
+	SELECT 
+		cs.SourceName as source,
+		SUM(o.TotalPeople) AS sum,
+		DATE_FORMAT(tfo.ScheduleOfArriveTime,'%m')AS time 
+	FROM 
+		<if test="role=='Region'">
+			region_dept_rel rd,
+		</if>
+		<if test="role=='Group'">
+			admin_group g,
+		</if>
+		orders_total ot,orders o,customer_source cs,tour_info_for_order tfo
+	<where> 
+		o.ordersTotalId=ot.ordersTotalId and cs.CustomerSourceId=ot.CustomerSourceId 
+		and o.orderId=tfo.orderId
+		<if test="role=='Region'">
+			AND rd.DeptId=o.DeptId
+		</if> 
+		<if test="role=='Group'">
+			AND o.UserId=g.AdminId
+		</if>
+		<if test="source!=null">
+			AND  cs.SourceName=#{source}
+		</if>
+		<if test="deptId!=null">
+			AND o.DeptId=#{deptId}
+		</if>
+		<if test="regionId!=null"> 
+			AND rd.RegionId=#{regionId}
+		</if> 
+		<if test="groupId!=null"> 
+			AND g.GroupId=#{groupId}
+		</if> 
+		<if test="time!=null"> 
+			AND DATE_FORMAT(tfo.ScheduleOfArriveTime,'%Y')=#{time}
+		</if> 
+		<if test="userId!=null"> 
+			AND o.UserId=#{userId}
+		</if> 
+		GROUP BY DATE_FORMAT(tfo.ScheduleOfArriveTime,'%y-%m');
+	</where>
+	</select>
+	<select id="findSourceName" resultMap="BaseResultMap">
+		SELECT
+			sourceName as Source
+		FROM 
+		<if test="role=='Region'">
+			region_dept_rel rd,
+		</if>
+			Customer_source cs
+		<where> 
+			<if test="role=='Region'">
+			AND rd.DeptId=cs.DeptId
+		</if> 
+		<if test="regionId!=null"> 
+			AND rd.RegionId=#{regionId}
+		</if> 
+		<if test="deptId!=null">
+			AND  cs.deptId=#{deptId}
+		</if>
+		</where>
+		GROUP BY cs.sourceName
+	</select>
+		<!-- flight Statistical -->
+	<select id="queryFlight" resultType="com.chinatour.entity.SupplierPriceForOrder" parameterType="com.chinatour.entity.SupplierPriceForOrder">
+		SELECT
+			s.agentId,
+			<if test="type != null and type==0">
+			d.deptId,
+			d.deptName,
+			za.username as agentName,
+			</if>
+			<if test="type != null and type==1">
+			d.deptName,
+			</if>
+			<if test="type != null and type==2">
+			s.agency,
+			v.name as venderName,
+			d.deptName,
+			</if>
+			<if test="type != null and type==3">
+			d.deptName,
+			s.airline,
+			SUM(IF(TempValue04='B' AND TempValue05='I', Quantity, 0)) as BI,
+			SUM(IF(TempValue04='B'AND TempValue05='D.', Quantity, 0)) as BD ,
+			SUM(IF(TempValue04='E' AND TempValue05='I', Quantity, 0)) as EI,
+			SUM(IF(TempValue04='E'AND TempValue05='D.', Quantity, 0)) as ED,
+			SUM(IF(TempValue04='P' AND TempValue05='I', Quantity, 0)) as PI,
+			SUM(IF(TempValue04='P'AND TempValue05='D.', Quantity, 0)) as PD,
+			</if>
+			s.tempValue01,
+			SUM(s.Quantity) as Quantity,
+			SUM(s.Net) as Net,
+			SUM(s.OperatorFee) as OperatorFee,
+			SUM(s.Amount) as Amount,
+			SUM(s.Charge) as Charge,
+			ROUND(SUM(s.tempValue06),2) as tempValue06
+		FROM supplierpricefororder s 
+			<if test="type != null and type==0">
+				,zs_admin za,dept d
+			</if>
+			<if test="type != null and type==1">
+				,dept d
+			</if>
+			<if test="type != null and type==2">
+				,vender v,dept d
+			</if>
+			<if test="type != null and type==3">
+				,dept d
+			</if>
+		WHERE
+			s.IsDel=0
+			<if test="type != null and type==0">
+				AND s.AgentId=za.id
+				AND d.deptId=za.deptId
+			</if>
+			<if test="type != null and type==1">
+				AND d.deptId=s.deptId
+			</if>
+			<if test="type != null and type==2">
+				AND s.Agency=v.venderId
+				AND d.deptId=s.deptId
+			</if>
+			<if test="type != null and type==3">
+				AND d.deptId=s.deptId
+				AND s.TempValue04 IN ('B','E','P')
+				AND s.TempValue05 IN ('I','D.')
+			</if>
+			<if test="invoiceNo != null">
+				AND s.invoiceNo =#{invoiceNo,jdbcType=VARCHAR}
+			</if>
+			<if test="quantity!= null">
+				AND s.quantity=#{quantity,jdbcType=INTEGER}
+			</if>
+			<if test="airline != null">
+				AND s.airline LIKE CONCAT(CONCAT('%',#{airline}),'%')
+			</if>
+			<if test="ticketNo != null">
+				AND s.ticketNo LIKE CONCAT(CONCAT('%',#{ticketNo}),'%')
+			</if>
+			<if test="charge != null">
+				AND s.charge=#{charge,jdbcType=DECIMAL}
+			</if>
+			<if test="operatorFee != null">
+				AND s.operatorFee=#{operatorFee,jdbcType=DECIMAL}
+			</if>
+			<if test="amount != null">
+				AND s.amount=#{amount,jdbcType=DECIMAL}
+			</if>
+			<if test="type != null and type !=3 ">
+				AND s.type=#{type,jdbcType=INTEGER}
+			</if>
+			<if test="agentId != null">
+				AND s.agentId=#{agentId,jdbcType=VARCHAR}
+			</if>
+			<if test="remark != null">
+				AND s.remark=#{remark,jdbcType=VARCHAR}
+			</if>
+			<if test="remarkOfAgent != null">
+				AND s.remarkOfAgent=#{remarkOfAgent,jdbcType=VARCHAR}
+			</if>
+			<if test="accRemarkOfOp != null">
+				AND s.accRemarkOfOp=#{accRemarkOfOp,jdbcType=VARCHAR}
+			</if>
+			<if test="agency != null">
+				AND s.agency=#{agency,jdbcType=VARCHAR}
+			</if>
+			<if test="rateOfCurrencyId != null">
+				AND s.rateOfCurrencyId=#{rateOfCurrencyId,jdbcType=VARCHAR}
+			</if>
+			<if test="card != null">
+				AND s.card=#{card,jdbcType=VARCHAR}
+			</if>
+			<if test="userId != null">
+				AND s.userId=#{userId,jdbcType=VARCHAR}
+			</if>
+			<if test="userName != null">
+				AND s.userName LIKE CONCAT(CONCAT('%',#{userName}),'%')
+			</if>
+			<if test="deptId != null">
+				AND d.deptId =#{deptId,jdbcType=VARCHAR}
+			</if>
+			<if test="agentName!=null">
+				AND za.userName LIKE CONCAT(CONCAT('%',#{agentName}),'%')
+			</if>
+			<if test="createDate!= null">
+				AND s.createDate=#{createDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="beginningDate != null">
+				AND s.date <![CDATA[>=]]> #{beginningDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="endingDate != null">
+				AND s.date <![CDATA[<=]]> #{endingDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="arrivalBeginningDate != null">
+				AND s.arriveDate <![CDATA[>=]]> #{arrivalBeginningDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="arrivalEndingDate != null">
+				AND s.arriveDate <![CDATA[<=]]> #{arrivalEndingDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="time!=null"> 
+				AND DATE_FORMAT(s.date,'%Y-%m')=#{time}
+			</if> 
+			<if test="year!=null"> 
+				AND DATE_FORMAT(s.date,'%Y')=#{year}
+			</if> 
+			<if test="uploadUrl!= null">
+				AND s.uploadUrl=#{uploadUrl,jdbcType=VARCHAR}
+			</if>
+			<if test="flightPnr!= null">
+				AND s.flightPnr=#{flightPnr,jdbcType=VARCHAR}
+			</if>
+			<if test="isDel != null">
+				AND s.isDel=#{isDel,jdbcType=INTEGER}
+			</if>
+			<if test="approveStatus != null">
+				AND s.approveStatus=#{approveStatus,jdbcType=INTEGER}
+			</if>
+			<if test="tempValue01!= null">
+				AND s.tempValue01=#{tempValue01,jdbcType=VARCHAR}
+			</if>
+			<if test="tempValue02!= null">
+				AND s.tempValue02=#{tempValue02,jdbcType=VARCHAR}
+			</if>
+			<if test="tempValue03!= null">
+				AND s.tempValue03=#{tempValue03,jdbcType=VARCHAR}
+			</if>
+			<if test="tempValue04!= null">
+				AND s.tempValue04=#{tempValue04,jdbcType=VARCHAR}
+			</if>
+			<if test="tempValue05!= null">
+				AND s.tempValue05=#{tempValue05,jdbcType=VARCHAR}
+			</if>
+			<if test="tempValue06!= null">
+				AND s.tempValue06=#{tempValue06,jdbcType=VARCHAR}
+			</if>
+			<if test="date != null">
+				AND s.Date = #{date,jdbcType=DATE}
+			</if>
+			<if test="type != null and type==0">
+				GROUP BY za.id ORDER BY d.DeptId,Quantity DESC
+			</if>
+			<if test="type != null and type==1">
+				GROUP BY s.tempValue01 ORDER BY Quantity DESC
+			</if>
+			<if test="type != null and type==2">
+				GROUP BY v.name ORDER BY Quantity DESC
+			</if>
+			<if test="type != null and type==3">
+				GROUP BY s.airline ORDER BY Quantity DESC
+			</if>
+	</select>
+	
+	<select id="queryFlightAirline" resultType="com.chinatour.entity.SupplierPriceForOrder" parameterType="com.chinatour.entity.SupplierPriceForOrder">
+		SELECT
+			s.deptName,
+			s.airline,
+			SUM(IF(TempValue04='B' AND TempValue05='I', NewQuantity, 0)) as BI,
+			SUM(IF(TempValue04='B'AND TempValue05='D.', NewQuantity, 0)) as BD ,
+			SUM(IF(TempValue04='E' AND TempValue05='I', NewQuantity, 0)) as EI,
+			SUM(IF(TempValue04='E'AND TempValue05='D.', NewQuantity, 0)) as ED,
+			SUM(IF(TempValue04='P' AND TempValue05='I', NewQuantity, 0)) as PI,
+			SUM(IF(TempValue04='P'AND TempValue05='D.', NewQuantity, 0)) as PD,
+			s.tempValue01,
+			SUM(s.NewQuantity) as Quantity,
+			SUM(s.Net) as Net,
+			SUM(s.OperatorFee) as OperatorFee,
+			SUM(s.Amount) as Amount,
+			SUM(s.Charge) as Charge,
+			ROUND(SUM(s.tempValue06),2) as tempValue06
+		FROM (SELECT d.deptName,ss.Airline,ss.TempValue04,ss.TempValue05,ss.TempValue01,ss.Net,ss.OperatorFee,ss.Amount,ss.Charge,ss.TempValue06,
+				IF(ss.TicketType='R', (0-ss.Quantity), ss.Quantity) AS NewQuantity 
+			  FROM supplierpricefororder ss,dept d
+			  WHERE d.deptId=ss.deptId
+			  	AND ss.IsDel=0 
+			  	AND ss.TempValue04 IN ('B','E','P')
+				AND ss.TempValue05 IN ('I','D.')
+			<if test="airline != null">
+				AND ss.airline LIKE CONCAT(CONCAT('%',#{airline}),'%')
+			</if>
+			<if test="beginningDate != null">
+				AND ss.date <![CDATA[>=]]> #{beginningDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="endingDate != null">
+				AND ss.date <![CDATA[<=]]> #{endingDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="arrivalBeginningDate != null">
+				AND ss.arriveDate <![CDATA[>=]]> #{arrivalBeginningDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="arrivalEndingDate != null">
+				AND ss.arriveDate <![CDATA[<=]]> #{arrivalEndingDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="time!=null"> 
+				AND DATE_FORMAT(ss.date,'%Y-%m')=#{time}
+			</if> 
+			<if test="year!=null"> 
+				AND DATE_FORMAT(ss.date,'%Y')=#{year}
+			</if> 
+			<if test="date != null">
+				AND ss.Date = #{date,jdbcType=DATE}
+			</if>)s
+		GROUP BY s.airline ORDER BY Quantity DESC
+	</select>
+	
+		<!-- flight Statistical -->
+	<select id="queryFlightbyVender" resultType="com.chinatour.entity.SupplierPriceForOrder" parameterType="com.chinatour.entity.SupplierPriceForOrder">
+		SELECT
+			s.agentId,
+			<if test="type != null and type==0">
+			d.deptId,
+			d.deptName,
+			za.username as agentName,
+			</if>
+			<if test="type != null and type==1">
+			d.deptName,
+			</if>
+			<if test="type != null and type==2">
+			s.venderId,
+			v.name as venderName,
+			d.deptName,
+			</if>
+			s.tempValue01,
+			SUM(s.Quantity) as Quantity,
+			SUM(s.OperatorFee) as OperatorFee,
+			SUM(s.Amount) as Amount,
+			SUM(s.Charge) as Charge,
+			ROUND(SUM(s.tempValue06),2) as tempValue06
+		FROM supplierpricefororder s 
+			<if test="type != null and type==0">
+				,zs_admin za,dept d
+			</if>
+			<if test="type != null and type==1">
+				,dept d
+			</if>
+			<if test="type != null and type==2">
+				,vender v,dept d
+			</if>
+		WHERE
+			s.IsDel=0
+			<if test="type != null and type==0">
+				AND s.AgentId=za.id
+				AND d.deptId=za.deptId
+			</if>
+			<if test="type != null and type==1">
+				AND d.deptId=s.deptId
+			</if>
+			<if test="type != null and type==2">
+				AND s.venderId=v.venderId
+				AND d.deptId=s.deptId
+			</if>
+			<if test="invoiceNo != null">
+				AND s.invoiceNo =#{invoiceNo,jdbcType=VARCHAR}
+			</if>
+			<if test="quantity!= null">
+				AND s.quantity=#{quantity,jdbcType=INTEGER}
+			</if>
+			<if test="airline != null">
+				AND s.airline LIKE CONCAT(CONCAT('%',#{airline}),'%')
+			</if>
+			<if test="ticketNo != null">
+				AND s.ticketNo LIKE CONCAT(CONCAT('%',#{ticketNo}),'%')
+			</if>
+			<if test="charge != null">
+				AND s.charge=#{charge,jdbcType=DECIMAL}
+			</if>
+			<if test="operatorFee != null">
+				AND s.operatorFee=#{operatorFee,jdbcType=DECIMAL}
+			</if>
+			<if test="amount != null">
+				AND s.amount=#{amount,jdbcType=DECIMAL}
+			</if>
+			<if test="agentId != null">
+				AND s.agentId=#{agentId,jdbcType=VARCHAR}
+			</if>
+			<if test="remark != null">
+				AND s.remark=#{remark,jdbcType=VARCHAR}
+			</if>
+			<if test="remarkOfAgent != null">
+				AND s.remarkOfAgent=#{remarkOfAgent,jdbcType=VARCHAR}
+			</if>
+			<if test="accRemarkOfOp != null">
+				AND s.accRemarkOfOp=#{accRemarkOfOp,jdbcType=VARCHAR}
+			</if>
+			<if test="agency != null">
+				AND s.agency=#{agency,jdbcType=VARCHAR}
+			</if>
+			<if test="rateOfCurrencyId != null">
+				AND s.rateOfCurrencyId=#{rateOfCurrencyId,jdbcType=VARCHAR}
+			</if>
+			<if test="card != null">
+				AND s.card=#{card,jdbcType=VARCHAR}
+			</if>
+			<if test="userId != null">
+				AND s.userId=#{userId,jdbcType=VARCHAR}
+			</if>
+			<if test="userName != null">
+				AND s.userName LIKE CONCAT(CONCAT('%',#{userName}),'%')
+			</if>
+			<if test="deptId != null">
+				AND za.deptId =#{deptId,jdbcType=VARCHAR}
+			</if>
+			<if test="agentName!=null">
+				AND za.userName LIKE CONCAT(CONCAT('%',#{agentName}),'%')
+			</if>
+			<if test="createDate!= null">
+				AND s.createDate=#{createDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="beginningDate != null">
+				AND s.date <![CDATA[>=]]> #{beginningDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="endingDate != null">
+				AND s.date <![CDATA[<=]]> #{endingDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="time!=null"> 
+				AND DATE_FORMAT(s.date,'%Y-%m')=#{time}
+			</if> 
+			<if test="year!=null"> 
+				AND DATE_FORMAT(s.date,'%Y')=#{year}
+			</if> 
+			<if test="uploadUrl!= null">
+				AND s.uploadUrl=#{uploadUrl,jdbcType=VARCHAR}
+			</if>
+			<if test="flightPnr!= null">
+				AND s.flightPnr=#{flightPnr,jdbcType=VARCHAR}
+			</if>
+			<if test="isDel != null">
+				AND s.isDel=#{isDel,jdbcType=INTEGER}
+			</if>
+			<if test="approveStatus != null">
+				AND s.approveStatus=#{approveStatus,jdbcType=INTEGER}
+			</if>
+			<if test="tempValue01!= null">
+				AND s.tempValue01=#{tempValue01,jdbcType=VARCHAR}
+			</if>
+			<if test="tempValue02!= null">
+				AND s.tempValue02=#{tempValue02,jdbcType=VARCHAR}
+			</if>
+			<if test="tempValue03!= null">
+				AND s.tempValue03=#{tempValue03,jdbcType=VARCHAR}
+			</if>
+			<if test="tempValue04!= null">
+				AND s.tempValue04=#{tempValue04,jdbcType=VARCHAR}
+			</if>
+			<if test="tempValue05!= null">
+				AND s.tempValue05=#{tempValue05,jdbcType=VARCHAR}
+			</if>
+			<if test="tempValue06!= null">
+				AND s.tempValue06=#{tempValue06,jdbcType=VARCHAR}
+			</if>
+			<if test="date != null">
+				AND s.Date = #{date,jdbcType=DATE}
+			</if>
+			<if test="type != null and type==0">
+				GROUP BY za.id ORDER BY d.DeptId
+			</if>
+			<if test="type != null and type==1">
+				GROUP BY s.tempValue01
+			</if>
+			<if test="type != null and type==2">
+				GROUP BY v.name
+			</if>
+	</select>
+	<!-- Optional Tour下单日期统计 -->
+	<select id="queryBookingOptional" resultType="com.chinatour.entity.OptionalExcurition" parameterType="com.chinatour.entity.OptionalExcurition">
+		SELECT 
+			a.Id, 
+			a.Type, 
+			a.name, 
+			SUM(a.TotalPeople)as sum,
+			SUM(a.CommonTourFee)AS CommonTourFee,
+			ROUND(SUM(a.pay),2)AS pay,
+			ROUND(SUM(a.cost),2)AS cost,
+			a.time 
+		FROM(
+			SELECT 
+				x.Id, 
+				x.Type, 
+				x.name, 
+				x.TotalPeople,
+				x.CommonTourFee,
+				ROUND(Sum(IF(p.PayOrCost=1,p.sum,0)),2)AS pay,
+				ROUND(Sum(IF(p.PayOrCost=2,p.sum,0)),2) AS cost,
+				x.time 
+			FROM(
+				SELECT 
+					ox.Id, 
+					ox.Type, 
+					ox.name, 
+					o.TotalPeople,
+					o.CommonTourFee,
+					o.OrderId,
+					DATE_FORMAT(o.CreateTime,'%Y-%m')AS time 
+				FROM 
+					orders o,
+					orders_total tot,
+					dept d,
+					<if test="record.role=='Region'">
+						region_dept_rel rd,
+					</if>
+					<if test="record.role=='Group'">
+						admin_group ag,
+					</if>
+					receivable_info_of_order ro,
+					t_order_receive_item tm,
+					optionalexcursion ox
+				<where> 
+					AND o.OrdersTotalId=tot.OrdersTotalId
+					AND o.DeptId = d.DeptId 
+					AND o.OrderId= ro.OrderId
+					and ro.ReceivableInfoOfOrderId=tm.ReceivableInfoOfOrderId
+					AND tm.OptionalId=ox.Id
+					<if test="record.role=='Region'">
+						AND rd.DeptId=d.DeptId
+					</if>
+					<if test="record.role=='Group'">
+						AND o.UserId=ag.AdminId
+					</if>
+					AND o.State!=5 
+					AND o.State!=6 
+					<if test="record.deptId!=null">
+						AND o.DeptId=#{record.deptId}
+					</if>
+					<if test="record.userId!=null">
+						AND o.UserId=#{record.userId}
+					</if>
+					<if test="record.time!=null"> 
+						AND DATE_FORMAT(o.CreateTime,'%Y-%m')=#{record.time}
+					</if> 
+					<if test="record.departureDate!=null"> 
+						AND DATE_FORMAT(o.CreateTime,'%Y')=#{record.departureDate}
+					</if> 
+					<if test="record.tripDesc!=null">
+						AND tot.WR=#{record.tripDesc}
+					</if>
+					<if test="record.contactor!=null">
+						AND rd.RegionId=#{record.contactor}
+					</if>
+					<if test="record.type!=null">
+						AND ox LIKE CONCAT(CONCAT('%', #{record.type}), '%')
+					</if>
+					GROUP BY o.OrderId 
+				</where>
+				)x  LEFT JOIN pay_cost_records p ON x.OrderId=p.OrderId 
+			GROUP BY x.OrderId
+		) a GROUP BY a.Id ORDER BY sum DESC;
+	</select>
+		<!-- Optional Tour抵达日期统计 -->
+	<select id="queryArrivalOptional" resultType="com.chinatour.entity.OptionalExcurition" parameterType="com.chinatour.entity.OptionalExcurition">
+		SELECT 
+			a.Id, 
+			a.Type, 
+			a.name, 
+			SUM(a.TotalPeople)as sum,
+			SUM(a.CommonTourFee)AS CommonTourFee,
+			ROUND(SUM(a.pay),2)AS pay,
+			ROUND(SUM(a.cost),2)AS cost,
+			a.time 
+		FROM(
+			SELECT 
+				x.Id, 
+				x.Type, 
+				x.name, 
+				x.TotalPeople,
+				x.CommonTourFee,
+				ROUND(Sum(IF(p.PayOrCost=1,p.sum,0)),2)AS pay,
+				ROUND(Sum(IF(p.PayOrCost=2,p.sum,0)),2) AS cost,
+				x.time 
+			FROM(
+				SELECT 
+					ox.Id, 
+					ox.Type, 
+					ox.name, 
+					o.TotalPeople,
+					o.CommonTourFee,
+					o.OrderId,
+					DATE_FORMAT(o.CreateTime,'%Y-%m')AS time 
+				FROM 
+					orders o,
+					orders_total tot,
+					dept d,
+					<if test="record.role=='Region'">
+						region_dept_rel rd,
+					</if>
+					<if test="record.role=='Group'">
+						admin_group ag,
+					</if>
+					tour_info_for_order ot,
+					receivable_info_of_order ro,
+					t_order_receive_item tm,
+					optionalexcursion ox
+					
+				<where> 
+					AND o.orderId=ot.OrderId
+					AND o.OrdersTotalId=tot.OrdersTotalId
+					AND o.DeptId = d.DeptId 
+					AND o.OrderId= ro.OrderId
+					and ro.ReceivableInfoOfOrderId=tm.ReceivableInfoOfOrderId
+					AND tm.OptionalId=ox.Id
+					<if test="record.role=='Region'">
+						AND rd.DeptId=d.DeptId
+					</if>
+					<if test="record.role=='Group'">
+						AND o.UserId=ag.AdminId
+					</if>
+					AND o.State!=5 
+					AND o.State!=6 
+					<if test="record.deptId!=null">
+						AND o.DeptId=#{record.deptId}
+					</if>
+					<if test="record.userId!=null">
+						AND o.UserId=#{record.userId}
+					</if>
+					<if test="record.time!=null"> 
+						AND DATE_FORMAT(ot.ScheduleOfArriveTime,'%Y-%m')=#{record.time}
+					</if> 
+					<if test="record.departureDate!=null"> 
+						AND DATE_FORMAT(ot.ScheduleOfArriveTime,'%Y')=#{record.departureDate}
+					</if> 
+					<if test="record.tripDesc!=null">
+						AND tot.WR=#{record.tripDesc}
+					</if>
+					<if test="record.contactor!=null">
+						AND rd.RegionId=#{record.contactor}
+					</if>
+					<if test="record.type!=null">
+						AND ox LIKE CONCAT(CONCAT('%', #{record.type}), '%')
+					</if>
+					GROUP BY o.OrderId 
+				</where>
+				)x  LEFT JOIN pay_cost_records p ON x.OrderId=p.OrderId 
+			GROUP BY x.OrderId
+		) a GROUP BY a.Id ORDER BY sum DESC;
+	</select>
+	<select id="queryStatisticalReport" resultType="com.chinatour.entity.Statistical" parameterType="com.chinatour.entity.Statistical">
+		SELECT x.DeptName,x.Agent, x.UserId, x.deptId,x.Source, x.TotalPeople AS sum, x.date,x.time, x.OrderId, x.PeerId,v.`Name` AS venderName
+		FROM( 
+			SELECT d.DeptName, o.UserName As Agent, o.UserId, u.deptId,t.ScheduleLineCode AS Source, SUM(o.TotalPeople)AS TotalPeople, DATE_FORMAT(o.CreateTime,'%Y') AS date,
+				DATE_FORMAT(o.CreateTime,'%m') AS time, o.OrderId, o.PeerId 
+			FROM orders o,tour_info_for_order t, zs_admin u, dept d 
+			<where> 
+				AND u.deptId=d.DeptId 
+				AND o.UserId=u.id
+				AND o.OrderId=t.OrderId
+				<if test="record.deptId!=null">
+					AND u.DeptId=#{record.deptId}
+				</if>
+				<if test="record.agent!=null">
+					AND o.UserName=#{record.agent}
+				</if>
+				<if test="record.bDate!=null"> 
+					AND DATE_FORMAT(o.CreateTime,'%m-%d') <![CDATA[>=]]> #{record.bDate}
+				</if> 
+				<if test="record.eDate!=null"> 
+					AND DATE_FORMAT(o.CreateTime,'%m-%d') <![CDATA[<=]]> #{record.eDate}
+				</if> 
+				<if test="record.time!=null"> 
+					AND DATE_FORMAT(o.CreateTime,'%Y') <![CDATA[>=]]> #{record.time}
+				</if> 
+				<if test="record.date!=null"> 
+					AND DATE_FORMAT(o.CreateTime,'%Y') <![CDATA[<=]]> #{record.date}
+				</if> 
+				<if test="record.venderName!=null">
+					AND o.PeerId=#{record.venderName}
+				</if>
+				<if test="record.Brand!=null">
+					AND o.Brand=#{record.Brand}
+				</if>
+				<if test="record.orderType!=null">
+					<choose>
+					    <when test="record.orderType==2">
+					        AND o.IsSelfOrganize!=2  <!-- 团订单类型标识 -->
+					    </when>
+					    <otherwise>
+					        AND o.IsSelfOrganize=2  <!-- 非团订单类型标识-->
+					    </otherwise>
+					</choose>
+				</if>
+				<if test="record.orderTourType!=null">
+					<choose>
+					     <when test="record.orderTourType==0">
+					        AND o.PeerId!=""  <!-- 同行订单类型标识 -->
+					    </when>
+					     <when test="record.orderTourType==1">
+					        AND o.PeerId=""  <!-- 零售订单类型标识 -->
+					    </when>
+					</choose>
+				</if>
+				<if test="record.Source!=null">
+					AND t.ScheduleLineCode LIKE CONCAT(CONCAT('%', #{record.Source}), '%')
+				</if>
+				GROUP BY u.deptId,DATE_FORMAT(o.CreateTime,'%Y-%m')
+			</where>
+		)x  LEFT JOIN vender v ON v.VenderId=x.PeerId
+		ORDER BY x.date asc,x.DeptName ASC,x.time asc;
+	</select>
+	<select id="queryStatisticalReportArrival" resultType="com.chinatour.entity.Statistical" parameterType="com.chinatour.entity.Statistical">
+		SELECT x.DeptName,x.Agent, x.UserId, x.deptId,x.Source, x.TotalPeople AS sum, x.date,x.time, x.OrderId, x.PeerId,v.`Name` AS venderName
+		FROM( 
+			SELECT d.DeptName, o.UserName As Agent, o.UserId, u.deptId,t.ScheduleLineCode AS Source, SUM(o.TotalPeople)AS TotalPeople, DATE_FORMAT(t.ScheduleOfArriveTime,'%Y') AS date,
+				DATE_FORMAT(t.ScheduleOfArriveTime,'%m') AS time, o.OrderId, o.PeerId 
+			FROM orders o,tour_info_for_order t, zs_admin u, dept d 
+			<where> 
+				AND u.deptId=d.DeptId 
+				AND o.UserId=u.id
+				AND o.OrderId=t.OrderId
+				<if test="record.deptId!=null">
+					AND u.DeptId=#{record.deptId}
+				</if>
+				<if test="record.agent!=null">
+					AND o.UserName=#{record.agent}
+				</if>
+				<if test="record.bDate!=null"> 
+					AND DATE_FORMAT(t.ScheduleOfArriveTime,'%m-%d') <![CDATA[>=]]>#{record.bDate}
+				</if> 
+				<if test="record.eDate!=null"> 
+					AND DATE_FORMAT(t.ScheduleOfArriveTime,'%m-%d') <![CDATA[<=]]> #{record.eDate}
+				</if> 
+				<if test="record.time!=null"> 
+					AND DATE_FORMAT(t.ScheduleOfArriveTime,'%Y') <![CDATA[>=]]> #{record.time}
+				</if> 
+				<if test="record.date!=null"> 
+					AND DATE_FORMAT(t.ScheduleOfArriveTime,'%Y') <![CDATA[<=]]> #{record.date}
+				</if> 
+				<if test="record.venderName!=null">
+					AND o.PeerId=#{record.venderName}
+				</if>
+				<if test="record.Brand!=null">
+					AND o.Brand=#{record.Brand}
+				</if>
+				<if test="record.orderType!=null">
+					<choose>
+					    <when test="record.orderType==2">
+					        AND o.IsSelfOrganize!=2  <!-- 团订单类型标识 -->
+					    </when>
+					    <otherwise>
+					        AND o.IsSelfOrganize=2  <!-- 非团订单类型标识-->
+					    </otherwise>
+					</choose>
+				</if>
+				<if test="record.orderTourType!=null">
+					<choose>
+					     <when test="record.orderTourType==0">
+					        AND o.PeerId!=""  <!-- 同行订单类型标识 -->
+					    </when>
+					     <when test="record.orderTourType==1">
+					        AND o.PeerId=""  <!-- 零售订单类型标识 -->
+					    </when>
+					</choose>
+				</if>
+				<if test="record.Source!=null">
+					AND t.ScheduleLineCode LIKE CONCAT(CONCAT('%', #{record.Source}), '%')
+				</if>
+				GROUP BY u.deptId,DATE_FORMAT(t.ScheduleOfArriveTime,'%Y-%m')
+			</where>
+		)x  LEFT JOIN vender v ON v.VenderId=x.PeerId
+		ORDER BY x.date asc,x.DeptName ASC,x.time asc;
+	</select>
+	<select id="queryStatisticalReportDept" resultType="com.chinatour.entity.Dept" parameterType="com.chinatour.entity.Dept">
+		SELECT d.DeptName, d.deptId
+		FROM orders o,tour_info_for_order t, zs_admin u, dept d 
+		<where> 
+			AND u.deptId=d.DeptId 
+			AND o.UserId=u.id
+			AND o.OrderId=t.OrderId
+			<if test="record.deptId!=null">
+				AND u.DeptId=#{record.deptId}
+			</if>
+			<if test="record.agent!=null">
+				AND o.UserName=#{record.agent}
+			</if>
+			<if test="record.isSelfOrganize!=null">
+				<choose>
+				    <when test="record.isSelfOrganize==0">
+				        AND DATE_FORMAT(o.CreateTime,'%Y') <![CDATA[>=]]> #{record.time}
+				        AND DATE_FORMAT(o.CreateTime,'%Y') <![CDATA[<=]]> #{record.date}
+				        <if test="record.bDate!=null"> 
+							AND DATE_FORMAT(o.CreateTime,'%m-%d') <![CDATA[>=]]> #{record.bDate}
+						</if> 
+						<if test="record.eDate!=null"> 
+							AND DATE_FORMAT(o.CreateTime,'%m-%d') <![CDATA[<=]]> #{record.eDate}
+						</if> 
+				    </when>
+				    <otherwise>
+				        AND DATE_FORMAT(t.ScheduleOfArriveTime,'%Y') <![CDATA[>=]]> #{record.time}
+				        AND DATE_FORMAT(t.ScheduleOfArriveTime,'%Y') <![CDATA[<=]]> #{record.date}
+				        <if test="record.bDate!=null"> 
+							AND DATE_FORMAT(t.ScheduleOfArriveTime,'%m-%d') <![CDATA[>=]]> #{record.bDate}
+						</if> 
+						<if test="record.eDate!=null"> 
+							AND DATE_FORMAT(t.ScheduleOfArriveTime,'%m-%d') <![CDATA[<=]]> #{record.eDate}
+						</if> 
+				    </otherwise>
+				</choose>
+			</if>
+			<if test="record.venderName!=null">
+				AND o.PeerId=#{record.venderName}
+			</if>
+			<if test="record.Brand!=null">
+				AND o.Brand=#{record.Brand}
+			</if>
+			<if test="record.orderType!=null">
+				<choose>
+				    <when test="record.orderType==2">
+				        AND o.IsSelfOrganize!=2  <!-- 团订单类型标识 -->
+				    </when>
+				    <otherwise>
+				        AND o.IsSelfOrganize=2  <!-- 非团订单类型标识-->
+				    </otherwise>
+				</choose>
+			</if>
+			<if test="record.orderTourType!=null">
+				<choose>
+				     <when test="record.orderTourType==0">
+				        AND o.PeerId!=""  <!-- 同行订单类型标识 -->
+				    </when>
+				     <when test="record.orderTourType==1">
+				        AND o.PeerId=""  <!-- 零售订单类型标识 -->
+				    </when>
+				</choose>
+			</if>
+			<if test="record.Source!=null">
+				AND t.ScheduleLineCode LIKE CONCAT(CONCAT('%', #{record.Source}), '%')
+			</if>
+			GROUP BY u.deptId ORDER BY d.DeptName
+		</where>
+	</select>
+</mapper>

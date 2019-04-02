@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.ShareSpaceMapper">
+
+	<sql id="Base_Column_List">
+		ShareSpaceId,ShareName,ShareUrl,ShareTypeId,UserId,CreateDate,ModifyDate,IsDel,ServerIp
+	</sql>
+	<resultMap type="com.chinatour.entity.ShareSpace" id="BaseResultMap">
+		<id property="shareSpaceId" column="ShareSpaceId" jdbcType="VARCHAR" />
+		<result property="shareName" column="ShareName" jdbcType="VARCHAR" />
+		<result property="shareUrl" column="ShareUrl" jdbcType="VARCHAR" />
+		<result property="shareTypeId" column="ShareTypeId" jdbcType="VARCHAR" />
+		<result property="userId" column="UserId" jdbcType="VARCHAR" />
+		<result property="createDate" column="CreateDate" jdbcType="TIMESTAMP" />
+		<result property="modifyDate" column="ModifyDate" jdbcType="TIMESTAMP" />
+		<result property="isDel" column="IsDel" jdbcType="INTEGER" />
+		<result property="serverIp" column="ServerIp" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
+	    select
+		<include refid="Base_Column_List" />
+		from share_space
+		where
+		ShareSpaceId = #{shareSpaceId,jdbcType=VARCHAR}
+	</select>
+
+	<select id="findAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from share_space
+	</select>
+	
+	<update id="update" parameterType="com.chinatour.entity.ShareSpace">
+		UPDATE share_space
+			<set>
+			    <if test="shareSpaceId != null">
+                    ShareSpaceId = #{shareSpaceId} ,
+                </if>
+                <if test="shareName != null">
+                    ShareName = #{shareName} ,
+                </if>
+                <if test="shareUrl != null">
+                    ShareUrl = #{shareUrl} ,
+                </if>
+                <if test="shareTypeId != null">
+                    ShareTypeId = #{shareTypeId} ,
+                </if>
+                <if test="userId != null">
+                    UserId = #{userId} ,
+                </if>
+                <if test="modifyDate != null">
+                    ModifyDate = #{modifyDate} ,
+                </if>
+                <if test="isDel !=null">
+	                IsDel = #{isDel},
+                </if>
+                <if test="serverIp !=null">
+	                ServerIp = #{serverIp} 
+                </if>
+			</set>
+		WHERE 
+            ShareSpaceId = #{shareSpaceId}
+	</update> 
+	
+	 <insert id="save" parameterType="com.chinatour.entity.ShareSpace">
+	     INSERT INTO share_space
+	     	<trim prefix="(" suffix=")" suffixOverrides=",">
+	     		 <if test="shareSpaceId != null">
+                    ShareSpaceId ,
+                </if>
+                <if test="shareName != null">
+                    ShareName ,
+                </if>
+                <if test="shareUrl != null">
+                    ShareUrl ,
+                </if>
+                <if test="shareTypeId != null">
+                    ShareTypeId ,
+                </if>
+                <if test="userId != null">
+                    UserId ,
+                </if>
+                <if test="modifyDate != null">
+                    ModifyDate ,
+                </if>
+                <if test="isDel !=null">
+	                IsDel ,
+                </if>
+				<if test="serverIp !=null">
+				 	ServerIp
+				</if>
+	     	</trim> 
+	     		
+	     	<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="shareSpaceId != null">
+				#{shareSpaceId,jdbcType=VARCHAR},
+			</if>
+			<if test="shareName != null">
+				#{shareName,jdbcType=VARCHAR},
+			</if>
+			<if test="shareUrl != null">
+                #{shareUrl,jdbcType=VARCHAR} ,
+            </if>
+            <if test="shareTypeId != null">
+                #{shareTypeId,jdbcType=VARCHAR} ,
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=VARCHAR} ,
+            </if>
+            <if test="modifyDate != null">
+                #{modifyDate,jdbcType=TIMESTAMP} ,
+            </if>
+			<if test="isDel != null">
+				#{isDel,jdbcType=INTEGER},
+			</if>
+			<if test="serverIp != null">
+				#{serverIp,jdbcType=INTEGER}
+			</if>
+		</trim>
+	</insert>
+	
+	 <select id="find" resultMap="BaseResultMap" parameterType="com.chinatour.entity.ShareSpace">
+        select
+        <include refid="Base_Column_List"/>
+        from share_space
+        <where>
+            <trim suffixOverrides="AND">
+                <if test="shareSpaceId != null">
+                    ShareSpaceId = #{shareSpaceId,jdbcType=VARCHAR} AND
+                </if>
+                <if test="shareName != null">
+                    ShareName = #{shareName,jdbcType=VARCHAR} AND
+                </if>
+                <if test="shareUrl != null">
+                    ShareUrl = #{shareUrl,jdbcType=VARCHAR} AND
+                </if>
+                <if test="shareTypeId != null">
+                    ShareTypeId = #{shareTypeId,jdbcType=VARCHAR} AND
+                </if>
+                <if test="userId != null">
+                    UserId = #{userId,jdbcType=VARCHAR} AND
+                </if>
+                <if test="modifyDate != null">
+                    ModifyDate = #{modifyDate,jdbcType=TIMESTAMP} AND
+                </if>
+                <if test="isDel !=null">
+	                IsDel = #{isDel,jdbcType=INTEGER} 
+                </if>
+                 <if test="serverIp !=null">
+	                ServerIp = #{serverIp,jdbcType=INTEGER} 
+                </if>
+            </trim>
+        </where>
+    </select>
+	
+	 <sql id="findForPage_sql">
+		select
+		<include refid="Base_Column_List" />
+		from share_space
+		<where>
+			<if test="record.shareTypeId != null">
+				ShareSpaceId = #{record.shareSpaceId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.shareName != null">
+				AND ShareName = #{record.shareName,jdbcType=VARCHAR}
+			</if>
+			<if test="record.shareUrl != null">
+                AND ShareUrl = #{record.shareUrl,jdbcType=VARCHAR} ,
+            </if>
+            <if test="record.shareTypeId != null">
+                AND ShareTypeId = #{record.shareTypeId,jdbcType=VARCHAR} ,
+            </if>
+            <if test="record.userId != null">
+                AND UserId = #{record.userId,jdbcType=VARCHAR} ,
+            </if>
+            <if test="record.modifyDate != null">
+                AND ModifyDate = #{record.modifyDate,jdbcType=TIMESTAMP} ,
+            </if>
+			<if test="record.isDel != null">
+				AND IsDel = #{record.isDel,jdbcType=INTEGER}
+			</if>
+		</where>
+	</sql>
+	
+	 <select id="findForPage" resultMap="BaseResultMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findForPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+</mapper>

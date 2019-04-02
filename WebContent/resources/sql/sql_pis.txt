@@ -1,0 +1,266 @@
+/*订单确认单表*/
+DROP TABLE IF EXISTS `itinerary_info`;
+CREATE TABLE `itinerary_info` (
+  `ItineraryInfoId` varchar(36) NOT NULL,
+  `TourName` varchar(255) NOT NULL DEFAULT '',
+  `TourCode` varchar(120) NOT NULL DEFAULT '',
+  `ItineraryDescribe` longtext,
+  `HotelInfo` text,
+  `Contact` longtext,
+  `IsDel` int(5) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ItineraryInfoId`)
+) ENGINE=MyISAM AUTO_INCREMENT=667 DEFAULT CHARSET=utf8;
+
+/*部门表*/
+DROP TABLE IF EXISTS `dept`;
+CREATE TABLE `dept` (
+  `DeptId` varchar(36) NOT NULL,
+  `DeptName` varchar(64) NOT NULL DEFAULT '',
+  `Tel` varchar(64) NOT NULL DEFAULT '',
+  `Mobile` varchar(64) NOT NULL DEFAULT '',
+  `Email` varchar(128) NOT NULL DEFAULT '',
+  `Address` varchar(600) NOT NULL DEFAULT '',
+  `Fax` varchar(64) NOT NULL DEFAULT '',
+  `ZipCode` varchar(6) NOT NULL DEFAULT '',
+  `CreateDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `CurrencyTypeId` varchar(36) NOT NULL DEFAULT '',
+  `CountryId` varchar(36) NOT NULL DEFAULT '',
+  `CityId` varchar(36) NOT NULL DEFAULT '',
+  PRIMARY KEY (`DeptId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+ 
+ /*地接表*/
+DROP TABLE IF EXISTS `supplier`;
+CREATE TABLE `supplier` (
+  `SupplierId` varchar(36) NOT NULL,
+  `SupplierName` varchar(32) NOT NULL DEFAULT '',
+  `SupplierShortName` varchar(32) NOT NULL DEFAULT '',
+  `Tel` varchar(64) NOT NULL DEFAULT '',
+  `Fax` varchar(64) NOT NULL DEFAULT '',
+  `ContactPerson` varchar(32) NOT NULL DEFAULT '',
+  `Mobile` varchar(64) NOT NULL DEFAULT '',
+  `Address` varchar(128) NOT NULL DEFAULT '',
+  `ZipCode` varchar(16) NOT NULL DEFAULT '',
+  `Email` varchar(128) NOT NULL DEFAULT '',
+  `CityId` varchar(36) NOT NULL,
+  `Province` varchar(32) NOT NULL DEFAULT '',
+  `City` varchar(64) NOT NULL DEFAULT '',
+  `CreateDate` timestamp NOT NULL default CURRENT_TIMESTAMP,
+  `ModifyDate` datetime,
+  `IsDel` int(2) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`SupplierId`),
+  KEY `supplier_city_Id` (`CityId`),
+  CONSTRAINT `supplier_city_Id` FOREIGN KEY (`CityId`) REFERENCES `city` (`CityId`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+/*订单子表*/
+DROP TABLE IF EXISTS `orders`;
+CREATE TABLE `orders` (
+  `OrderId` varchar(36) NOT NULL,
+  `OrderNo` varchar(32) NOT NULL DEFAULT '',
+  `OrderNoIn` int(32) NOT NULL DEFAULT '0',
+  `TotalPeople` int(16) NOT NULL DEFAULT '0',
+  `CommonTourFee` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `Tax` tinyint(2) NOT NULL DEFAULT '0',
+  `State` int(8) NOT NULL DEFAULT '0',
+  `UserId` varchar(36) NOT NULL,
+  `TourTypeId` varchar(36) NOT NULL DEFAULT '',
+  `TourCode` varchar(150) NOT NULL DEFAULT '',
+  `TourId` varchar(36) NOT NULL DEFAULT '',
+  `CreateTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `PeerId` varchar(36) NOT NULL DEFAULT '',
+  `OrderType` tinyint(2) NOT NULL DEFAULT '0',
+  `ArriveDate` datetime,
+  `FlightPnr` varchar(128) NOT NULL DEFAULT '',
+  `NonGroupType` varchar(16) NOT NULL DEFAULT '',
+  `PeerUserId` varchar(36) NOT NULL DEFAULT '',
+  `NoticeState` int(2) NOT NULL DEFAULT '0',
+  `PayState` tinyint(2) NOT NULL DEFAULT '0',
+  `WarnState` tinyint(2) NOT NULL DEFAULT '0',
+  `PeerState` tinyint(2) NOT NULL DEFAULT '0',
+  `ReviewState` tinyint(2) NOT NULL DEFAULT '0',
+  `CostState` tinyint(2) NOT NULL DEFAULT '0',
+  `Contact` varchar(250) NOT NULL DEFAULT '',
+  `ModifyDate` datetime,
+  `OrdersTotalId` varchar(36) NOT NULL,
+  `DeptId` varchar(36) NOT NULL,
+  `OrderTourType` varchar(16) NOT NULL DEFAULT '',
+  PRIMARY KEY (`OrderId`),
+  KEY `orders_admin_id` (`UserId`),
+  KEY `orders_dept_deptId` (`DeptId`),
+  KEY `orders_orders_total_orderTotalId` (`OrdersTotalId`),
+  CONSTRAINT `orders_admin_id` FOREIGN KEY (`UserId`) REFERENCES `zs_admin` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `orders_dept_deptId` FOREIGN KEY (`DeptId`) REFERENCES `dept` (`DeptId`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `orders_orders_total_orderTotalId` FOREIGN KEY (`OrdersTotalId`) REFERENCES `orders_total` (`OrdersTotalId`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*客人信息表*/
+DROP TABLE IF EXISTS `customer`;
+CREATE TABLE `customer` (
+  `CustomerId` varchar(36) NOT NULL,
+  `CustomerCode` varchar(36) NOT NULL DEFAULT '',
+  `CreateDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `ModifyDate` datetime,
+  `LastName` varchar(32) NOT NULL DEFAULT '',
+  `FirstName` varchar(32) NOT NULL DEFAULT '',
+  `MiddleName` varchar(78) NOT NULL DEFAULT '',
+  `DateOfBirth` date,
+  `Sex` tinyint(2) NOT NULL DEFAULT '0',
+  `MemoOfCustomer` varchar(32) NOT NULL DEFAULT '',
+  `NationalityOfPassport` varchar(32) NOT NULL DEFAULT '',
+  `PassportNo` varchar(64) NOT NULL DEFAULT '',
+  `ExpireDateOfPassport` date,
+  `StreetAddress` varchar(128) NOT NULL DEFAULT '',
+  `City` varchar(78) NOT NULL DEFAULT '',
+  `Tel` varchar(78) NOT NULL DEFAULT '',
+  `Mobile` varchar(45) NOT NULL DEFAULT '',
+  `Email` varchar(128) NOT NULL DEFAULT '',
+  `Zip` varchar(15) NOT NULL DEFAULT '',
+  `OtherInfo` varchar(600) NOT NULL DEFAULT '',
+  `LanguageId` varchar(36) NOT NULL DEFAULT '',
+  `StateId` varchar(36) NOT NULL DEFAULT '',
+  `CountryId` varchar(36) NOT NULL DEFAULT '',
+  `CustomerSource` tinyint(2) NOT NULL DEFAULT '0',
+  `IsDel` tinyint(2) NOT NULL DEFAULT '0',
+  `Advertised` tinyint(2) NOT NULL DEFAULT '0',
+  `Planticket` varchar(5) NOT NULL DEFAULT '',
+  `PayHistoryInfo` varchar(600) NOT NULL DEFAULT '',
+  PRIMARY KEY (`CustomerId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+/*团信息表*/
+DROP TABLE IF EXISTS `tour_info_for_order`;
+CREATE TABLE `tour_info_for_order` (
+  `TourInfoForOrderId` varchar(36) NOT NULL,
+  `ScheduleOfArriveTime` datetime,
+  `GroupLineId` varchar(36) NOT NULL DEFAULT '',
+  `TourType` tinyint(2) NOT NULL DEFAULT '0',
+  `ScheduleLineCode` varchar(150) NOT NULL DEFAULT '',
+  `LineName` varchar(255) NOT NULL DEFAULT '',
+  `SpecialRequirements` text,
+  `TourInfo` text,
+  `PersonalRoute` text,
+  `OrderId` varchar(36) NOT NULL,
+  `DepartureDate` date,
+  `DayNum` tinyint(2) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`TourInfoForOrderId`),
+  KEY `tourInfo_of_order` (`OrderId`),
+  CONSTRAINT `tourInfo_of_order` FOREIGN KEY (`OrderId`) REFERENCES `orders` (`OrderId`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*客人-订单中间表*/
+DROP TABLE IF EXISTS `customer_order_rel`;
+CREATE TABLE `customer_order_rel` (
+  `CustomerOrderRelId` varchar(36) NOT NULL,
+  `CustomerId` varchar(36) NOT NULL,
+  `OrderId` varchar(36) NOT NULL DEFAULT '',
+  `ContactFlag` int(1) NOT NULL DEFAULT '0',
+  `CustomerOrderNo` int(15) NOT NULL DEFAULT '0',
+  `CustomerTourNo` int(15) NOT NULL DEFAULT '0',
+  `SameComeIn` varchar(80) NOT NULL DEFAULT '',
+  `RoomNumber` int(3) NOT NULL DEFAULT '0',
+  `GuestRoomType` varchar(20) NOT NULL DEFAULT '',
+  `RoomIsFull` int(2) NOT NULL DEFAULT '0',
+  `IsDel` int(2) NOT NULL DEFAULT '0',
+  `OrdersTotalId` varchar(36) NOT NULL,
+  PRIMARY KEY (`CustomerOrderRelId`),
+  KEY `customer_rel_orderId` (`OrderId`),
+  KEY `customer_rel_customerId` (`CustomerId`),
+  KEY `customer_rel_orders_total_ordersTotal` (`OrdersTotalId`),
+  CONSTRAINT `customer_rel_customerId` FOREIGN KEY (`CustomerId`) REFERENCES `customer` (`CustomerId`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `customer_rel_orders_total_ordersTotal` FOREIGN KEY (`OrdersTotalId`) REFERENCES `orders_total` (`OrdersTotalId`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+/*团，非团收费总表*/
+DROP TABLE IF EXISTS `receivable_info_of_order`;
+CREATE TABLE `receivable_info_of_order` (
+  `ReceivableInfoOfOrderId` varchar(36) NOT NULL,
+  `TotalCommonTourFee` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `TotalFeeOfOthers` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `SumFee` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `OrderId` varchar(36) NOT NULL,
+  `PeerUserCost` decimal(10,2) NOT NULL DEFAULT '0.00',
+  PRIMARY KEY  (`ReceivableInfoOfOrderId`),
+  KEY `receivable_order_Id` (`OrderId`),
+  CONSTRAINT `receivable_order_Id` FOREIGN KEY (`OrderId`) REFERENCES `orders` (`OrderId`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+/*非团信息明细表*/
+DROP TABLE IF EXISTS `s_order_receive_item`;
+CREATE TABLE `s_order_receive_item` (
+  `ItemId` varchar(36) NOT NULL,
+  `ReceivableInfoOfOrderId` varchar(36) NOT NULL,
+  `Type` tinyint(2) NOT NULL default '0',
+  `ItemFee` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `ItemFeeNum` tinyint(4) NOT NULL default '0',
+  `Remark` text,
+  `Num` int(4) NOT NULL default '0',
+  PRIMARY KEY  (`ItemId`),
+  KEY `item_s_receive_orderId` (`ReceivableInfoOfOrderId`),
+  CONSTRAINT `item_s_receive_orderId` FOREIGN KEY (`ReceivableInfoOfOrderId`) REFERENCES `receivable_info_of_order` (`ReceivableInfoOfOrderId`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+/*团信息明细表*/
+DROP TABLE IF EXISTS `t_order_receive_item`;
+CREATE TABLE `t_order_receive_item` (
+  `ItemId` varchar(36) NOT NULL,
+  `ReceivableInfoOfOrderId` varchar(36) NOT NULL,
+  `Type` tinyint(2) NOT NULL default '0',
+  `ItemFee` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `ItemFeeNum` tinyint(2) NOT NULL default '0',
+  `Remark` text,
+  `Num` int(4) NOT NULL default '0',
+  PRIMARY KEY  (`ItemId`),
+  KEY `item_t_receive_orderId` (`ReceivableInfoOfOrderId`),
+  CONSTRAINT `item_t_receive_orderId` FOREIGN KEY (`ReceivableInfoOfOrderId`) REFERENCES `receivable_info_of_order` (`ReceivableInfoOfOrderId`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+/*航班表*/
+DROP TABLE IF EXISTS `customer_flight`;
+CREATE TABLE `customer_flight` (
+  `CustomerFlightId` varchar(36) NOT NULL,
+  `FlightNumber` varchar(45) NOT NULL default '',
+  `FlightCode` varchar(45) NOT NULL default '',
+  `ArriveTime` varchar(20) NOT NULL DEFAULT '',
+  `ArriveDate` date DEFAULT NULL,
+  `IfPickUp` int(2) NOT NULL default '0',
+  `IfSendUp` int(2) NOT NULL default '0',
+  `OutOrEnter` int(2) NOT NULL default '0',
+  `CustomerOrderRelId` varchar(36) NOT NULL,
+  `IsDel` int(5) NOT NULL default '0',
+  PRIMARY KEY  (`CustomerFlightId`),
+  KEY `customer_fli_relId` (`CustomerOrderRelId`),
+  CONSTRAINT `customer_fli_relId` FOREIGN KEY (`CustomerOrderRelId`) REFERENCES `customer_order_rel` (`CustomerOrderRelId`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+/*订单修改日志表*/
+DROP TABLE IF EXISTS `order_remark`;
+CREATE TABLE `order_remark` (
+  `OrderRemarksId` varchar(36) NOT NULL,
+  `ModifyDate` datetime,
+  `UpdateRemark` text,
+  `OrderId` varchar(36) NOT NULL,
+  PRIMARY KEY  (`OrderRemarksId`),
+  KEY `order_remark_Id` (`OrderId`),
+  CONSTRAINT `order_remark_Id` FOREIGN KEY (`OrderId`) REFERENCES `orders` (`OrderId`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+
+
+
+ 
+	

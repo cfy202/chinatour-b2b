@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.SupplierOfOrderMapper">
+	<resultMap id="BaseResultMap" type="com.chinatour.entity.SupplierOfOrder">
+		<id column="SupplierOfOrderId" property="supplierOfOrderId"
+			jdbcType="VARCHAR" />
+		<result column="Sum" property="sum" jdbcType="DECIMAL" />
+		<result column="OrderId" property="orderId" jdbcType="VARCHAR" />
+		<result column="SupplierOfAgentId" property="supplierOfAgentId"
+			jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		SupplierOfOrderId, `Sum`, OrderId, SupplierOfAgentId
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from supplieroforder
+		where SupplierOfOrderId =
+		#{supplieroforderid,jdbcType=VARCHAR}
+	</select>
+	<delete id="removeById" parameterType="java.lang.String">
+		delete from
+		supplieroforder
+		where SupplierOfOrderId =
+		#{supplierOfOrderId,jdbcType=VARCHAR}
+	</delete>
+	
+	<insert id="save" parameterType="com.chinatour.entity.SupplierOfOrder">
+		insert into supplieroforder
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="supplierOfOrderId != null">
+				SupplierOfOrderId,
+			</if>
+			<if test="sum != null">
+				`Sum`,
+			</if>
+			<if test="orderId != null">
+				OrderId,
+			</if>
+			<if test="supplierOfAgentId != null">
+				SupplierOfAgentId,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="supplierOfOrderId != null">
+				#{supplierOfOrderId,jdbcType=VARCHAR},
+			</if>
+			<if test="sum != null">
+				#{sum,jdbcType=DECIMAL},
+			</if>
+			<if test="orderId != null">
+				#{orderId,jdbcType=VARCHAR},
+			</if>
+			<if test="supplierOfAgentId != null">
+				#{supplierOfAgentId,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	
+	<insert id="batchSave" parameterType="java.util.List">
+		INSERT INTO supplieroforder
+			(<include refid="Base_Column_List"/>)
+		values 
+			<foreach collection="list" item="item" index="index" separator="," >
+				(
+				#{item.supplierOfOrderId,jdbcType=VARCHAR},
+				#{item.sum,jdbcType=DECIMAL},
+				#{item.orderId,jdbcType=VARCHAR},
+				#{item.supplierOfAgentId,jdbcType=VARCHAR}
+				)
+			</foreach>
+	</insert>
+	
+	<update id="update" parameterType="com.chinatour.entity.SupplierOfOrder">
+		update supplieroforder
+		<set>
+			<if test="sum != null">
+				`Sum` = #{sum,jdbcType=DECIMAL},
+			</if>
+			<if test="orderId != null">
+				OrderId = #{orderId,jdbcType=VARCHAR},
+			</if>
+			<if test="supplierOfAgentId != null">
+				SupplierOfAgentId =
+				#{supplierOfAgentId,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where SupplierOfOrderId = #{supplierOfOrderId,jdbcType=VARCHAR}
+	</update>
+	<select id="find" resultMap="BaseResultMap" parameterType="com.chinatour.entity.SupplierOfOrder">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM supplieroforder
+		<where>
+			<if test="supplierOfOrderId != null">
+				AND SupplierOfOrderId=#{supplierOfOrderId,jdbcType=VARCHAR}
+			</if>
+			<if test="sum != null">
+				AND Sum=#{sum,jdbcType=DECIMAL}
+			</if>
+			<if test="orderId != null">
+				AND OrderId=#{orderId,jdbcType=VARCHAR}
+			</if>
+			<if test="supplierOfAgentId != null">
+				AND SupplierOfAgentId=#{supplierOfAgentId,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+</mapper>

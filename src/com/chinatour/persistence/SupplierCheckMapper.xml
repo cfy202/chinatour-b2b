@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.SupplierCheckMapper">
+	<resultMap id="BaseResultMap" type="com.chinatour.entity.SupplierCheck">
+		<id column="SupplierCheckId" property="supplierCheckId" jdbcType="VARCHAR" />
+		<result column="CheckOfAgent" property="checkOfAgent" jdbcType="TINYINT" />
+		<result column="RemarkOfAgent" property="remarkOfAgent"
+			jdbcType="VARCHAR" />
+		<result column="TotalPeople" property="totalPeople" jdbcType="TINYINT" />
+		<result column="UserIdOfAgent" property="userIdOfAgent"
+			jdbcType="VARCHAR" />
+		<result column="SupplierPriceId" property="supplierPriceId"
+			jdbcType="VARCHAR" />
+		<result column="CustomerNos" property="customerNos" jdbcType="VARCHAR" />
+		<result column="RateOfCurrencyId" property="rateOfCurrencyId"
+			jdbcType="VARCHAR" />
+		<result column="ToRateOfCurrencyId" property="toRateOfCurrencyId"
+			jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap id="ResulUserInfotMap" type="com.chinatour.entity.SupplierCheck">
+		<id column="SupplierCheckId" property="supplierCheckId" jdbcType="VARCHAR" />
+		<result column="CheckOfAgent" property="checkOfAgent" jdbcType="TINYINT" />
+		<result column="RemarkOfAgent" property="remarkOfAgent"
+			jdbcType="VARCHAR" />
+		<result column="TotalPeople" property="totalPeople" jdbcType="TINYINT" />
+		<result column="UserIdOfAgent" property="userIdOfAgent"
+			jdbcType="VARCHAR" />
+		<result column="SupplierPriceId" property="supplierPriceId"
+			jdbcType="VARCHAR" />
+		<result column="CustomerNos" property="customerNos" jdbcType="VARCHAR" />
+		<result column="RateOfCurrencyId" property="rateOfCurrencyId"
+			jdbcType="VARCHAR" />
+		<result column="ToRateOfCurrencyId" property="toRateOfCurrencyId"
+			jdbcType="VARCHAR" />
+		<result column="UserNameOfAgent" property="userNameOfAgent"
+			jdbcType="VARCHAR" />
+		<result column="tax" property="tax" jdbcType="VARCHAR" />
+		<result column="subtotalOfAgent" property="subtotalOfAgent" jdbcType="DECIMAL" />
+		<result column="totalFeeOfAgent" property="totalFeeOfAgent" jdbcType="DECIMAL" />
+		<result column="totalRateFeeOfAgent" property="totalRateFeeOfAgent" jdbcType="DECIMAL" />
+		<result column="totalUSARateFeeOfAgent" property="totalUSARateFeeOfAgent" jdbcType="DECIMAL" />
+		<result column="totalFeeOfInsurance" property="totalFeeOfInsurance" jdbcType="DECIMAL" />
+		<result column="rateUp" property="rateUp" jdbcType="DECIMAL" />
+		<result column="rateDown" property="rateDown" jdbcType="DECIMAL" />
+		<result column="exchangeUSARate" property="exchangeUSARate" jdbcType="DECIMAL" />
+		<result column="deptName" property="deptName" jdbcType="VARCHAR" />
+		<result column="currencyType" property="currencyType" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		SupplierCheckId, CheckOfAgent, RemarkOfAgent, TotalPeople,
+		UserIdOfAgent,
+		SupplierPriceId,
+		CustomerNos, RateOfCurrencyId, ToRateOfCurrencyId
+	</sql>
+	<select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from suppliercheck
+		where SupplierCheckId =
+		#{supplierCheckId,jdbcType=VARCHAR}
+	</select>
+	<delete id="removeById" parameterType="java.lang.String">
+		delete from suppliercheck
+		where SupplierCheckId = #{SupplierCheckId,jdbcType=VARCHAR}
+	</delete>
+	<insert id="save" parameterType="com.chinatour.entity.SupplierCheck">
+		insert into suppliercheck
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="supplierCheckId != null">
+				SupplierCheckId,
+			</if>
+			<if test="checkOfAgent != null">
+				CheckOfAgent,
+			</if>
+			<if test="remarkOfAgent != null">
+				RemarkOfAgent,
+			</if>
+			<if test="totalPeople != null">
+				TotalPeople,
+			</if>
+			<if test="userIdOfAgent != null">
+				UserIdOfAgent,
+			</if>
+			<if test="supplierPriceId != null">
+				SupplierPriceId,
+			</if>
+			<if test="customerNos != null">
+				CustomerNos,
+			</if>
+			<if test="rateOfCurrencyId != null">
+				RateOfCurrencyId,
+			</if>
+			<if test="toRateOfCurrencyId != null">
+				ToRateOfCurrencyId,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="supplierCheckId != null">
+				#{supplierCheckId,jdbcType=VARCHAR},
+			</if>
+			<if test="checkOfAgent != null">
+				#{checkOfAgent,jdbcType=TINYINT},
+			</if>
+			<if test="remarkOfAgent != null">
+				#{remarkOfAgent,jdbcType=VARCHAR},
+			</if>
+			<if test="totalPeople != null">
+				#{totalPeople,jdbcType=TINYINT},
+			</if>
+			<if test="userIdOfAgent != null">
+				#{userIdOfAgent,jdbcType=VARCHAR},
+			</if>
+			<if test="supplierPriceId != null">
+				#{supplierPriceId,jdbcType=VARCHAR},
+			</if>
+			<if test="customerNos != null">
+				#{customerNos,jdbcType=VARCHAR},
+			</if>
+			<if test="rateOfCurrencyId != null">
+				#{rateOfCurrencyId,jdbcType=VARCHAR},
+			</if>
+			<if test="toRateOfCurrencyId != null">
+				#{toRateOfCurrencyId,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+		
+	<insert id="batchSave" parameterType="java.util.List">
+		INSERT INTO suppliercheck
+			(SupplierCheckId, CheckOfAgent, TotalPeople,
+				UserIdOfAgent,
+				SupplierPriceId,
+				CustomerNos, RateOfCurrencyId,ToRateOfCurrencyId)
+		values 
+			<foreach collection="list" item="item" index="index" separator="," >
+				(
+					#{item.supplierCheckId,jdbcType=VARCHAR},
+					#{item.checkOfAgent,jdbcType=TINYINT},
+					#{item.totalPeople,jdbcType=TINYINT},
+					#{item.userIdOfAgent,jdbcType=VARCHAR},
+					#{item.supplierPriceId,jdbcType=VARCHAR},
+					#{item.customerNos,jdbcType=VARCHAR},
+					#{item.rateOfCurrencyId,jdbcType=VARCHAR},
+					#{item.toRateOfCurrencyId,jdbcType=VARCHAR}
+				)
+			</foreach>
+	</insert>
+	
+	<update id="update" parameterType="com.chinatour.entity.SupplierCheck">
+		update suppliercheck
+		<set>
+			<if test="checkOfAgent != null">
+				CheckOfAgent = #{checkOfAgent,jdbcType=TINYINT},
+			</if>
+			<if test="remarkOfAgent != null">
+				RemarkOfAgent = #{remarkOfAgent,jdbcType=VARCHAR},
+			</if>
+			<if test="totalPeople != null">
+				TotalPeople = #{totalPeople,jdbcType=TINYINT},
+			</if>
+			<if test="userIdOfAgent != null">
+				UserIdOfAgent = #{userIdOfAgent,jdbcType=VARCHAR},
+			</if>
+			<if test="supplierPriceId != null">
+				SupplierPriceId = #{supplierPriceId,jdbcType=VARCHAR},
+			</if>
+			<if test="customerNos != null">
+				CustomerNos = #{customerNos,jdbcType=VARCHAR},
+			</if>
+			<if test="rateOfCurrencyId != null">
+				RateOfCurrencyId = #{rateOfCurrencyId,jdbcType=VARCHAR},
+			</if>
+			<if test="toRateOfCurrencyId != null">
+				ToRateOfCurrencyId = #{toRateOfCurrencyId,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where SupplierCheckId = #{supplierCheckId,jdbcType=VARCHAR}
+	</update>
+	<select id="find" resultMap="BaseResultMap" parameterType="com.chinatour.entity.SupplierCheck">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM suppliercheck
+		<where>
+			<if test="supplierCheckId != null">
+				SupplierCheckId = #{supplierCheckId,jdbcType=VARCHAR}
+			</if>
+			<if test="checkOfAgent != null">
+				AND CheckOfAgent = #{checkOfAgent,jdbcType=TINYINT}
+			</if>
+			<if test="remarkOfAgent != null">
+				AND RemarkOfAgent = #{remarkOfAgent,jdbcType=VARCHAR}
+			</if>
+			<if test="totalPeople != null">
+				AND TotalPeople = #{totalPeople,jdbcType=TINYINT}
+			</if>
+			<if test="userIdOfAgent != null">
+				AND UserIdOfAgent = #{userIdOfAgent,jdbcType=VARCHAR}
+			</if>
+			<if test="supplierPriceId != null">
+				AND SupplierPriceId = #{supplierPriceId,jdbcType=VARCHAR}
+			</if>
+			<if test="customerNos != null">
+				AND CustomerNos = #{customerNos,jdbcType=VARCHAR}
+			</if>
+			<if test="rateOfCurrencyId != null">
+				AND RateOfCurrencyId =
+				#{rateOfCurrencyId,jdbcType=VARCHAR}
+			</if>
+			<if test="toRateOfCurrencyId != null">
+				AND ToRateOfCurrencyId = #{toRateOfCurrencyId,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+	<select id="findCount" resultType="int" parameterType="com.chinatour.entity.SupplierCheck">
+		SELECT
+		COUNT(sc.SupplierCheckId)
+		FROM suppliercheck sc,supplierprice sp
+		<where>
+		    sc.SupplierPriceId=sp.SupplierPriceId
+		    AND sp.AccCheck = 1
+			<if test="supplierCheckId != null">
+				AND sc.SupplierCheckId = #{supplierCheckId,jdbcType=VARCHAR}
+			</if>
+			<if test="checkOfAgent != null">
+				AND sc.CheckOfAgent = #{checkOfAgent,jdbcType=TINYINT}
+			</if>
+			<if test="remarkOfAgent != null">
+				AND sc.RemarkOfAgent = #{remarkOfAgent,jdbcType=VARCHAR}
+			</if>
+			<if test="totalPeople != null">
+				AND sc.TotalPeople = #{totalPeople,jdbcType=TINYINT}
+			</if>
+			<if test="userIdOfAgent != null">
+				AND sc.UserIdOfAgent = #{userIdOfAgent,jdbcType=VARCHAR}
+			</if>
+			<if test="supplierPriceId != null">
+				AND sc.SupplierPriceId = #{supplierPriceId,jdbcType=VARCHAR}
+			</if>
+			<if test="customerNos != null">
+				AND sc.CustomerNos = #{customerNos,jdbcType=VARCHAR}
+			</if>
+			<if test="rateOfCurrencyId != null">
+				AND RateOfCurrencyId = #{rateOfCurrencyId,jdbcType=VARCHAR}
+			</if>
+			<if test="toRateOfCurrencyId != null">
+				AND ToRateOfCurrencyId = #{toRateOfCurrencyId,jdbcType=VARCHAR},
+			</if>
+		</where>
+	</select>
+	<select id="findCheckAndTaxOfOrder" resultMap="ResulUserInfotMap"
+		parameterType="com.chinatour.entity.SupplierCheck">
+		SELECT
+		s.SupplierCheckId,
+		s.CheckOfAgent,
+		s.RemarkOfAgent,
+		s.TotalPeople,
+		s.UserIdOfAgent,
+		s.SupplierPriceId,
+		s.CustomerNos,
+		a.UserName as
+		UserNameOfAgent,
+		o.Tax,
+		d.DeptName as deptName,
+		ct.Symbol as currencyType
+		FROM
+		SupplierPrice sp,
+		SupplierCheck s,
+		zs_admin a,
+		Dept d,
+		Orders o,
+		currency_type ct
+		WHERE
+		sp.SupplierPriceId=s.SupplierPriceId
+		AND
+		s.UserIdOfAgent=a.id
+		AND sp.TourId=o.TourId
+		AND
+		o.UserId=s.UserIdOfAgent
+		AND	a.DeptId=d.DeptId
+		AND d.CurrencyTypeId=ct.CurrencyTypeId
+		<if test="tourId!=null">
+			AND sp.tourId=#{tourId}
+		</if>
+		<if test="userIdOfAgent!=null">
+			AND s.UserIdOfAgent=#{userIdOfAgent}
+		</if>
+		<if test="supplierCheckId!=null">
+			AND s.SupplierCheckId=#{supplierCheckId}
+		</if>
+		<if test="supplierPriceId!=null">
+			AND s.SupplierPriceId=#{supplierPriceId}
+		</if>
+		GROUP BY s.SupplierCheckId
+	</select>
+	<select id="findUserInfo" parameterType="com.chinatour.entity.SupplierCheck" resultMap="ResulUserInfotMap">
+		SELECT 
+		  s.SupplierCheckId,
+		  s.CheckOfAgent,
+		  s.RemarkOfAgent,
+		  s.TotalPeople,
+		  s.UserIdOfAgent,
+		  s.SupplierPriceId,
+		  s.CustomerNos,
+		  a.id,
+		  a.UserName as UserNameOfAgent,
+		  d.DeptName,
+		  ct.Symbol as currencyType,
+		  r.RateUp AS RateUp,
+		  r.RateDown AS RateDown,
+		  r.UsRate AS exchangeUSARate,
+		  r.Id AS rateOfCurrencyId
+		FROM 
+		  SupplierCheck s,
+		  zs_admin a,
+		  Dept d,
+		  RateOfCurrency r,
+		  currency_type ct
+		WHERE 
+			s.UserIdOfAgent=a.id
+		AND	a.DeptId=d.DeptId
+		AND r.Id=s.RateOfCurrencyId
+		AND d.CurrencyTypeId=ct.CurrencyTypeId
+		<if test="supplierCheckId!= null">
+			AND s.SupplierCheckId=#{supplierCheckId}
+		</if>
+		<if test="supplierPriceId!= null">
+			AND s.SupplierPriceId=#{supplierPriceId}
+		</if>
+		<if test="userIdOfAgent!= null">
+			AND s.UserIdOfAgent=#{userIdOfAgent}
+		</if>
+	</select>
+	<select id="findBySupplierPriceId" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from suppliercheck
+		where SupplierPriceId =
+		#{supplierPriceId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="queryOfDept" parameterType="supplierCheck" resultType="supplierCheck">
+		SELECT 
+		  s.SupplierCheckId,
+		  s.CheckOfAgent,
+		  s.RemarkOfAgent,
+		  s.TotalPeople,
+		  s.UserIdOfAgent,
+		  s.SupplierPriceId,
+		  s.CustomerNos,
+		  s.RateOfCurrencyId,
+		  d.DeptId
+		FROM 
+		  SupplierCheck s,
+		  zs_admin u,
+		  Dept d
+		WHERE s.UserIdOfAgent=u.Id 
+			AND u.DeptId=d.DeptId 
+		<if test="supplierPriceId!= null">
+			AND s.SupplierPriceId=#{supplierPriceId}
+		</if>
+		<if test="userIdOfAgent!= null">
+			AND s.UserIdOfAgent=#{userIdOfAgent}
+		</if>
+		<if test="checkOfAgent!= null">
+			AND s.CheckOfAgent=#{checkOfAgent}
+		</if>
+		<if test="deptId!= null">
+			AND d.DeptId=#{deptId}
+		</if>
+		GROUP BY d.DeptId
+	</select>
+	
+	<select id="findAgentForDept" parameterType="com.chinatour.entity.SupplierCheck" resultMap="ResulUserInfotMap">
+		SELECT 
+		  s.SupplierCheckId,
+		  s.CheckOfAgent,
+		  s.RemarkOfAgent,
+		  s.TotalPeople,
+		  s.UserIdOfAgent,
+		  s.SupplierPriceId,
+		  s.CustomerNos,
+		  a.id,
+		  a.UserName as UserNameOfAgent,
+		  d.DeptName,
+		  ct.Symbol as currencyType,
+		  r.RateUp AS RateUp,
+		  r.RateDown AS RateDown,
+		  r.UsRate AS exchangeUSARate,
+		  r.Id AS rateOfCurrencyId
+		FROM 
+		  SupplierCheck s,
+		  zs_admin a,
+		  Dept d,
+		  RateOfCurrency r,
+		  currency_type ct
+		WHERE 
+			s.UserIdOfAgent=a.id
+		AND	a.DeptId=d.DeptId
+		AND r.Id=s.RateOfCurrencyId
+		AND d.CurrencyTypeId=ct.CurrencyTypeId
+		<if test="deptId!= null">
+			AND d.DeptId=#{deptId}
+		</if>
+		<if test="supplierPriceId!= null">
+			AND s.SupplierPriceId=#{supplierPriceId}
+		</if>
+		<if test="userIdOfAgent!= null">
+			AND s.UserIdOfAgent=#{userIdOfAgent}
+		</if>
+	</select>
+</mapper>

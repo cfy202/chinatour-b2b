@@ -1,0 +1,463 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.SupplierPriceRemarkMapper">
+	<resultMap id="BaseResultMap" type="com.chinatour.entity.SupplierPriceRemark">
+		<id column="SupplierPriceRemarkId" property="supplierPriceRemarkId"
+			jdbcType="VARCHAR" />
+		<result column="EidtTime" property="eidtTime" jdbcType="TIMESTAMP" />
+		<result column="SupplierName" property="supplierName" jdbcType="VARCHAR" />
+		<result column="tourcode" property="tourCode" jdbcType="VARCHAR" />
+		<result column="presum" property="preSum" jdbcType="DECIMAL" />
+		<result column="nextsum" property="nextSum" jdbcType="DECIMAL" />
+		<result column="differencesum" property="differenceSum"
+			jdbcType="DECIMAL" />
+		<result column="Reason" property="reason" jdbcType="VARCHAR" />
+		<result column="TourId" property="tourId" jdbcType="VARCHAR" />
+		<result column="Type" property="type" jdbcType="INTEGER" />
+		<result column="SupfrType" property="supfrType" jdbcType="TINYINT" />
+		<result column="IsDel" property="isDel" jdbcType="INTEGER" />
+		<result column="InsertTime" property="insertTime" jdbcType="TIMESTAMP" />
+		<result column="SprCheck" property="sprCheck" jdbcType="TINYINT" />
+		<result column="AccCheckTime" property="accCheckTime" jdbcType="TIMESTAMP" />
+		<result column="SupplierCheckId" property="supplierCheckId"
+			jdbcType="VARCHAR" />
+		<result column="SupId" property="supId" jdbcType="VARCHAR" />
+		<result column="InvoiceState" property="invoiceState" jdbcType="TINYINT" />
+		<result column="orderId" property="orderId" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		SupplierPriceRemarkId, EidtTime, SupplierName, tourcode,
+		presum, nextsum, differencesum,
+		Reason, TourId, `Type`, SupfrType,
+		IsDel, InsertTime, SprCheck,
+		AccCheckTime, SupplierCheckId,
+		SupId,
+		InvoiceState,orderId
+	</sql>
+	<select id="findById" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from supplierpriceremark
+		where SupplierPriceRemarkId =
+		#{supplierPriceRemarkId,jdbcType=VARCHAR}
+	</select>
+	<delete id="removeById" parameterType="java.lang.String">
+		delete from
+		supplierpriceremark
+		where SupplierPriceRemarkId =
+		#{supplierPriceRemarkId,jdbcType=VARCHAR}
+	</delete>
+
+	<insert id="save" parameterType="com.chinatour.entity.SupplierPriceRemark">
+		insert into supplierpriceremark
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="supplierPriceRemarkId != null">
+				SupplierPriceRemarkId,
+			</if>
+			<if test="eidtTime != null">
+				EidtTime,
+			</if>
+			<if test="supplierName != null">
+				SupplierName,
+			</if>
+			<if test="tourCode != null">
+				tourCode,
+			</if>
+			<if test="preSum != null">
+				presum,
+			</if>
+			<if test="nextSum != null">
+				nextsum,
+			</if>
+			<if test="differenceSum != null">
+				differencesum,
+			</if>
+			<if test="reason != null">
+				Reason,
+			</if>
+			<if test="tourId != null">
+				TourId,
+			</if>
+			<if test="type != null">
+				`Type`,
+			</if>
+			<if test="supfrType != null">
+				SupfrType,
+			</if>
+			<if test="isDel != null">
+				IsDel,
+			</if>
+			<if test="insertTime != null">
+				InsertTime,
+			</if>
+			<if test="sprCheck != null">
+				SprCheck,
+			</if>
+			<if test="accCheckTime != null">
+				AccCheckTime,
+			</if>
+			<if test="supplierCheckId != null">
+				SupplierCheckId,
+			</if>
+			<if test="supId != null">
+				SupId,
+			</if>
+			<if test="invoiceState != null">
+				InvoiceState,
+			</if>
+			<if test="orderId != null">
+				orderId
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="supplierPriceRemarkId != null">
+				#{supplierPriceRemarkId,jdbcType=VARCHAR},
+			</if>
+			<if test="eidtTime != null">
+				#{eidtTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="supplierName != null">
+				#{supplierName,jdbcType=VARCHAR},
+			</if>
+			<if test="tourCode != null">
+				#{tourCode,jdbcType=VARCHAR},
+			</if>
+			<if test="preSum != null">
+				#{preSum,jdbcType=DECIMAL},
+			</if>
+			<if test="nextSum != null">
+				#{nextSum,jdbcType=DECIMAL},
+			</if>
+			<if test="differenceSum != null">
+				#{differenceSum,jdbcType=DECIMAL},
+			</if>
+			<if test="reason != null">
+				#{reason,jdbcType=VARCHAR},
+			</if>
+			<if test="tourId != null">
+				#{tourId,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=INTEGER},
+			</if>
+			<if test="supfrType != null">
+				#{supfrType,jdbcType=TINYINT},
+			</if>
+			<if test="isDel != null">
+				#{isDel,jdbcType=INTEGER},
+			</if>
+			<if test="insertTime != null">
+				#{insertTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="sprCheck != null">
+				#{sprCheck,jdbcType=TINYINT},
+			</if>
+			<if test="accCheckTime != null">
+				#{accCheckTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="supplierCheckId != null">
+				#{supplierCheckId,jdbcType=VARCHAR},
+			</if>
+			<if test="supId != null">
+				#{supId,jdbcType=VARCHAR},
+			</if>
+			<if test="invoiceState != null">
+				#{invoiceState,jdbcType=TINYINT},
+			</if>
+			<if test="orderId != null">
+				#{orderId,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="update" parameterType="com.chinatour.entity.SupplierPriceRemark">
+		update supplierpriceremark
+		<set>
+			<if test="eidtTime != null">
+				EidtTime = #{eidtTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="supplierName != null">
+				SupplierName = #{supplierName,jdbcType=VARCHAR},
+			</if>
+			<if test="tourCode != null">
+				tourcode = #{tourCode,jdbcType=VARCHAR},
+			</if>
+			<if test="preSum != null">
+				presum = #{preSum,jdbcType=DECIMAL},
+			</if>
+			<if test="nextSum != null">
+				nextsum = #{nextSum,jdbcType=DECIMAL},
+			</if>
+			<if test="differenceSum != null">
+				differencesum = #{differenceSum,jdbcType=DECIMAL},
+			</if>
+			<if test="reason != null">
+				Reason = #{reason,jdbcType=VARCHAR},
+			</if>
+			<if test="tourId != null">
+				TourId = #{tourId,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				`Type` = #{type,jdbcType=INTEGER},
+			</if>
+			<if test="supfrType != null">
+				SupfrType = #{supfrType,jdbcType=TINYINT},
+			</if>
+			<if test="isDel != null">
+				IsDel = #{isDel,jdbcType=INTEGER},
+			</if>
+			<if test="insertTime != null">
+				InsertTime = #{insertTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="sprCheck != null">
+				SprCheck = #{sprCheck,jdbcType=TINYINT},
+			</if>
+			<if test="accCheckTime != null">
+				AccCheckTime = #{accCheckTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="supplierCheckId != null">
+				SupplierCheckId = #{supplierCheckId,jdbcType=VARCHAR},
+			</if>
+			<if test="supId != null">
+				SupId = #{supId,jdbcType=VARCHAR},
+			</if>
+			<if test="invoiceState != null">
+				InvoiceState = #{invoiceState,jdbcType=TINYINT},
+			</if>
+			<if test="orderId != null">
+				orderId = #{orderId,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where SupplierPriceRemarkId =
+		#{supplierPriceRemarkId,jdbcType=VARCHAR}
+	</update>
+	<select id="find" resultMap="BaseResultMap" parameterType="com.chinatour.entity.SupplierPriceRemark">
+		select
+		<include refid="Base_Column_List" />
+		from supplierpriceremark
+		<where>
+			<if test="supplierPriceRemarkId != null">
+				SupplierPriceRemarkId=#{supplierPriceRemarkId,jdbcType=VARCHAR}
+			</if>
+			<if test="eidtTime != null">
+				AND EidtTime = #{eidtTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="supplierName != null">
+				AND SupplierName = #{supplierName,jdbcType=VARCHAR}
+			</if>
+			<if test="tourCode != null">
+				AND tourcode = #{tourCode,jdbcType=VARCHAR}
+			</if>
+			<if test="preSum != null">
+				AND presum = #{preSum,jdbcType=DECIMAL}
+			</if>
+			<if test="nextSum != null">
+				AND nextsum = #{nextSum,jdbcType=DECIMAL}
+			</if>
+			<if test="differenceSum != null">
+				AND differencesum = #{differenceSum,jdbcType=DECIMAL}
+			</if>
+			<if test="reason != null">
+				AND Reason = #{reason,jdbcType=VARCHAR}
+			</if>
+			<if test="tourId != null">
+				AND TourId = #{tourId,jdbcType=VARCHAR}
+			</if>
+			<if test="type != null">
+				AND `Type` = #{type,jdbcType=INTEGER}
+			</if>
+			<if test="supfrType != null">
+				AND SupfrType = #{supfrType,jdbcType=TINYINT}
+			</if>
+			<if test="isDel != null">
+				AND IsDel = #{isDel,jdbcType=INTEGER}
+			</if>
+			<if test="insertTime != null">
+				AND InsertTime = #{insertTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="sprCheck != null">
+				AND SprCheck = #{sprCheck,jdbcType=TINYINT}
+			</if>
+			<if test="accCheckTime != null">
+				AND AccCheckTime = #{accCheckTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="supplierCheckId != null">
+				AND SupplierCheckId = #{supplierCheckId,jdbcType=VARCHAR}
+			</if>
+			<if test="supId != null">
+				AND SupId = #{supId,jdbcType=VARCHAR}
+			</if>
+			<if test="invoiceState != null">
+				AND InvoiceState = #{invoiceState,jdbcType=TINYINT}
+			</if>
+			<if test="orderId != null">
+				AND orderId = #{orderId,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+	<select id="findSupplierPriceRemark" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+			spr.SupplierPriceRemarkId,
+		 	spr.SupplierName,
+		 	spr.EidtTime,
+		 	spr.InsertTime,
+			spr.TourCode,
+			spr.PreSum,
+			spr.NextSum,
+			spr.DifferenceSum,
+			spr.Reason,
+			spr.Type,
+			spr.TourId,
+			spr.IsDel,
+			spr.SupfrType,
+			spr.SprCheck,
+			spr.SupplierCheckId,
+			spr.SupId,
+			spr.AccCheckTime,
+			sck.rateOfCurrencyId,
+			a.UserName,
+			d.DeptName
+		from 
+			supplierpriceremark spr,suppliercheck sck, 
+			zs_admin a, dept d
+		where 
+			spr.SupplierCheckId=sck.SupplierCheckId
+			AND a.id=sck.UserIdOfAgent
+			AND a.deptId=d.DeptId
+		<if test="supplierPriceRemarkId!= null">
+			AND spr.SupplierPriceRemarkId=#{supplierPriceRemarkId}
+		</if>
+		<if test="tourId!=null">
+			AND spr.TourId=#{tourId}
+		</if>
+		<if test="sprCheck!=null">
+			AND spr.SprCheck=#{sprCheck}
+		</if>
+		<if test="type!=null">
+			AND spr.Type=#{type}
+		</if>
+		<if test="isDel!=null">
+			AND spr.IsDel=#{isDel}
+		</if>
+		<if test="invoiceState!=null">
+			AND spr.InvoiceState=#{invoiceState}
+		</if>
+		ORDER BY spr.EidtTime Desc
+	</select>
+	
+	<select id="findAgentTax" resultMap="BaseResultMap" parameterType="com.chinatour.entity.SupplierPriceRemark">
+		SELECT 
+			spr.SupplierPriceRemarkId,
+		 	spr.SupplierName,
+		 	spr.EidtTime,
+		 	DATE_FORMAT(spr.InsertTime,'%Y-%m-%d') AS InsertTime,
+			spr.TourCode,
+			ROUND(spr.PreSum*rc.RateUp/rc.RateDown,2) AS PreSum,
+			ROUND(spr.NextSum*rc.RateUp/rc.RateDown,2) AS NextSum,
+			ROUND(spr.DifferenceSum*rc.RateUp/rc.RateDown,2) AS DifferenceSum,
+			spr.Reason,
+			spr.Type,
+			spr.TourId,
+			spr.IsDel,
+			spr.SupfrType,
+			spr.SprCheck,
+			spr.SupplierCheckId,
+			spr.SupId,
+			spr.AccCheckTime,
+			spr.orderId
+		FROM
+			 SupplierPriceRemark spr,
+			 SupplierCheck sck ,
+   			 RateOfCurrency rc
+		WHERE spr.SupplierCheckId=sck.SupplierCheckId
+			AND spr.Type=1
+			AND rc.Id=sck.RateOfCurrencyId
+			AND (spr.SprCheck=1 OR spr.SprCheck=3 OR spr.SprCheck=5) 
+			AND spr.IsDel=0
+		<if test="supplierPriceRemarkId!= null">
+			AND spr.SupplierPriceRemarkId=#{supplierPriceRemarkId}
+		</if>
+		<if test="tourId!=null">
+			AND spr.TourId=#{tourId}
+		</if>
+		<if test="sprCheck!=null">
+			AND spr.sprCheck=#{sprCheck}
+		</if>
+		<if test="userId!=null">
+			AND sck.UserIdOfAgent=#{userId}
+		</if>
+		<if test="supplierCheckId!=null">
+			AND sck.SupplierCheckId=#{supplierCheckId}
+		</if>
+			ORDER BY insertTime Desc 
+	</select>
+	
+	<select id="findRateById" resultMap="BaseResultMap" parameterType="com.chinatour.entity.SupplierPriceRemark">
+		SELECT 
+			spr.SupplierPriceRemarkId,
+		 	spr.SupplierName,
+		 	spr.EidtTime,
+		 	spr.InsertTime,
+			spr.TourCode,
+			spr.PreSum,
+			spr.NextSum,
+			ROUND(spr.DifferenceSum*rc.RateUp/rc.RateDown,2) AS usaDifferenceSum,
+			spr.DifferenceSum,
+			spr.Reason,
+			spr.Type,
+			spr.TourId,
+			spr.IsDel,
+			spr.SupfrType,
+			spr.SprCheck,
+			spr.SupplierCheckId,
+			spr.SupId,
+			spr.AccCheckTime,
+			spr.orderId
+		FROM 
+			SupplierPriceRemark spr,
+			SupplierCheck sck ,
+  			RateOfCurrency rc
+		WHERE spr.SupplierCheckId=sck.SupplierCheckId
+			AND rc.Id=sck.RateOfCurrencyId
+			AND spr.SupplierPriceRemarkId=#{supplierPriceRemarkId}
+	</select>
+	
+	<select id="findSupplierPriceRemarkByOrderId" resultMap="BaseResultMap" parameterType="com.chinatour.entity.SupplierPriceRemark">
+		SELECT 
+			<include refid="Base_Column_List" />
+		FROM 
+			SupplierPriceRemark
+		WHERE 
+			SprCheck = 1
+			AND type=1
+			AND IsDel=0
+			AND OrderId=#{orderId}
+			ORDER BY InsertTime
+	</select>
+	<select id="findBill" resultMap="BaseResultMap" parameterType="com.chinatour.entity.SupplierPriceRemark">
+		select
+		<include refid="Base_Column_List" />
+		from supplierpriceremark
+		<where>
+			<if test="type!=null">
+				AND Type=#{type}
+			</if>
+			<if test="supfrType != null">
+				AND SupfrType = #{supfrType,jdbcType=TINYINT}
+			</if>
+			<if test="isDel != null">
+				AND IsDel = #{isDel,jdbcType=INTEGER}
+			</if>
+			<if test="sprCheck != null">
+				AND SprCheck = #{sprCheck,jdbcType=TINYINT}
+			</if>
+			<if test="accCheckTime != null">
+				AND #{accCheckTime} > AccCheckTime
+			</if>
+			<if test="invoiceState != null">
+				AND InvoiceState = #{invoiceState,jdbcType=TINYINT}
+			</if>
+		</where>
+	</select>
+</mapper>

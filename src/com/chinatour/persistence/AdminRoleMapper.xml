@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.AdminRoleMapper">
+
+	<sql id="Base_Column_List">
+		Admins, Roles
+	</sql>
+	<resultMap type="com.chinatour.entity.AdminRole" id="BaseResultMap">
+		<id property="admins" column="Admins" jdbcType="VARCHAR" />
+		<result property="roles" column="Roles" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<resultMap type="com.chinatour.entity.AdminRole" id="ResultMapForRole">
+		<id property="admins" column="Admins" jdbcType="VARCHAR" />
+		<result property="roles" column="Roles" jdbcType="VARCHAR" />
+		<collection property="role" select="com.chinatour.persistence.RoleMapper.findByIdForAuthorities" ofType="com.chinatour.entity.Role" javaType="String"
+				column="roles"/>
+	</resultMap>
+	
+	<select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
+	    SELECT
+		<include refid="Base_Column_List" />
+		FROM zs_admin_role
+		WHERE
+		Admins = #{admins,jdbcType=VARCHAR}
+	</select>
+
+	 <select id="findByIdForRole" resultMap="ResultMapForRole" parameterType="java.lang.String">
+        SELECT
+       <include refid="Base_Column_List" />
+        FROM
+        zs_admin_role ar
+        where ar.admins = #{id,jdbcType=VARCHAR}
+    </select>
+	<select id="findAll" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM zs_admin_role
+	</select>
+	 <insert id="save" parameterType="com.chinatour.entity.TourType">
+	     INSERT INTO zs_admin_role
+	     	<trim prefix="(" suffix=")" suffixOverrides=",">
+	     		 <if test="admins != null">
+                    Admins ,
+                </if>
+                <if test="roles != null">
+                    Roles ,
+                </if>
+	     	</trim> 
+	     	<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="admins != null">
+				#{admins,jdbcType=VARCHAR},
+			</if>
+			<if test="roles != null">
+				#{roles,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	
+	<insert id="batchSave" parameterType="java.util.List">
+		INSERT INTO zs_admin_role
+		(
+		<include refid="Base_Column_List" />
+		)
+		values
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			(
+			#{item.admins,jdbcType=VARCHAR},
+			#{item.roles,jdbcType=VARCHAR}
+			)
+		</foreach>
+	</insert>
+	
+	<delete id="removeById" parameterType="String">
+	    DELETE FROM 
+		    zs_admin_role
+		WHERE 
+		     admins=#{id}
+	</delete>	
+</mapper>

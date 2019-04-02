@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.AgeOfPriceMapper">
+
+	<sql id="Base_Column_List">
+		AgeOfPriceId,CurrencyId,Adult,CreateTime,Bed,NotBed,Children,Baby,DepartureTime,
+		Commission,HotelPrice,Days,UpdateTime,GroupLineId,IsAvailable,Supplement,ChildComm,typeNo,roomSharing
+	</sql>
+	<resultMap type="AgeOfPrice" id="BaseResultMap">
+		<id property="ageOfPriceId" column="AgeOfPriceId" jdbcType="VARCHAR" />
+		<result property="currencyId" column="CurrencyId" jdbcType="VARCHAR" />
+		<result property="departureTime" column="DepartureTime" jdbcType="TIMESTAMP" />
+		<result property="adult" column="Adult" jdbcType="DECIMAL" />
+		<result property="bed" column="Bed" jdbcType="DECIMAL" />
+		<result property="notBed" column="NotBed" jdbcType="DECIMAL" />
+		<result property="children" column="Children" jdbcType="DECIMAL" />
+		<result property="baby" column="Baby" jdbcType="DECIMAL" />
+		<result property="commission" column="Commission" jdbcType="DECIMAL" />
+		<result property="hotelPrice" column="HotelPrice" jdbcType="DECIMAL" />
+		<result property="days" column="Days" jdbcType="INTEGER" />
+		<result property="typeNo" column="TypeNo" jdbcType="INTEGER" />
+		<result property="createTime" column="CreateTime" jdbcType="TIMESTAMP" />
+		<result property="UpdateTime" column="UpdateTime" jdbcType="TIMESTAMP" />
+		<result property="isAvailable" column="IsAvailable" jdbcType="INTEGER" />
+		<result property="groupLineId" column="GroupLineId" jdbcType="VARCHAR" />
+		<result property="supplement" column="Supplement" jdbcType="DECIMAL" />
+		<result property="childComm" column="ChildComm" jdbcType="DECIMAL" />
+		<result property="roomSharing" column="RoomSharing" jdbcType="DECIMAL" />
+	</resultMap>
+	
+	<sql id="findForPage_sql">
+		select
+		<include refid="Base_Column_List" />
+		from age_of_price
+		<where>
+			<if test="record.id != null">
+				AgeOfPriceId = #{record.id,jdbcType=VARCHAR}
+			</if>
+			<if test="record.currencyId != null">
+				CurrencyId = #{record.currencyId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.groupLineId != null">
+				GroupLineId = #{record.groupLineId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.typeNo != null">
+				TypeNo = #{record.typeNo,jdbcType=INTEGER}
+			</if>
+		</where>
+	</sql>
+	<select id="findByGroupLineId" parameterType="java.lang.String" resultMap="BaseResultMap">
+	    select
+			p.*,t.*
+		from age_of_price p,currency_type t
+		where
+			p.CurrencyId=t.CurrencyTypeId
+			AND GroupLineId = #{id,jdbcType=VARCHAR}
+			AND IsAvailable =0
+			GROUP BY DepartureTime
+			ORDER BY DepartureTime DESC
+	</select>
+	<select id="findOnlyOne" parameterType="com.chinatour.entity.AgeOfPrice" resultMap="BaseResultMap">
+	    select
+			p.*,t.*
+		from age_of_price p,currency_type t
+		where
+			p.CurrencyId=t.CurrencyTypeId
+			<if test="currencyId != null">
+				AND p.CurrencyId = #{currencyId,jdbcType=VARCHAR}
+			</if>
+			<if test="groupLineId != null">
+				AND p.GroupLineId = #{groupLineId,jdbcType=VARCHAR}
+			</if>
+			AND IsAvailable =0 LIMIT 1
+	</select>
+	<select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
+	    select
+		<include refid="Base_Column_List" />
+		from age_of_price
+		where
+		ageOfPriceId = #{ageOfPriceId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="findByDepartureTime" parameterType="com.chinatour.entity.AgeOfPrice" resultType="com.chinatour.entity.AgeOfPrice">
+	    select
+		<include refid="Base_Column_List" />
+		from age_of_price
+		where
+			1=1
+			<if test="currencyId != null">
+				AND CurrencyId = #{currencyId,jdbcType=VARCHAR}
+			</if>
+			<if test="groupLineId != null">
+				AND GroupLineId = #{groupLineId,jdbcType=VARCHAR}
+			</if>
+			<if test="departureTime != null">
+				AND DepartureTime = #{departureTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="typeNo != null">
+				AND TypeNo=#{typeNo,jdbcType=INTEGER}
+			</if>
+			GROUP BY DepartureTime
+	</select>
+	<select id="findByTime" parameterType="com.chinatour.entity.AgeOfPrice" resultMap="BaseResultMap">
+	    select
+		<include refid="Base_Column_List" />
+		from age_of_price
+		where
+			1=1
+			<if test="currencyId != null">
+				AND CurrencyId = #{currencyId,jdbcType=VARCHAR}
+			</if>
+			<if test="groupLineId != null">
+				AND GroupLineId = #{groupLineId,jdbcType=VARCHAR}
+			</if>
+			<if test="maxTime != null">
+				AND DATE_FORMAT(DepartureTime,'%y-%m-%d') &lt;=DATE_FORMAT(#{maxTime,jdbcType=TIMESTAMP},'%y-%m-%d')
+			</if>
+			<if test="minTime != null">
+				AND DATE_FORMAT(DepartureTime,'%y-%m-%d')  &gt;= DATE_FORMAT(#{minTime,jdbcType=TIMESTAMP},'%y-%m-%d')
+			</if>
+			<if test="typeNo !=null">
+				AND TypeNo=#{typeNo,jdbcType=INTEGER}
+			</if>
+			AND IsAvailable =0
+			GROUP BY DepartureTime
+	</select>
+	<select id="findByPrice" parameterType="com.chinatour.entity.AgeOfPrice" resultMap="BaseResultMap">
+	    select
+		<include refid="Base_Column_List" />
+		from age_of_price
+		where
+			1=1
+			<if test="currencyId != null">
+				AND CurrencyId = #{currencyId,jdbcType=VARCHAR}
+			</if>
+			<if test="groupLineId != null">
+				AND GroupLineId = #{groupLineId,jdbcType=VARCHAR}
+			</if>
+			<if test="typeNo !=null">
+				AND TypeNo=#{typeNo,jdbcType=INTEGER}
+			</if>
+			<if test="departureTime != null">
+				AND DepartureTime = #{departureTime,jdbcType=TIMESTAMP}
+			</if>
+			AND IsAvailable =0
+			ORDER BY TypeNo
+	</select>
+
+	<select id="findAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from age_of_price
+	</select>
+
+	<select id="findForPage" resultMap="BaseResultMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findForPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+	<select id="findOrderByCurrencyId" parameterType="com.chinatour.entity.AgeOfPrice" resultMap="BaseResultMap">
+		SELECT 
+			a.*,
+			c.currencyChs,
+			c.currencyEng
+		FROM
+			(SELECT 
+				* 
+			FROM 
+				age_of_price 
+			WHERE 
+				GroupLineId = #{groupLineId,jdbcType=VARCHAR}
+			<if test="departureTime != null">
+				AND DATE_FORMAT(DepartureTime,'%y-%m-%d')>DATE_FORMAT(#{departureTime,jdbcType=TIMESTAMP},'%y-%m-%d')
+			</if>
+			ORDER BY DepartureTime
+			)a, currency_type c 
+		WHERE a.currencyId=c.CurrencyTypeId
+			AND a.IsAvailable =0
+		GROUP BY a.currencyId
+	</select>
+	<delete id="removeById" parameterType="java.lang.String">
+		delete from age_of_price
+		where
+		ageOfPriceId = #{ageOfPriceId,jdbcType=VARCHAR}
+	</delete>
+	<delete id="deleteAgeOfPrice" parameterType="AgeOfPrice">
+		delete from age_of_price
+		where 1=1
+			<if test="currencyId != null">
+				AND CurrencyId = #{currencyId,jdbcType=VARCHAR}
+			</if>
+			<if test="groupLineId != null">
+				AND GroupLineId = #{groupLineId,jdbcType=VARCHAR}
+			</if>
+	</delete>
+
+	<update id="update" parameterType="AgeOfPrice">
+		update age_of_price
+		<set>
+			<if test="currencyId != null">
+				CurrencyId = #{currencyId,jdbcType=VARCHAR},
+			</if>
+			<if test="departureTime != null">
+				DepartureTime = #{departureTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="adult != null">
+				Adult = #{adult,jdbcType=DECIMAL},
+			</if>
+			<if test="bed != null">
+				Bed = #{bed,jdbcType=DECIMAL},
+			</if>
+			<if test="notBed != null">
+				NotBed = #{notBed,jdbcType=DECIMAL},
+			</if>
+			<if test="children != null">
+				Children = #{children,jdbcType=DECIMAL},
+			</if>
+			<if test="baby != null">
+				Baby = #{baby,jdbcType=DECIMAL},
+			</if>
+			<if test="commission != null">
+				Commission = #{commission,jdbcType=DECIMAL},
+			</if>
+			<if test="hotelPrice != null">
+				HotelPrice = #{hotelPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="days != null">
+				Days = #{days,jdbcType=DECIMAL},
+			</if>
+			<if test="updateTime != null">
+				UpdateTime = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="groupLineId != null">
+				GroupLineId = #{groupLineId,jdbcType=VARCHAR},
+			</if>
+			<if test="supplement != null">
+				Supplement = #{supplement,jdbcType=DECIMAL},
+			</if>
+			<if test="childComm != null">
+				ChildComm = #{childComm,jdbcType=DECIMAL},
+			</if>
+			<if test="isAvailable != null">
+				IsAvailable = #{isAvailable,jdbcType=INTEGER},
+			</if>
+			<if test="typeNo !=null">
+				TypeNo = #{typeNo,jdbcType=INTEGER}
+			</if>
+		</set>
+		where AgeOfPriceId = #{ageOfPriceId,jdbcType=VARCHAR}
+	</update>
+
+	<insert id="save" parameterType="com.chinatour.entity.AgeOfPrice">
+		insert into age_of_price
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="ageOfPriceId != null">
+				AgeOfPriceId,
+			</if>
+			<if test="currencyId != null">
+				CurrencyId,
+			</if>
+			<if test="departureTime != null">
+				DepartureTime,
+			</if>
+			<if test="adult != null">
+				Adult,
+			</if>
+			<if test="bed != null">
+				Bed,
+			</if>
+			<if test="notBed != null">
+				NotBed ,
+			</if>
+			<if test="children != null">
+				Children,
+			</if>
+			<if test="baby != null">
+				Baby,
+			</if>
+			<if test="commission != null">
+				Commission,
+			</if>
+			<if test="hotelPrice != null">
+				HotelPrice,
+			</if>
+			<if test="updateTime != null">
+				UpdateTime,
+			</if>
+			<if test="createTime != null">
+				CreateTime,
+			</if>
+			<if test="groupLineId != null">
+				GroupLineId,
+			</if>
+			<if test="supplement != null">
+				Supplement,
+			</if>
+			<if test="childComm != null">
+				ChildComm,
+			</if>
+			<if test="isAvailable != null">
+				IsAvailable,
+			</if>
+			<if test="typeNo !=null">
+				TypeNo
+			</if>
+		</trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="ageOfPriceId != null">
+				#{ageOfPriceId,jdbcType=VARCHAR},
+			</if>
+			<if test="currencyId != null">
+				#{currencyId,jdbcType=VARCHAR},
+			</if>
+			<if test="departureTime != null">
+				#{departureTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="adult != null">
+				#{adult,jdbcType=DECIMAL},
+			</if>
+			<if test="bed != null">
+				#{bed,jdbcType=DECIMAL},
+			</if>
+			<if test="notBed != null">
+				#{notBed,jdbcType=DECIMAL},
+			</if>
+			<if test="children != null">
+				#{children,jdbcType=DECIMAL},
+			</if>
+			<if test="baby != null">
+				#{baby,jdbcType=DECIMAL},
+			</if>
+			<if test="commission != null">
+				#{commission,jdbcType=DECIMAL},
+			</if>
+			<if test="hotelPrice != null">
+				#{hotelPrice,jdbcType=DECIMAL},
+			</if>
+			<if test="updateTime != null">
+				#{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="groupLineId != null">
+				#{groupLineId,jdbcType=VARCHAR},
+			</if>
+			<if test="supplement != null">
+				#{supplement,jdbcType=DECIMAL},
+			</if>
+			<if test="childComm != null">
+				#{childComm,jdbcType=DECIMAL},
+			</if>
+			<if test="isAvailable != null">
+				#{isAvailable,jdbcType=DECIMAL},
+			</if>
+			<if test="typeNo !=null">
+				#{typeNo,jdbcType=INTEGER}
+			</if>
+		</trim>
+	</insert>
+	
+	<insert id="batchSave" parameterType="java.util.List">
+	     INSERT INTO age_of_price
+	     (AgeOfPriceId,DepartureTime,CurrencyId,GroupLineId,Adult,Bed,NotBed,Children,Baby,Commission,HotelPrice,
+	     Supplement,ChildComm)
+	     values 
+     	<foreach collection="list" item="item" index="index" separator="," >
+     	    (
+                #{item.ageOfPriceId},
+                #{item.departureTime,jdbcType=TIMESTAMP},
+                #{item.currencyId,jdbcType=VARCHAR},
+                #{item.groupLineId,jdbcType=VARCHAR}, 
+                #{item.adult,jdbcType=DECIMAL},
+                #{item.bed,jdbcType=DECIMAL},
+                #{item.notBed,jdbcType=DECIMAL} ,
+                #{item.children,jdbcType=DECIMAL},
+                #{item.baby,jdbcType=DECIMAL},
+                #{item.commission,jdbcType=DECIMAL},
+                #{item.hotelPrice,jdbcType=DECIMAL},
+                #{item.supplement,jdbcType=DECIMAL},
+                #{item.childComm,jdbcType=DECIMAL}
+	         )
+     	</foreach>
+	</insert>
+	
+	
+	
+	
+	
+	<!-- 查找出不同币种，不同价格的最大最小时间 -->
+	<select id="findMaxMin" resultMap="BaseResultMap" parameterType="java.lang.String">
+		SELECT 
+			a.*,
+			MAX(a.DepartureTime) AS maxTime,
+			MIN(a.DepartureTime) AS minTime,
+			c.currencyChs,
+			c.currencyEng
+		FROM 
+			age_of_price a,currency_type c 
+		WHERE 
+			a.currencyId=c.CurrencyTypeId
+			AND a.GroupLineId=#{groupLineId,jdbcType=VARCHAR}
+			AND a.IsAvailable =0
+ 		GROUP BY Adult,CurrencyId 
+ 		ORDER BY CurrencyId
+	</select>
+	<select id="findOrderNoCurrencyId" parameterType="com.chinatour.entity.AgeOfPrice" resultMap="BaseResultMap">
+		SELECT 
+			a.*,
+			c.currencyChs,
+			c.currencyEng
+		FROM
+			(SELECT 
+				* 
+			FROM 
+				age_of_price 
+			WHERE 
+				GroupLineId = #{groupLineId,jdbcType=VARCHAR}
+			ORDER BY DepartureTime
+			)a, currency_type c 
+		WHERE a.currencyId=c.CurrencyTypeId
+			AND a.IsAvailable =0
+		GROUP BY a.TypeNo
+		ORDER BY a.TypeNo
+	</select>
+</mapper>

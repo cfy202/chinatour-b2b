@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.FinanceSubjectMapper">
+
+	<sql id="Base_Column_List">
+		FinanceSubjectId, SubjectCode,SubjectName,CodeLen,SubjectType,DirectionOfBalance,ParentSubjectCode,AdjustType,HasChild,IsCurrentYearProfit,IsUnappropriatedProfit,GlobalFinanceSubjectId,DeptId
+	</sql>
+	<sql id="findForPage_sql">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM finance_subject
+		<where>
+			<trim suffixOverrides="AND">
+				<if test="record.financeSubjectId != null">
+					FinanceSubjectId = #{record.financeSubjectId,jdbcType=VARCHAR}
+				</if>
+				<if test="record.subjectCode != null">
+					AND SubjectCode = #{record.subjectCode,jdbcType=VARCHAR}
+				</if>
+				<if test="record.subjectName != null">
+					AND SubjectName LIKE CONCAT('%','${record.subjectName}','%')
+				</if>
+				<if test="record.codeLen != null">
+					AND CodeLen = #{record.codeLen,jdbcType=INTEGER}
+				</if>
+				<if test="record.subjectType != null">
+					AND SubjectType = #{record.subjectType,jdbcType=VARCHAR}
+				</if>
+				<if test="record.directionOfBalance != null">
+					AND DirectionOfBalance = #{record.directionOfBalance,jdbcType=INTEGER}
+				</if>
+				<if test="record.parentSubjectCode != null">
+					AND ParentSubjectCode = #{record.parentSubjectCode,jdbcType=VARCHAR}
+				</if>
+				<if test="record.adjustType != null">
+					AND AdjustType = #{record.adjustType,jdbcType=VARCHAR}
+				</if>
+				<if test="record.hasChild != null">
+					AND HasChild = #{record.hasChild,jdbcType=INTEGER}
+				</if>
+				<if test="record.isCurrentYearProfit != null">
+					AND IsCurrentYearProfit = #{record.isCurrentYearProfit,jdbcType=INTEGER}
+				</if>
+				<if test="record.isUnappropriatedProfit != null">
+					AND IsUnappropriatedProfit = #{record.IsUnappropriatedProfit,jdbcType=INTEGER}
+				</if>
+				<if test="record.globalFinanceSubjectId != null">
+					AND GlobalFinanceSubjectId = #{record.globalFinanceSubjectId,jdbcType=VARCHAR}
+				</if>
+				<if test="record.deptId != null">
+					AND DeptId = #{record.deptId,jdbcType=VARCHAR}
+				</if>
+			</trim>
+		</where>
+	</sql>
+	<resultMap type="com.chinatour.entity.FinanceSubject" id="BaseResultMap">
+		<id property="financeSubjectId" column="FinanceSubjectId" jdbcType="VARCHAR" />
+		<result property="subjectCode" column="SubjectCode" jdbcType="VARCHAR" />
+		<result property="subjectName" column="SubjectName" jdbcType="VARCHAR" />
+		<result property="codeLen" column="CodeLen" jdbcType="INTEGER" />
+		<result property="subjectType" column="SubjectType" jdbcType="VARCHAR" />
+		<result property="directionOfBalance" column="DirectionOfBalance" jdbcType="INTEGER" />
+		<result property="parentSubjectCode" column="ParentSubjectCode" jdbcType="VARCHAR" />
+		<result property="adjustType" column="AdjustType" jdbcType="VARCHAR" />
+		<result property="hasChild" column="HasChild" jdbcType="INTEGER" />
+		<result property="isCurrentYearProfit" column="IsCurrentYearProfit" jdbcType="INTEGER" />
+		<result property="isUnappropriatedProfit" column="IsUnappropriatedProfit" jdbcType="INTEGER" />
+		<result property="globalFinanceSubjectId" column="GlobalFinanceSubjectId" jdbcType="VARCHAR" />
+		<result property="deptId" column="DeptId" jdbcType="VARCHAR" />
+	</resultMap>
+	<select id="find" parameterType="com.chinatour.entity.FinanceSubject" resultType="com.chinatour.entity.FinanceSubject">
+		SELECT
+			<include refid="Base_Column_List" />
+		FROM
+			finance_subject
+		<where>
+			<trim suffixOverrides="AND">
+				<if test="id != null">
+					FinanceSubjectId = #{id} AND
+				</if>
+				<if test="subjectCode != null">
+					SubjectCode = #{subjectCode} AND
+				</if>
+				<if test="subjectName != null">
+					SubjectName = #{subjectName} AND
+				</if>
+				<if test="codeLen != null">
+					CodeLen = #{codeLen} AND
+				</if>
+				<if test="subjectType != null">
+					SubjectType = #{subjectType} AND
+				</if>
+				<if test="directionOfBalance != null">
+					DirectionOfBalance = #{directionOfBalance} AND
+				</if>
+				<if test="parentSubjectCode !=null">
+					ParentSubjectCode = #{parentSubjectCode} AND
+				</if>
+				<if test="adjustType !=null">
+					AdjustType = #{adjustType} AND
+				</if>
+				<if test="hasChild !=null">
+					HasChild = #{hasChild} AND
+				</if>
+				<if test="isCurrentYearProfit !=null">
+					IsCurrentYearProfit = #{isCurrentYearProfit} AND
+				</if>
+				<if test="isUnappropriatedProfit !=null">
+					IsUnappropriatedProfit = #{isUnappropriatedProfit} AND
+				</if>
+				<if test="globalFinanceSubjectId !=null">
+					GlobalFinanceSubjectId = #{globalFinanceSubjectId} AND
+				</if>
+				<if test="deptId !=null">
+					DeptId = #{deptId} AND
+				</if>
+			</trim>
+		</where>
+		ORDER BY
+		SubjectCode
+	</select>
+	
+	<insert id="saveBatch"  parameterType="java.util.List">  
+	    INSERT INTO finance_subject 
+	    (
+	    	`FinanceSubjectId`,
+			`SubjectCode`,
+			`SubjectName`,
+			`CodeLen`,
+			`SubjectType`,
+			`DirectionOfBalance`,
+			`ParentSubjectCode`,
+			`AdjustType`,
+			`DeptId`,
+			`HasChild`,
+			`IsCurrentYearProfit`,
+			`IsUnappropriatedProfit`,
+			`GlobalFinanceSubjectId`
+	    )
+	    VALUES  
+		    <foreach collection="list" item="item" index="index" separator=",">  
+			(
+				#{item.financeSubjectId},
+				#{item.subjectCode},                   
+				#{item.subjectName},      
+				#{item.codeLen},                       
+				#{item.subjectType},      
+				#{item.directionOfBalance},            
+				#{item.parentSubjectCode},             
+				#{item.adjustType}, 
+				#{item.deptId},
+				#{item.hasChild},
+				#{item.isCurrentYearProfit},
+				#{item.isUnappropriatedProfit},
+				#{item.globalFinanceSubjectId}
+			)
+		    </foreach>  
+	</insert>
+	
+	<delete id="removeById">
+		DELETE FROM
+			finance_subject
+		WHERE
+		<if test="id != null">
+			FinanceSubjectId = #{id}
+		</if>
+	</delete>
+	
+	<select id="findForPage" resultMap="BaseResultMap">
+		<include refid="Pager.paginationStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.paginationEnd" />
+	</select>
+
+	<select id="findForPageCount" resultType="int">
+		<include refid="Pager.countStart" />
+		<include refid="findForPage_sql" />
+		<include refid="Pager.countEnd" />
+	</select>
+	
+	<update id="update" parameterType="com.chinatour.entity.FinanceSubject">
+		UPDATE 
+			finance_subject
+			<set>
+				<if test="subjectCode != null">
+					SubjectCode = #{subjectCode},
+				</if>
+				<if test="subjectName != null">
+					SubjectName=#{subjectName},
+				</if>
+				<if test="codeLen != null">
+					CodeLen = #{codeLen},
+				</if>
+				<if test="subjectType != null">
+					SubjectType = #{subjectType},
+				</if>
+				<if test="directionOfBalance != null">
+					DirectionOfBalance = #{directionOfBalance},
+				</if>
+				<if test="parentSubjectCode != null">
+					ParentSubjectCode = #{parentSubjectCode},
+				</if>
+				<if test="adjustType != null">
+					AdjustType = #{adjustType},
+				</if>
+				<if test="hasChild != null">
+					HasChild = #{hasChild},
+				</if>
+				<if test="isCurrentYearProfit != null">
+					IsCurrentYearProfit = #{isCurrentYearProfit},
+				</if>
+				<if test="isUnappropriatedProfit != null">
+					IsUnappropriatedProfit = #{isUnappropriatedProfit},
+				</if>
+				<if test="globalFinanceSubjectId != null">
+					GlobalFinanceSubjectId = #{globalFinanceSubjectId},
+				</if>
+				<if test="deptId != null">
+					DeptId = #{deptId}
+				</if>
+			</set>
+		WHERE 
+            FinanceSubjectId=#{financeSubjectId}
+	</update>
+	
+	<insert id="save" parameterType="com.chinatour.entity.FinanceSubject">
+	     INSERT INTO finance_subject
+	     	<trim prefix="(" suffix=")" suffixOverrides=",">
+	     		 <if test="financeSubjectId != null">
+                    FinanceSubjectId,
+                </if>
+                <if test="subjectName != null">
+                    SubjectName,
+                </if>
+                <if test="codeLen != null">
+                    CodeLen,
+                </if>
+                <if test="subjectType != null">
+                    SubjectType,
+                </if>
+                <if test="directionOfBalance != null">
+                    DirectionOfBalance,
+                </if>
+                <if test="parentSubjectCode != null">
+                    ParentSubjectCode,
+                </if>
+                <if test="adjustType !=null">
+	                AdjustType,
+                </if>
+                <if test="hasChild !=null">
+	                HasChild,
+                </if>
+                <if test="isCurrentYearProfit !=null">
+	                IsCurrentYearProfit,
+                </if>
+                <if test="isUnappropriatedProfit !=null">
+	                IsUnappropriatedProfit,
+                </if>
+                <if test="globalFinanceSubjectId !=null">
+	                GlobalFinanceSubjectId,
+                </if>
+                <if test="deptId !=null">
+	                DeptId, 
+                </if>
+	     	</trim> 
+	     		
+	     	<trim prefix="values (" suffix=")" suffixOverrides=",">
+	     		<if test="financeSubjectId != null">
+                    #{financeSubjectId} ,
+                </if>
+                <if test="subjectName != null">
+                    #{subjectName} ,
+                </if>
+                <if test="codeLen != null">
+                    #{codeLen} ,
+                </if>
+                <if test="subjectType != null">
+                    #{subjectType} ,
+                </if>
+                <if test="directionOfBalance != null">
+                    #{directionOfBalance} ,
+                </if>
+                <if test="parentSubjectCode != null">
+                    #{parentSubjectCode} ,
+                </if>
+                <if test="adjustType !=null">
+	                #{adjustType} ,
+                </if>
+                <if test="hasChild !=null">
+	                #{hasChild} ,
+                </if>
+                <if test="isCurrentYearProfit !=null">
+	                #{isCurrentYearProfit},
+                </if>
+                <if test="isUnappropriatedProfit !=null">
+	                #{isUnappropriatedProfit} ,
+                </if>
+                <if test="globalFinanceSubjectId !=null">
+	                #{globalFinanceSubjectId},
+                </if>
+                <if test="deptId !=null">
+	                #{deptId} ,
+                </if>
+	     	</trim>
+	</insert>
+</mapper>

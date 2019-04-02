@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.InsurancePriceInfoMapper">
+	<resultMap id="BaseResultMap" type="com.chinatour.entity.InsurancePriceInfo">
+		<id column="InsurancePriceInfoId" property="insurancePriceInfoId"
+			jdbcType="VARCHAR" />
+		<result column="CustomerNo" property="customerNo" jdbcType="INTEGER" />
+		<result column="Receivable" property="receivable" jdbcType="DECIMAL" />
+		<result column="supplierOfAgentId" property="supplierOfAgentId"
+			jdbcType="VARCHAR" />
+		<result column="CustomerId" property="customerId" jdbcType="VARCHAR" />
+		<result column="IsCalculate" property="isCalculate" jdbcType="INTEGER" />
+		<result column="OrderId" property="orderId" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap id="ResultCustomerMap" type="com.chinatour.entity.InsurancePriceInfo">
+		<id column="InsurancePriceInfoId" property="insurancePriceInfoId"
+			jdbcType="VARCHAR" />
+		<result column="CustomerNo" property="customerNo" jdbcType="INTEGER" />
+		<result column="Receivable" property="receivable" jdbcType="DECIMAL" />
+		<result column="supplierOfAgentId" property="supplierOfAgentId"
+			jdbcType="VARCHAR" />
+		<result column="CustomerId" property="customerId" jdbcType="VARCHAR" />
+		<result column="IsCalculate" property="isCalculate" jdbcType="INTEGER" />
+		<result column="OrderId" property="orderId" jdbcType="VARCHAR" />
+		<result column="userId" property="userId" jdbcType="VARCHAR" />
+		<result column="orderNo" property="orderNo" jdbcType="VARCHAR" />
+		<result column="lastName" property="lastName" jdbcType="VARCHAR" />
+		<result column="firstName" property="firstName" jdbcType="VARCHAR" />
+		<result column="middleName" property="middleName" jdbcType="VARCHAR" />
+		<result column="agent" property="agent" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		InsurancePriceInfoId, CustomerNo, Receivable,
+		supplierOfAgentId, CustomerId, IsCalculate,
+		OrderId
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from insurancepriceinfo
+		where InsurancePriceInfoId =
+		#{insurancepriceinfoid,jdbcType=VARCHAR}
+	</select>
+	<delete id="removeById" parameterType="java.lang.String">
+		delete from
+		insurancepriceinfo
+		where InsurancePriceInfoId =
+		#{insurancePriceInfoId,jdbcType=VARCHAR}
+	</delete>
+			
+	<select id="removeByIds" resultMap="BaseResultMap">
+		DELETE 
+		FROM insurancepriceinfo
+		<where>
+			<trim suffixOverrides="AND">
+				InsurancePriceInfoId in
+					<foreach item="item" index="index" collection="ids" open="("
+					separator="," close=")">
+						#{item}
+					</foreach>
+				AND
+			</trim>
+		</where>
+	</select>
+	
+	<insert id="save" parameterType="com.chinatour.entity.InsurancePriceInfo">
+		insert into insurancepriceinfo
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="insurancePriceInfoId != null">
+				InsurancePriceInfoId,
+			</if>
+			<if test="customerNo != null">
+				CustomerNo,
+			</if>
+			<if test="receivable != null">
+				Receivable,
+			</if>
+			<if test="supplierOfAgentId != null">
+				supplierOfAgentId,
+			</if>
+			<if test="customerId != null">
+				CustomerId,</if>
+			<if test="isCalculate != null">
+				IsCalculate,
+			</if>
+			<if test="orderId != null">
+				OrderId,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="insurancePriceInfoId != null">
+				#{insurancePriceInfoId,jdbcType=VARCHAR},
+			</if>
+			<if test="customerNo != null">
+				#{customerNo,jdbcType=INTEGER},
+			</if>
+			<if test="receivable != null">
+				#{receivable,jdbcType=DECIMAL},
+			</if>
+			<if test="supplierOfAgentId != null">
+				#{supplierOfAgentId,jdbcType=VARCHAR},
+			</if>
+			<if test="customerId != null">
+				#{customerId,jdbcType=VARCHAR},
+			</if>
+			<if test="isCalculate != null">
+				#{isCalculate,jdbcType=INTEGER},
+			</if>
+			<if test="orderId != null">
+				#{orderId,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	
+	<insert id="batchSave" parameterType="java.util.List">
+		INSERT INTO insurancepriceinfo
+			(<include refid="Base_Column_List"/>)
+		values 
+			<foreach collection="list" item="item" index="index" separator="," >
+				(
+					#{item.insurancePriceInfoId,jdbcType=VARCHAR},
+					#{item.customerNo,jdbcType=INTEGER},
+					#{item.receivable,jdbcType=DECIMAL},
+					#{item.supplierOfAgentId,jdbcType=VARCHAR},
+					#{item.customerId,jdbcType=VARCHAR},
+					#{item.isCalculate,jdbcType=INTEGER},
+					#{item.orderId,jdbcType=VARCHAR}
+				)
+			</foreach>
+	</insert>
+	
+	<update id="update" parameterType="com.chinatour.entity.InsurancePriceInfo">
+		update insurancepriceinfo
+		<set>
+			<if test="customerNo != null">
+				CustomerNo = #{customerNo,jdbcType=INTEGER},
+			</if>
+			<if test="receivable != null">
+				Receivable = #{receivable,jdbcType=DECIMAL},
+			</if>
+			<if test="supplierOfAgentId != null">
+				supplierOfAgentId =
+				#{supplierOfAgentId,jdbcType=VARCHAR},
+			</if>
+			<if test="customerId != null">
+				CustomerId = #{customerId,jdbcType=VARCHAR},
+			</if>
+			<if test="isCalculate != null">
+				IsCalculate = #{isCalculate,jdbcType=INTEGER},
+			</if>
+			<if test="orderId != null">
+				OrderId = #{orderId,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where InsurancePriceInfoId = #{insurancePriceInfoId,jdbcType=VARCHAR}
+	</update>
+	<select id="findInsuranceAndCustomer" resultMap="ResultCustomerMap"
+		parameterType="java.lang.String">
+		SELECT
+		ii.orderId,
+		ii.InsurancePriceInfoId,
+		ii.CustomerNo,
+		ii.Receivable,
+		ii.IsCalculate,
+		c.lastName As lastName,
+		c.firstName As firstName,
+		c.MiddleName As
+		midlleName,
+		a.UserName As agent,
+		o.UserId As UserId ,
+		ii.SupplierOfAgentId,
+		o.orderNo as orderNo,
+		o.state
+		FROM
+		insurancepriceinfo ii,
+		supplierofagent s,
+		customer c,
+		suppriceinforel sf,
+		orders o,
+		customer_order_rel cr,
+		zs_admin a
+		WHERE
+		s.SupPriceInfoRelId=sf.SupPriceInfoRelId
+		AND
+		ii.SupplierOfAgentId=s.SupplierOfAgentId
+		AND cr.CustomerId=c.CustomerId
+		AND cr.OrderId=o.OrderId
+		AND o.UserId=a.id
+		AND sf.TourId=o.TourId
+		AND
+		ii.OrderId=o.OrderId
+		AND c.CustomerId=ii.CustomerId
+		
+		<if test="insurancePriceInfoId!=null">
+			AND ii.InsurancePriceInfoId=#{insurancePriceInfoId}
+		</if>
+		<if test="supplierOfAgentId!=null">
+			AND ii.SupplierOfAgentId=#{supplierOfAgentId}
+		</if>
+		<if test="orderId!=null">
+			AND o.OrderId=#{orderId}
+		</if>
+		<if test="userId!=null">
+			AND s.userId=#{userId}
+		</if>
+		<if test="supPriceInfoRelId!=null">
+			AND sf.supPriceInfoRelId=#{supPriceInfoRelId}
+		</if>
+		Order By ii.CustomerNo ASC
+	</select>
+	<select id="find" resultMap="BaseResultMap"
+		parameterType="com.chinatour.entity.InsurancePriceInfo">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM insurancepriceinfo
+		<where>
+			<if test="insurancePriceInfoId != null">
+				AND
+				InsurancePriceInfoId=#{insurancePriceInfoId,jdbcType=VARCHAR}
+			</if>
+			<if test="customerNo != null">
+				AND CustomerNo=#{customerNo,jdbcType=INTEGER}
+			</if>
+			<if test="receivable != null">
+				AND Receivable=#{receivable,jdbcType=DECIMAL}
+			</if>
+			<if test="supplierOfAgentId != null">
+				AND
+				SupplierOfAgentId=#{supplierOfAgentId,jdbcType=VARCHAR}
+			</if>
+			<if test="customerId != null">
+				AND CustomerId=#{customerId,jdbcType=VARCHAR}
+			</if>
+			<if test="isCalculate != null">
+				AND IsCalculate=#{isCalculate,jdbcType=INTEGER}
+			</if>
+			<if test="orderId != null">
+				AND OrderId=#{orderId,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+</mapper>

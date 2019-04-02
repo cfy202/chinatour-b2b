@@ -1,0 +1,1471 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.SupplierPriceForOrderMapper">
+	<resultMap id="BaseResultMap" type="com.chinatour.entity.SupplierPriceForOrder">
+		<id column="SupplierpricefororderId" property="supplierPriceForOrderId" jdbcType="VARCHAR" />
+		<result column="Quantity" property="quantity" jdbcType="INTEGER" />
+		<result column="InvoiceNo" property="invoiceNo" jdbcType="VARCHAR" />
+		<result column="Airline" property="airline" jdbcType="VARCHAR" />
+		<result column="TicketNo" property="ticketNo" jdbcType="VARCHAR" />
+		<result column="Charge" property="charge" jdbcType="DECIMAL" />
+		<result column="OperatorFee" property="operatorFee" jdbcType="DECIMAL" />
+		<result column="Amount" property="amount" jdbcType="DECIMAL" />
+		<result column="Type" property="type" jdbcType="INTEGER" />
+		<result column="AgentId" property="agentId" jdbcType="VARCHAR" />
+		<result column="Remark" property="remark" jdbcType="VARCHAR" />
+		<result column="RemarkOfAgent" property="remarkOfAgent" jdbcType="VARCHAR" />
+		<result column="Agency" property="agency" jdbcType="VARCHAR" />
+		<result column="AccRemarkOfOp" property="accRemarkOfOp" jdbcType="VARCHAR" />
+		<result column="RateOfCurrencyId" property="rateOfCurrencyId" jdbcType="VARCHAR" />
+		<result column="Card" property="card" jdbcType="VARCHAR" />
+		<result column="ApproveStatus" property="approveStatus" jdbcType="INTEGER"/>
+		<result column="UserId" property="userId" jdbcType="VARCHAR"/>
+		<result column="UserName" property="userName" jdbcType="VARCHAR"/>
+		<result column="DeptId" property="deptId" jdbcType="VARCHAR"/>
+		<result column="CreateDate" property="createDate" jdbcType="TIMESTAMP" />
+		<result column="UploadUrl" property="uploadUrl" jdbcType="VARCHAR"/>
+		<result column="FlightPnr" property="flightPnr" jdbcType="VARCHAR"/>
+		<result column="IsDel" property="isDel" jdbcType="INTEGER" />
+		<result column="TempValue01" property="tempValue01" jdbcType="VARCHAR"/>
+		<result column="TempValue02" property="tempValue02" jdbcType="VARCHAR"/>
+		<result column="TempValue03" property="tempValue03" jdbcType="VARCHAR"/>
+		<result column="TempValue04" property="tempValue04" jdbcType="VARCHAR"/>
+		<result column="TempValue05" property="tempValue05" jdbcType="VARCHAR"/>
+		<result column="TempValue06" property="tempValue06" jdbcType="VARCHAR"/>
+		<result column="Date" property="date" jdbcType="DATE" />
+		<result column="ArriveDate" property="arriveDate" jdbcType="DATE" />
+		<result column="VenderId" property="venderId" jdbcType="VARCHAR"/>
+		<result column="SupplierName" property="supplierName" jdbcType="VARCHAR"/>
+		<result column="Code" property="code" jdbcType="VARCHAR"/>
+		<result column="TicketType" property="TicketType" jdbcType="VARCHAR"/>
+		<result column="System" property="System" jdbcType="VARCHAR"/>
+		<result column="InvoiceNum" property="InvoiceNum" jdbcType="VARCHAR"/>
+		<result column="invoiceRemark" property="invoiceRemark" jdbcType="VARCHAR" />
+		<result column="locator" property="locator" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap id="resultWithAgent" type="com.chinatour.entity.SupplierPriceForOrder" extends="BaseResultMap">
+		<association property="agentName" column="agentId"
+			select="com.chinatour.persistence.AdminMapper.findNameById" />
+		<association property="deptName" column="agentId"
+			select="com.chinatour.persistence.DeptMapper.findNameByAdminId" />
+	</resultMap>
+	<resultMap id="resultWithAgency" type="com.chinatour.entity.SupplierPriceForOrder" extends="BaseResultMap">
+		<association property="venderName" column="agency"
+			select="com.chinatour.persistence.VenderMapper.findNameById" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		SupplierpricefororderId, Quantity, InvoiceNo, Airline, TicketNo,Charge,Card,Type,AgentId,approveStatus,DeptId,
+		OperatorFee, Amount,Remark,RemarkOfAgent,Agency,AccRemarkOfOp,rateOfCurrencyId,UserId,UserName,CreateDate,Date,ArriveDate,
+		UploadUrl,FlightPnr,TempValue01,TempValue02,TempValue03,TempValue04,TempValue05,TempValue06,IsDel,VenderId,SupplierName,
+		Code,TicketType,System,InvoiceNum,invoiceRemark,locator
+	</sql>
+
+	<select id="findById" resultMap="resultWithAgent" parameterType="java.lang.String">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		supplierpricefororder
+		WHERE
+		SupplierpricefororderId=#{supplierPriceForOrderId,jdbcType=VARCHAR}
+	</select>
+	<!-- 机票单号，重复提示功能 -->
+	<select id="findByInvoiceNo" resultMap="BaseResultMap" parameterType="java.lang.String">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		supplierpricefororder
+		WHERE
+		InvoiceNo=#{InvoiceNo,jdbcType=VARCHAR}
+	</select>
+
+	<delete id="removeById" parameterType="java.lang.String">
+		DELETE FROM
+		supplierpricefororder
+		WHERE
+		SupplierpricefororderId=#{supplierPriceForOrderId,jdbcType=VARCHAR}
+	</delete>
+
+	<insert id="save" parameterType="com.chinatour.entity.SupplierPriceForOrder">
+		insert into supplierpricefororder
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="supplierPriceForOrderId != null">
+				SupplierpricefororderId,
+			</if>
+			<if test="invoiceNo != null">
+				invoiceNo,
+			</if>
+			<if test="quantity != null">
+				quantity,
+			</if>
+			<if test="airline!= null">
+				Airline,
+			</if>
+			<if test="ticketNo!= null">
+				TicketNo,
+			</if>
+			<if test="charge!= null">
+				Charge,
+			</if>
+			<if test="net!= null">
+				Net,
+			</if>
+			<if test="operatorFee!= null">
+				OperatorFee,
+			</if>
+			<if test="amount!= null">
+				Amount,
+			</if>
+			<if test="type!= null">
+				Type,
+			</if>
+			<if test="agentId!= null">
+				AgentId,
+			</if>
+			<if test="remark!= null">
+				Remark,
+			</if>
+			<if test="remarkOfAgent!= null">
+				RemarkOfAgent,
+			</if>
+			<if test="accRemarkOfOp!= null">
+				AccRemarkOfOp,
+			</if>
+			<if test="agency!= null">
+				Agency,
+			</if>
+			<if test="rateOfCurrencyId!= null">
+				rateOfCurrencyId,
+			</if>
+			<if test="card!= null">
+				Card,
+			</if>
+			<if test="userId!= null">
+				UserId,
+			</if>
+			<if test="userName!= null">
+				UserName,
+			</if>
+			<if test="deptId!= null">
+				DeptId,
+			</if>
+			<if test="createDate!= null">
+				createDate,
+			</if>
+			<if test="uploadUrl!= null">
+				uploadUrl,
+			</if>
+			<if test="flightPnr!= null">
+				flightPnr,
+			</if>
+			<if test="isDel!= null">
+				isDel,
+			</if>
+			<if test="tempValue01!= null">
+				tempValue01,
+			</if>
+			<if test="tempValue02!= null">
+				tempValue02,
+			</if>
+			<if test="tempValue03!= null">
+				tempValue03,
+			</if>
+			<if test="tempValue04!= null">
+				tempValue04,
+			</if>
+			<if test="tempValue05!= null">
+				tempValue05,
+			</if>
+			<if test="tempValue06!= null">
+				tempValue06,
+			</if>
+			<if test="date!= null">
+				date,
+			</if>
+			<if test="arriveDate!= null">
+				arriveDate,
+			</if>
+			<if test="venderId!= null">
+				venderId,
+			</if>
+			<if test="supplierName!= null">
+				supplierName,
+			</if>
+			<if test="code!= null">
+				code,
+			</if>
+			<if test="TicketType!= null">
+				TicketType,
+			</if>
+			<if test="System!= null">
+				System,
+			</if>
+			<if test="invoiceRemark!= null">
+				invoiceRemark,
+			</if>
+			<if test="locator!= null">
+				locator,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="supplierPriceForOrderId != null">
+				#{supplierPriceForOrderId,jdbcType=VARCHAR},
+			</if>
+			<if test="invoiceNo != null">
+				#{invoiceNo,jdbcType=VARCHAR},
+			</if>
+			<if test="quantity!= null">
+				#{quantity,jdbcType=INTEGER},
+			</if>
+			<if test="airline != null">
+				#{airline,jdbcType=VARCHAR},
+			</if>
+			<if test="ticketNo != null">
+				#{ticketNo,jdbcType=VARCHAR},
+			</if>
+			<if test="charge != null">
+				#{charge,jdbcType=DECIMAL},
+			</if>
+			<if test="net != null">
+				#{net,jdbcType=DECIMAL},
+			</if>
+			<if test="operatorFee != null">
+				#{operatorFee,jdbcType=DECIMAL},
+			</if>
+			<if test="amount != null">
+				#{amount,jdbcType=DECIMAL},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=INTEGER},
+			</if>
+			<if test="agentId != null">
+				#{agentId,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="remarkOfAgent != null">
+				#{remarkOfAgent,jdbcType=VARCHAR},
+			</if>
+			<if test="accRemarkOfOp != null">
+				#{accRemarkOfOp,jdbcType=VARCHAR},
+			</if>
+			<if test="agency != null">
+				#{agency,jdbcType=VARCHAR},
+			</if>
+			<if test="rateOfCurrencyId != null">
+				#{rateOfCurrencyId,jdbcType=VARCHAR},
+			</if>
+			<if test="card != null">
+				#{card,jdbcType=VARCHAR},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=VARCHAR},
+			</if>
+			<if test="userName != null">
+				#{userName,jdbcType=VARCHAR},
+			</if>
+			<if test="deptId != null">
+				#{deptId,jdbcType=VARCHAR},
+			</if>
+			<if test="createDate!= null">
+				#{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="uploadUrl!= null">
+				#{uploadUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="flightPnr!= null">
+				#{flightPnr,jdbcType=VARCHAR},
+			</if>
+			<if test="isDel != null">
+				#{isDel,jdbcType=INTEGER},
+			</if>
+			<if test="tempValue01!= null">
+				#{tempValue01,jdbcType=VARCHAR},
+			</if>
+			<if test="tempValue02!= null">
+				#{tempValue02,jdbcType=VARCHAR},
+			</if>
+			<if test="tempValue03!= null">
+				#{tempValue03,jdbcType=VARCHAR},
+			</if>
+			<if test="tempValue04!= null">
+				#{tempValue04,jdbcType=VARCHAR},
+			</if>
+			<if test="tempValue05!= null">
+				#{tempValue05,jdbcType=VARCHAR},
+			</if>
+			<if test="tempValue06!= null">
+				#{tempValue06,jdbcType=VARCHAR},
+			</if>
+			<if test="date != null">
+				 #{date,jdbcType=DATE},
+			</if>
+			<if test="arriveDate != null">
+				 #{arriveDate,jdbcType=DATE},
+			</if>
+			<if test="venderId!= null">
+				#{venderId,jdbcType=VARCHAR},
+			</if>
+			<if test="supplierName!= null">
+				#{supplierName,jdbcType=VARCHAR},
+			</if>
+			<if test="code!= null">
+				#{code,jdbcType=VARCHAR},
+			</if>
+			<if test="TicketType!= null">
+				#{TicketType,jdbcType=VARCHAR},
+			</if>
+			<if test="System!= null">
+				#{System,jdbcType=VARCHAR},
+			</if>
+			<if test="invoiceRemark!= null">
+				#{invoiceRemark,jdbcType=VARCHAR},
+			</if>
+			<if test="locator!= null">
+				#{locator,jdbcType=VARCHAR},
+			</if>
+			
+		</trim>
+	</insert>
+	
+	<sql id="findForPage_sql">
+		SELECT
+			s.SupplierpricefororderId, s.Quantity, s.InvoiceNo,s. Airline, s.TicketNo,s.Charge,s.Card,s.Type,s.AgentId,s.approveStatus,s.deptId,s.Net,
+		s.OperatorFee,s.Amount,s.Remark,s.RemarkOfAgent,s.agency,s.AccRemarkOfOp,s.rateOfCurrencyId,s.UserId,s.UserName,s.CreateDate,s.Date,s.ArriveDate,v.name as venderName,
+		s.UploadUrl,s.FlightPnr,s.IsDel,za.username as agentName,d.deptName,s.tempValue01,s.tempValue02,s.tempValue03,s.tempValue04,s.tempValue05,s.tempValue06,
+		s.TicketType,s.System,s.InvoiceNum,s.Locator
+		FROM supplierpricefororder s LEFT JOIN zs_admin za 
+		   ON s.AgentId=za.id LEFT JOIN dept d ON d.deptId=za.deptId LEFT JOIN vender v on s.Agency= v.VenderId
+		<where>
+		     s.IsDel=0
+			<if test="record.invoiceNo != null">
+				AND s.invoiceNo LIKE CONCAT(CONCAT('%',#{record.invoiceNo}),'%')
+			</if>
+			<if test="record.quantity!= null">
+				AND s.quantity=#{record.quantity,jdbcType=INTEGER}
+			</if>
+			<if test="record.airline != null">
+				AND s.airline LIKE CONCAT(CONCAT('%',#{record.airline}),'%')
+			</if>
+			<if test="record.ticketNo != null">
+				AND s.ticketNo LIKE CONCAT(CONCAT('%',#{record.ticketNo}),'%')
+			</if>
+			<if test="record.charge != null">
+				AND s.charge=#{record.charge,jdbcType=DECIMAL}
+			</if>
+			<if test="record.operatorFee != null">
+				AND s.operatorFee=#{record.operatorFee,jdbcType=DECIMAL}
+			</if>
+			<if test="record.amount != null">
+				AND s.amount=#{record.amount,jdbcType=DECIMAL}
+			</if>
+			<if test="record.type != null">
+				AND s.type=#{record.type,jdbcType=INTEGER}
+			</if>
+			<if test="record.agentId != null">
+				AND s.agentId=#{record.agentId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.remark != null">
+				AND s.remark=#{record.remark,jdbcType=VARCHAR}
+			</if>
+			<if test="record.remarkOfAgent != null">
+				AND s.remarkOfAgent=#{record.remarkOfAgent,jdbcType=VARCHAR}
+			</if>
+			<if test="record.accRemarkOfOp != null">
+				AND s.accRemarkOfOp LIKE CONCAT(CONCAT('%',#{record.accRemarkOfOp}),'%')
+			</if>
+			<if test="record.agency != null">
+				AND s.agency=#{record.agency,jdbcType=VARCHAR}
+			</if>
+			<if test="record.rateOfCurrencyId != null">
+				AND s.rateOfCurrencyId=#{record.rateOfCurrencyId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.card != null">
+				AND s.card LIKE CONCAT(CONCAT('%',#{record.card}),'%')
+			</if>
+			<if test="record.userId != null">
+				AND s.userId=#{record.userId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.userName != null">
+				AND s.userName LIKE CONCAT(CONCAT('%',#{record.userName}),'%')
+			</if>
+			<if test="record.deptId != null">
+				AND s.deptId =#{record.deptId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.agentName!=null">
+				AND za.userName LIKE CONCAT(CONCAT('%',#{record.agentName}),'%')
+			</if>
+			<if test="record.deptName!=null">
+				AND d.deptName LIKE CONCAT(CONCAT('%',#{record.deptName}),'%')
+			</if>
+			<if test="record.createDate!= null">
+				AND s.createDate=#{record.createDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.beginningDate != null">
+				AND s.date <![CDATA[>=]]> #{record.beginningDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.endingDate != null">
+				AND s.date <![CDATA[<=]]> #{record.endingDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.arrivalBeginningDate != null">
+				AND s.arriveDate <![CDATA[>=]]> #{record.arrivalBeginningDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.arrivalEndingDate != null">
+				AND s.arriveDate <![CDATA[<=]]> #{record.arrivalEndingDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.uploadUrl!= null">
+				AND s.uploadUrl=#{record.uploadUrl,jdbcType=VARCHAR}
+			</if>
+			<if test="record.flightPnr!= null">
+				AND s.flightPnr=#{record.flightPnr,jdbcType=VARCHAR}
+			</if>
+			<if test="record.isDel != null">
+				AND s.isDel=#{record.isDel,jdbcType=INTEGER}
+			</if>
+			<if test="record.approveStatus != null">
+				AND s.approveStatus=#{record.approveStatus,jdbcType=INTEGER}
+			</if>
+			<if test="record.tempValue01!= null">
+				AND s.tempValue01=#{record.tempValue01,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tempValue02!= null">
+				AND s.tempValue02=#{record.tempValue02,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tempValue03!= null">
+				AND s.tempValue03 LIKE CONCAT(CONCAT('%',#{record.tempValue03}),'%') 
+			</if>
+			<if test="record.tempValue04!= null">
+				AND s.tempValue04=#{record.tempValue04,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tempValue05!= null">
+				AND s.tempValue05=#{record.tempValue05,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tempValue06!= null">
+				AND s.tempValue06=#{record.tempValue06,jdbcType=VARCHAR}
+			</if>
+			<if test="record.date != null">
+				AND s.Date = #{record.date,jdbcType=DATE}
+			</if>
+			<if test="record.arriveDate != null">
+				AND s.arriveDate = #{record.arriveDate,jdbcType=DATE}
+			</if>
+			<if test="record.venderId!= null">
+				AND s.venderId=#{record.venderId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.supplierName!= null">
+				AND s.supplierName=#{record.supplierName,jdbcType=VARCHAR}
+			</if>
+			<if test="record.code!= null">
+				AND s.code=#{record.code,jdbcType=VARCHAR}
+			</if>
+			<if test="record.venderName != null">
+				AND v.name LIKE CONCAT(CONCAT('%',#{record.venderName}),'%')
+			</if>
+			<if test="record.TicketType!= null">
+				AND s.TicketType=#{record.TicketType,jdbcType=VARCHAR}
+			</if>
+			<if test="record.System!= null">
+				AND s.System=#{record.System,jdbcType=VARCHAR}
+			</if>
+			<if test="record.invoiceNum!= null">
+				AND s.invoiceNum LIKE CONCAT(CONCAT('%',#{record.InvoiceNum}),'%')
+			</if>
+			<if test="record.locator!= null">
+				AND s.locator LIKE CONCAT(CONCAT('%',#{record.locator}),'%')
+			</if>
+			
+		</where>
+		ORDER BY s.Date DESC,s.invoiceNum DESC
+	</sql>
+	<select id="findForPage" resultMap="BaseResultMap">
+        <include refid="Pager.paginationStart"/>
+        <include refid="findForPage_sql"/>
+        <include refid="Pager.paginationEnd"/>    
+    </select>
+    
+    <select id="findForPageCount" resultType="int">
+        <include refid="Pager.countStart"/>
+        <include refid="findForPage_sql"/>
+        <include refid="Pager.countEnd"/>
+    </select>
+    <!-- List  显示总人数 -->
+	<select id="findAirPepole" resultType="com.chinatour.entity.SupplierPriceForOrder" parameterType="com.chinatour.entity.SupplierPriceForOrder">
+		SELECT
+			SUM(s.Quantity) as Quantity,
+			SUM(s.Net) as Net,
+			SUM(s.OperatorFee) as OperatorFee,
+			SUM(s.Amount) as Amount,
+			SUM(s.Charge) as Charge,
+			ROUND(SUM(s.tempValue06),2) as tempValue06
+		FROM supplierpricefororder s LEFT JOIN zs_admin za 
+		   ON s.AgentId=za.id LEFT JOIN dept d ON d.deptId=za.deptId LEFT JOIN vender v on s.Agency= v.VenderId
+		WHERE
+		     s.IsDel=0
+			<if test="invoiceNo != null">
+				AND s.invoiceNo  LIKE CONCAT(CONCAT('%',#{invoiceNo}),'%')
+			</if>
+			<if test="quantity!= null">
+				AND s.quantity=#{quantity,jdbcType=INTEGER}
+			</if>
+			<if test="airline != null">
+				AND s.airline LIKE CONCAT(CONCAT('%',#{airline}),'%')
+			</if>
+			<if test="ticketNo != null">
+				AND s.ticketNo LIKE CONCAT(CONCAT('%',#{ticketNo}),'%')
+			</if>
+			<if test="charge != null">
+				AND s.charge=#{charge,jdbcType=DECIMAL}
+			</if>
+			<if test="operatorFee != null">
+				AND s.operatorFee=#{operatorFee,jdbcType=DECIMAL}
+			</if>
+			<if test="amount != null">
+				AND s.amount=#{amount,jdbcType=DECIMAL}
+			</if>
+			<if test="type != null">
+				AND s.type=#{type,jdbcType=INTEGER}
+			</if>
+			<if test="agentId != null">
+				AND s.agentId=#{agentId,jdbcType=VARCHAR}
+			</if>
+			<if test="remark != null">
+				AND s.remark=#{remark,jdbcType=VARCHAR}
+			</if>
+			<if test="remarkOfAgent != null">
+				AND s.remarkOfAgent=#{remarkOfAgent,jdbcType=VARCHAR}
+			</if>
+			<if test="accRemarkOfOp != null">
+				AND s.accRemarkOfOp LIKE CONCAT(CONCAT('%',#{accRemarkOfOp}),'%')
+			</if>
+			<if test="agency != null">
+				AND s.agency=#{agency,jdbcType=VARCHAR}
+			</if>
+			<if test="rateOfCurrencyId != null">
+				AND s.rateOfCurrencyId=#{rateOfCurrencyId,jdbcType=VARCHAR}
+			</if>
+			<if test="card != null">
+				AND s.card LIKE CONCAT(CONCAT('%',#{card}),'%')
+			</if>
+			<if test="userId != null">
+				AND s.userId=#{userId,jdbcType=VARCHAR}
+			</if>
+			<if test="userName != null">
+				AND s.userName LIKE CONCAT(CONCAT('%',#{userName}),'%')
+			</if>
+			<if test="deptId != null">
+				AND s.deptId =#{deptId,jdbcType=VARCHAR}
+			</if>
+			<if test="agentName!=null">
+				AND za.userName LIKE CONCAT(CONCAT('%',#{agentName}),'%')
+			</if>
+			<if test="deptName!=null">
+				AND d.deptName LIKE CONCAT(CONCAT('%',#{deptName}),'%')
+			</if>
+			<if test="createDate!= null">
+				AND s.createDate=#{createDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="beginningDate != null">
+				AND s.date <![CDATA[>=]]> #{beginningDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="endingDate != null">
+				AND s.date <![CDATA[<=]]> #{endingDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="arrivalBeginningDate != null">
+				AND s.arriveDate <![CDATA[>=]]> #{arrivalBeginningDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="arrivalEndingDate != null">
+				AND s.arriveDate <![CDATA[<=]]> #{arrivalEndingDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="uploadUrl!= null">
+				AND s.uploadUrl=#{uploadUrl,jdbcType=VARCHAR}
+			</if>
+			<if test="flightPnr!= null">
+				AND s.flightPnr=#{flightPnr,jdbcType=VARCHAR}
+			</if>
+			<if test="isDel != null">
+				AND s.isDel=#{isDel,jdbcType=INTEGER}
+			</if>
+			<if test="approveStatus != null">
+				AND s.approveStatus=#{approveStatus,jdbcType=INTEGER}
+			</if>
+			<if test="tempValue01!= null">
+				AND s.tempValue01=#{tempValue01,jdbcType=VARCHAR}
+			</if>
+			<if test="tempValue02!= null">
+				AND s.tempValue02=#{tempValue02,jdbcType=VARCHAR}
+			</if>
+			<if test="tempValue03!= null">
+				AND s.tempValue03=#{tempValue03,jdbcType=VARCHAR}
+			</if>
+			<if test="tempValue04!= null">
+				AND s.tempValue04=#{tempValue04,jdbcType=VARCHAR}
+			</if>
+			<if test="tempValue05!= null">
+				AND s.tempValue05=#{tempValue05,jdbcType=VARCHAR}
+			</if>
+			<if test="tempValue06!= null">
+				AND s.tempValue06=#{tempValue06,jdbcType=VARCHAR}
+			</if>
+			<if test="date != null">
+				AND s.Date = #{date,jdbcType=DATE}
+			</if>
+			<if test="arriveDate != null">
+				AND s.arriveDate = #{arriveDate,jdbcType=DATE}
+			</if>
+			<if test="venderId!= null">
+				AND s.venderId=#{venderId,jdbcType=VARCHAR}
+			</if>
+			<if test="supplierName!= null">
+				AND s.supplierName=#{supplierName,jdbcType=VARCHAR}
+			</if>
+			<if test="code!= null">
+				AND s.code=#{code,jdbcType=VARCHAR}
+			</if>
+			<if test="TicketType!= null">
+				AND s.TicketType=#{TicketType,jdbcType=VARCHAR}
+			</if>
+			<if test="venderName != null">
+				AND v.name LIKE CONCAT(CONCAT('%',#{venderName}),'%')
+			</if>
+			<if test="invoiceNum!= null">
+				AND s.invoiceNum LIKE CONCAT(CONCAT('%',#{InvoiceNum}),'%')
+			</if>
+	</select>
+	<!-- 财务导出 -->
+   	<select id="airTicekExcle" resultMap="BaseResultMap"
+		parameterType="com.chinatour.entity.SupplierPriceForOrder">
+		
+		SELECT
+			s.SupplierpricefororderId, s.Quantity,s.InvoiceNum, s.InvoiceNo,s. Airline, s.TicketNo,s.Charge,s.Card,s.Type,s.AgentId,s.approveStatus,s.deptId,s.net,
+		s.OperatorFee,s.Amount,s.Remark,s.RemarkOfAgent,s.agency,s.AccRemarkOfOp,s.rateOfCurrencyId,s.UserId,s.UserName,s.CreateDate,s.Date,s.ArriveDate,
+		s.UploadUrl,s.FlightPnr,s.IsDel,d.deptName,s.tempValue01,s.tempValue02,s.tempValue03,s.tempValue04,s.tempValue05,s.tempValue06,v.name as venderName
+		FROM supplierpricefororder s LEFT JOIN zs_admin za 
+		   ON s.AgentId=za.id LEFT JOIN dept d ON d.deptId=za.deptId  LEFT JOIN vender v on s.Agency= v.VenderId
+		<where>
+		     s.IsDel=0
+			<if test="record.invoiceNo != null">
+				AND s.invoiceNo =#{record.invoiceNo,jdbcType=VARCHAR}
+			</if>
+			<if test="record.InvoiceNum != null">
+				AND s.invoiceNum =#{record.InvoiceNum,jdbcType=VARCHAR}
+			</if>
+			<if test="record.quantity!= null">
+				AND s.quantity=#{record.quantity,jdbcType=INTEGER}
+			</if>
+			<if test="record.airline != null">
+				AND s.airline LIKE CONCAT(CONCAT('%',#{record.airline}),'%')
+			</if>
+			<if test="record.ticketNo != null">
+				AND s.ticketNo LIKE CONCAT(CONCAT('%',#{record.ticketNo}),'%')
+			</if>
+			<if test="record.charge != null">
+				AND s.charge=#{record.charge,jdbcType=DECIMAL}
+			</if>
+			<if test="record.operatorFee != null">
+				AND s.operatorFee=#{record.operatorFee,jdbcType=DECIMAL}
+			</if>
+			<if test="record.amount != null">
+				AND s.amount=#{record.amount,jdbcType=DECIMAL}
+			</if>
+			<if test="record.type != null">
+				AND s.type=#{record.type,jdbcType=INTEGER}
+			</if>
+			<if test="record.agentId != null">
+				AND s.agentId=#{record.agentId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.remark != null">
+				AND s.remark=#{record.remark,jdbcType=VARCHAR}
+			</if>
+			<if test="record.remarkOfAgent != null">
+				AND s.remarkOfAgent=#{record.remarkOfAgent,jdbcType=VARCHAR}
+			</if>
+			<if test="record.accRemarkOfOp != null">
+				AND s.accRemarkOfOp=#{record.accRemarkOfOp,jdbcType=VARCHAR}
+			</if>
+			<if test="record.agency != null">
+				AND s.agency=#{record.agency,jdbcType=VARCHAR}
+			</if>
+			<if test="record.rateOfCurrencyId != null">
+				AND s.rateOfCurrencyId=#{record.rateOfCurrencyId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.card != null">
+				AND s.card=#{record.card,jdbcType=VARCHAR}
+			</if>
+			<if test="record.userId != null">
+				AND s.userId=#{record.userId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.userName != null">
+				AND s.userName LIKE CONCAT(CONCAT('%',#{record.userName}),'%')
+			</if>
+			<if test="record.deptId != null">
+				AND s.deptId =#{record.deptId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.agentName!=null">
+				AND za.userName LIKE CONCAT(CONCAT('%',#{record.agentName}),'%')
+			</if>
+			<if test="record.deptName!=null">
+				AND d.deptName LIKE CONCAT(CONCAT('%',#{record.deptName}),'%')
+			</if>
+			<if test="record.createDate!= null">
+				AND s.createDate=#{record.createDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.beginningDate != null">
+				AND s.date <![CDATA[>=]]> #{record.beginningDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.endingDate != null">
+				AND s.date <![CDATA[<=]]> #{record.endingDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.arrivalBeginningDate != null">
+				AND s.arriveDate <![CDATA[>=]]> #{record.arrivalBeginningDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.arrivalEndingDate != null">
+				AND s.arriveDate <![CDATA[<=]]> #{record.arrivalEndingDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.uploadUrl!= null">
+				AND s.uploadUrl=#{record.uploadUrl,jdbcType=VARCHAR}
+			</if>
+			<if test="record.flightPnr!= null">
+				AND s.flightPnr=#{record.flightPnr,jdbcType=VARCHAR}
+			</if>
+			<if test="record.isDel != null">
+				AND s.isDel=#{record.isDel,jdbcType=INTEGER}
+			</if>
+			<if test="record.approveStatus != null">
+				AND s.approveStatus=#{record.approveStatus,jdbcType=INTEGER}
+			</if>
+			<if test="record.tempValue01!= null">
+				AND s.tempValue01=#{record.tempValue01,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tempValue02!= null">
+				AND s.tempValue02=#{record.tempValue02,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tempValue03!= null">
+				AND s.tempValue03=#{record.tempValue03,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tempValue04!= null">
+				AND s.tempValue04=#{record.tempValue04,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tempValue05!= null">
+				AND s.tempValue05=#{record.tempValue05,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tempValue06!= null">
+				AND s.tempValue06=#{record.tempValue06,jdbcType=VARCHAR}
+			</if>
+			<if test="record.date != null">
+				AND s.Date = #{record.date,jdbcType=DATE}
+			</if>
+			<if test="record.arriveDate != null">
+				AND s.ArriveDate = #{record.arriveDate,jdbcType=DATE}
+			</if>
+			<if test="record.venderId!= null">
+				AND s.venderId=#{record.venderId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.supplierName!= null">
+				AND s.supplierName=#{record.supplierName,jdbcType=VARCHAR}
+			</if>
+			<if test="record.code!= null">
+				AND s.code=#{record.code,jdbcType=VARCHAR}
+			</if>
+			<if test="record.TicketType!= null">
+				AND s.TicketType=#{record.TicketType,jdbcType=VARCHAR}
+			</if>
+			<if test="record.venderName != null">
+				AND v.name LIKE CONCAT(CONCAT('%',#{record.venderName}),'%')
+			</if>
+			<if test="record.invoiceNum!= null">
+				AND s.invoiceNum LIKE CONCAT(CONCAT('%',#{record.InvoiceNum}),'%')
+			</if>
+		</where>
+		ORDER BY s.invoiceNum
+	</select>
+	<!-- 操作导出 -->
+	<select id="airTicekItemExcle" resultMap="BaseResultMap"
+		parameterType="com.chinatour.entity.SupplierPriceForOrder">
+		SELECT
+			s.SupplierpricefororderId, s.Quantity, s.InvoiceNo,s. Airline, ai.TicketNo,ai.Charge as Charge,s.Card,s.Type,s.AgentId,s.approveStatus,s.deptId,
+		ai.total as OperatorFee,ai.selling as Amount,s.Remark,s.RemarkOfAgent,s.agency,s.AccRemarkOfOp,s.rateOfCurrencyId,s.UserId,s.UserName,s.CreateDate,s.Date,s.ArriveDate,
+		s.UploadUrl,s.FlightPnr,s.IsDel,d.deptName,s.tempValue01,s.tempValue02,s.tempValue03,s.tempValue04,s.tempValue05,s.tempValue06,v.name as venderName,s.InvoiceNum
+		FROM airticket_items ai,supplierpricefororder s LEFT JOIN zs_admin za 
+		   ON s.AgentId=za.id LEFT JOIN dept d ON d.deptId=za.deptId  LEFT JOIN vender v on s.Agency= v.VenderId
+		<where>
+			s.SupplierpricefororderId=ai.SupplierpricefororderId
+			AND s.IsDel=0
+			<if test="record.invoiceNo != null">
+				AND s.invoiceNo =#{record.invoiceNo,jdbcType=VARCHAR}
+			</if>
+			<if test="record.quantity!= null">
+				AND s.quantity=#{record.quantity,jdbcType=INTEGER}
+			</if>
+			<if test="record.airline != null">
+				AND s.airline LIKE CONCAT(CONCAT('%',#{record.airline}),'%')
+			</if>
+			<if test="record.ticketNo != null">
+				AND s.ticketNo LIKE CONCAT(CONCAT('%',#{record.ticketNo}),'%')
+			</if>
+			<if test="record.charge != null">
+				AND s.charge=#{record.charge,jdbcType=DECIMAL}
+			</if>
+			<if test="record.operatorFee != null">
+				AND s.operatorFee=#{record.operatorFee,jdbcType=DECIMAL}
+			</if>
+			<if test="record.amount != null">
+				AND s.amount=#{record.amount,jdbcType=DECIMAL}
+			</if>
+			<if test="record.type != null">
+				AND s.type=#{record.type,jdbcType=INTEGER}
+			</if>
+			<if test="record.agentId != null">
+				AND s.agentId=#{record.agentId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.remark != null">
+				AND s.remark=#{record.remark,jdbcType=VARCHAR}
+			</if>
+			<if test="record.remarkOfAgent != null">
+				AND s.remarkOfAgent=#{record.remarkOfAgent,jdbcType=VARCHAR}
+			</if>
+			<if test="record.accRemarkOfOp != null">
+				AND s.accRemarkOfOp=#{record.accRemarkOfOp,jdbcType=VARCHAR}
+			</if>
+			<if test="record.agency != null">
+				AND s.agency=#{record.agency,jdbcType=VARCHAR}
+			</if>
+			<if test="record.rateOfCurrencyId != null">
+				AND s.rateOfCurrencyId=#{record.rateOfCurrencyId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.card != null">
+				AND s.card=#{record.card,jdbcType=VARCHAR}
+			</if>
+			<if test="record.userId != null">
+				AND s.userId=#{record.userId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.userName != null">
+				AND s.userName LIKE CONCAT(CONCAT('%',#{record.userName}),'%')
+			</if>
+			<if test="record.deptId != null">
+				AND s.deptId =#{record.deptId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.agentName!=null">
+				AND za.userName LIKE CONCAT(CONCAT('%',#{record.agentName}),'%')
+			</if>
+			<if test="record.deptName!=null">
+				AND d.deptName LIKE CONCAT(CONCAT('%',#{record.deptName}),'%')
+			</if>
+			<if test="record.createDate!= null">
+				AND s.createDate=#{record.createDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.beginningDate != null">
+				AND s.date <![CDATA[>=]]> #{record.beginningDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.endingDate != null">
+				AND s.date <![CDATA[<=]]> #{record.endingDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.arrivalBeginningDate != null">
+				AND s.arriveDate <![CDATA[>=]]> #{record.arrivalBeginningDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.arrivalEndingDate != null">
+				AND s.arriveDate <![CDATA[<=]]> #{record.arrivalEndingDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.uploadUrl!= null">
+				AND s.uploadUrl=#{record.uploadUrl,jdbcType=VARCHAR}
+			</if>
+			<if test="record.flightPnr!= null">
+				AND s.flightPnr=#{record.flightPnr,jdbcType=VARCHAR}
+			</if>
+			<if test="record.isDel != null">
+				AND s.isDel=#{record.isDel,jdbcType=INTEGER}
+			</if>
+			<if test="record.approveStatus != null">
+				AND s.approveStatus=#{record.approveStatus,jdbcType=INTEGER}
+			</if>
+			<if test="record.tempValue01!= null">
+				AND s.tempValue01=#{record.tempValue01,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tempValue02!= null">
+				AND s.tempValue02=#{record.tempValue02,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tempValue03!= null">
+				AND s.tempValue03=#{record.tempValue03,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tempValue04!= null">
+				AND s.tempValue04=#{record.tempValue04,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tempValue05!= null">
+				AND s.tempValue05=#{record.tempValue05,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tempValue06!= null">
+				AND s.tempValue06=#{record.tempValue06,jdbcType=VARCHAR}
+			</if>
+			<if test="record.date != null">
+				AND s.Date = #{record.date,jdbcType=DATE}
+			</if>
+			<if test="record.arriveDate != null">
+				AND s.ArriveDate = #{record.arriveDate,jdbcType=DATE}
+			</if>
+			<if test="record.venderId!= null">
+				AND s.venderId=#{record.venderId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.supplierName!= null">
+				AND s.supplierName=#{record.supplierName,jdbcType=VARCHAR}
+			</if>
+			<if test="record.code!= null">
+				AND s.code=#{record.code,jdbcType=VARCHAR}
+			</if>
+			<if test="record.TicketType!= null">
+				AND s.TicketType=#{record.TicketType,jdbcType=VARCHAR}
+			</if>
+			<if test="record.venderName != null">
+				AND v.name LIKE CONCAT(CONCAT('%',#{record.venderName}),'%')
+			</if>
+			<if test="record.invoiceNum!= null">
+				AND s.invoiceNum LIKE CONCAT(CONCAT('%',#{record.InvoiceNum}),'%')
+			</if>
+		</where>
+		ORDER BY ai.ticketNo
+	</select>
+   	<update id="update" parameterType="com.chinatour.entity.SupplierPriceForOrder">
+		UPDATE supplierpricefororder
+		<set>
+			<if test="invoiceNo != null">
+				invoiceNo =#{invoiceNo,jdbcType=VARCHAR},
+			</if>
+			<if test="quantity!= null">
+				quantity=#{quantity,jdbcType=INTEGER},
+			</if>
+			<if test="airline != null">
+				airline=#{airline,jdbcType=VARCHAR},
+			</if>
+			<if test="ticketNo != null">
+				ticketNo=#{ticketNo,jdbcType=VARCHAR},
+			</if>
+			<if test="charge != null">
+				charge=#{charge,jdbcType=DECIMAL},
+			</if>
+			<if test="net != null">
+				net=#{net,jdbcType=DECIMAL},
+			</if>
+			<if test="operatorFee != null">
+				operatorFee=#{operatorFee,jdbcType=DECIMAL},
+			</if>
+			<if test="amount != null">
+				amount=#{amount,jdbcType=DECIMAL},
+			</if>
+			<if test="type != null">
+				type=#{type,jdbcType=INTEGER},
+			</if>
+			<if test="approveStatus != null">
+				approveStatus=#{approveStatus,jdbcType=INTEGER},
+			</if>
+			<if test="agentId != null">
+				agentId=#{agentId,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				remark=#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="remarkOfAgent != null">
+				remarkOfAgent=#{remarkOfAgent,jdbcType=VARCHAR},
+			</if>
+			<if test="accRemarkOfOp != null">
+				accRemarkOfOp=#{accRemarkOfOp,jdbcType=VARCHAR},
+			</if>
+			<if test="agency != null">
+				agency=#{agency,jdbcType=VARCHAR},
+			</if>
+			<if test="rateOfCurrencyId != null">
+				rateOfCurrencyId=#{rateOfCurrencyId,jdbcType=VARCHAR},
+			</if>
+			<if test="card != null">
+				card=#{card,jdbcType=VARCHAR},
+			</if>
+			<if test="userId != null">
+				userId=#{userId,jdbcType=VARCHAR},
+			</if>
+			<if test="userName != null">
+				userName=#{userName,jdbcType=VARCHAR},
+			</if>
+			<if test="createDate!= null">
+				createDate=#{createDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="uploadUrl!= null">
+				uploadUrl=#{uploadUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="flightPnr!= null">
+				flightPnr=#{flightPnr,jdbcType=VARCHAR},
+			</if>
+			<if test="isDel != null">
+				isDel=#{isDel,jdbcType=INTEGER},
+			</if>
+			<if test="tempValue01!= null">
+				tempValue01=#{tempValue01,jdbcType=VARCHAR},
+			</if>
+			<if test="tempValue02!= null">
+				tempValue02=#{tempValue02,jdbcType=VARCHAR},
+			</if>
+			<if test="tempValue03!= null">
+				tempValue03=#{tempValue03,jdbcType=VARCHAR},
+			</if>
+			<if test="tempValue04!= null">
+				tempValue04=#{tempValue04,jdbcType=VARCHAR},
+			</if>
+			<if test="tempValue05!= null">
+				tempValue05=#{tempValue05,jdbcType=VARCHAR},
+			</if>
+			<if test="tempValue06!= null">
+				tempValue06=#{tempValue06,jdbcType=VARCHAR},
+			</if>
+			<if test="date != null">
+				Date = #{date,jdbcType=DATE},
+			</if>
+			<if test="arriveDate != null">
+				ArriveDate = #{arriveDate,jdbcType=DATE},
+			</if>
+			<if test="venderId!= null">
+				venderId=#{venderId,jdbcType=VARCHAR},
+			</if>
+			<if test="supplierName!= null">
+				supplierName=#{supplierName,jdbcType=VARCHAR},
+			</if>
+			<if test="code!= null">
+				code=#{code,jdbcType=VARCHAR},
+			</if>
+			<if test="TicketType!= null">
+				TicketType=#{TicketType,jdbcType=VARCHAR},
+			</if>
+			<if test="System!= null">
+				System=#{System,jdbcType=VARCHAR},
+			</if>
+			<if test="invoiceRemark!= null">
+				invoiceRemark=#{invoiceRemark,jdbcType=VARCHAR},
+			</if>
+			<if test="locator!= null">
+				locator=#{locator,jdbcType=VARCHAR},
+			</if>
+			
+		</set>
+		WHERE SupplierPriceForOrderId = #{supplierPriceForOrderId,jdbcType=VARCHAR}
+	</update>
+	
+	<!-- 统计 -->
+	<sql id="findForStatisticalPage_sql">
+		SELECT
+			s.SupplierpricefororderId, s.Quantity, s.InvoiceNo,s.InvoiceNum,s. Airline, s.TicketNo,s.Charge,s.Card,s.Type,s.AgentId,s.approveStatus,s.deptId,
+		s.OperatorFee,s.Amount,s.Remark,s.RemarkOfAgent,s.agency,s.AccRemarkOfOp,s.rateOfCurrencyId,s.UserId,s.UserName,s.CreateDate,s.Date,s.ArriveDate,
+		s.UploadUrl,s.FlightPnr,s.IsDel,za.username as agentName,d.deptName,s.tempValue01,s.tempValue02,s.tempValue03,s.tempValue04,s.tempValue05,s.tempValue06
+		FROM supplierpricefororder s LEFT JOIN zs_admin za 
+		   ON s.AgentId=za.id LEFT JOIN dept d ON d.deptId=za.deptId
+		<where>
+		     s.IsDel=0
+			<if test="record.invoiceNo != null">
+				AND s.invoiceNo =#{record.invoiceNo,jdbcType=VARCHAR}
+			</if>
+			<if test="record.InvoiceNum != null">
+				AND s.InvoiceNum =#{record.InvoiceNum,jdbcType=VARCHAR}
+			</if>
+			<if test="record.quantity!= null">
+				AND s.quantity=#{record.quantity,jdbcType=INTEGER}
+			</if>
+			<if test="record.airline != null">
+				AND s.airline LIKE CONCAT(CONCAT('%',#{airline}),'%')
+			</if>
+			<if test="record.ticketNo != null">
+				AND s.ticketNo LIKE CONCAT(CONCAT('%',#{ticketNo}),'%')
+			</if>
+			<if test="record.charge != null">
+				AND s.charge=#{record.charge,jdbcType=DECIMAL}
+			</if>
+			<if test="record.operatorFee != null">
+				AND s.operatorFee=#{record.operatorFee,jdbcType=DECIMAL}
+			</if>
+			<if test="record.amount != null">
+				AND s.amount=#{record.amount,jdbcType=DECIMAL}
+			</if>
+			<if test="record.type != null">
+				AND s.type=#{record.type,jdbcType=INTEGER}
+			</if>
+			<if test="record.agentId != null">
+				AND s.agentId=#{record.agentId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.remark != null">
+				AND s.remark=#{record.remark,jdbcType=VARCHAR}
+			</if>
+			<if test="record.remarkOfAgent != null">
+				AND s.remarkOfAgent=#{record.remarkOfAgent,jdbcType=VARCHAR}
+			</if>
+			<if test="record.accRemarkOfOp != null">
+				AND s.accRemarkOfOp=#{record.accRemarkOfOp,jdbcType=VARCHAR}
+			</if>
+			<if test="record.agency != null">
+				AND s.agency=#{record.agency,jdbcType=VARCHAR}
+			</if>
+			<if test="record.rateOfCurrencyId != null">
+				AND s.rateOfCurrencyId=#{record.rateOfCurrencyId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.card != null">
+				AND s.card=#{record.card,jdbcType=VARCHAR}
+			</if>
+			<if test="record.userId != null">
+				AND s.userId=#{record.userId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.userName != null">
+				AND s.userName LIKE CONCAT(CONCAT('%',#{userName}),'%')
+			</if>
+			<if test="record.deptId != null">
+				AND za.deptId =#{record.deptId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.agentName!=null">
+				AND za.userName LIKE CONCAT(CONCAT('%',#{agentName}),'%')
+			</if>
+			<if test="record.createDate!= null">
+				AND s.createDate=#{record.createDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.beginningDate != null">
+				AND s.date <![CDATA[>=]]> #{beginningDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.endingDate != null">
+				AND s.date <![CDATA[<=]]> #{endingDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.time!=null"> 
+				AND DATE_FORMAT(s.date,'%Y-%m')=#{record.time}
+			</if> 
+			<if test="record.year!=null"> 
+				AND DATE_FORMAT(s.date,'%Y')=#{record.year}
+			</if> 
+			<if test="record.uploadUrl!= null">
+				AND s.uploadUrl=#{record.uploadUrl,jdbcType=VARCHAR}
+			</if>
+			<if test="record.flightPnr!= null">
+				AND s.flightPnr=#{record.flightPnr,jdbcType=VARCHAR}
+			</if>
+			<if test="record.isDel != null">
+				AND s.isDel=#{record.isDel,jdbcType=INTEGER}
+			</if>
+			<if test="record.approveStatus != null">
+				AND s.approveStatus=#{record.approveStatus,jdbcType=INTEGER}
+			</if>
+			<if test="record.tempValue01!= null">
+				AND s.tempValue01=#{record.tempValue01,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tempValue02!= null">
+				AND s.tempValue02=#{record.tempValue02,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tempValue03!= null">
+				AND s.tempValue03=#{record.tempValue03,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tempValue04!= null">
+				AND s.tempValue04=#{record.tempValue04,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tempValue05!= null">
+				AND s.tempValue05=#{record.tempValue05,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tempValue06!= null">
+				AND s.tempValue06=#{record.tempValue06,jdbcType=VARCHAR}
+			</if>
+			<if test="record.date != null">
+				AND s.Date = #{record.date,jdbcType=DATE}
+			</if>
+			<if test="record.arriveDate != null">
+				AND s.ArriveDate = #{record.arriveDate,jdbcType=DATE}
+			</if>
+			<if test="record.venderId!= null">
+				AND s.venderId=#{record.venderId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.supplierName!= null">
+				AND s.supplierName=#{record.supplierName,jdbcType=VARCHAR}
+			</if>
+			<if test="record.code!= null">
+				AND s.code=#{record.code,jdbcType=VARCHAR}
+			</if>
+			<if test="record.TicketType!= null">
+				AND s.TicketType=#{record.TicketType,jdbcType=VARCHAR}
+			</if>
+		</where>
+		ORDER BY s.Date DESC
+	</sql>
+	<select id="findForStatisticalPage" resultMap="BaseResultMap">
+        <include refid="Pager.paginationStart"/>
+        <include refid="findForStatisticalPage_sql"/>
+        <include refid="Pager.paginationEnd"/>    
+    </select>
+    
+    <select id="findForStatisticalCount" resultType="int">
+        <include refid="Pager.countStart"/>
+        <include refid="findForStatisticalPage_sql"/>
+        <include refid="Pager.countEnd"/>
+    </select>
+    <!-- 打印统计详情2 -->
+	<select id="findForStatisticalPrint" resultMap="BaseResultMap"
+		parameterType="com.chinatour.entity.SupplierPriceForOrder">
+		SELECT
+			s.SupplierpricefororderId, s.Quantity, s.InvoiceNo,s. Airline, ai.TicketNo,ai.Charge as Charge,s.Card,s.Type,s.AgentId,s.approveStatus,s.deptId,
+		ai.net as OperatorFee,ai.selling as Amount,s.Remark,s.RemarkOfAgent,s.agency,s.AccRemarkOfOp,s.rateOfCurrencyId,s.UserId,s.UserName,s.CreateDate,s.Date,s.ArriveDate,
+		s.UploadUrl,s.FlightPnr,s.IsDel,d.deptName,s.tempValue01,s.tempValue02,s.tempValue03,s.tempValue04,s.tempValue05,s.tempValue06
+		FROM airticket_items ai,supplierpricefororder s LEFT JOIN zs_admin za 
+		   ON s.AgentId=za.id LEFT JOIN dept d ON d.deptId=za.deptId
+		where
+			s.SupplierpricefororderId=ai.SupplierpricefororderId
+			AND s.IsDel=0
+			<if test="record.invoiceNo != null">
+				AND s.invoiceNo =#{record.invoiceNo,jdbcType=VARCHAR}
+			</if>
+			<if test="record.quantity!= null">
+				AND s.quantity=#{record.quantity,jdbcType=INTEGER}
+			</if>
+			<if test="record.airline != null">
+				AND s.airline LIKE CONCAT(CONCAT('%',#{airline}),'%')
+			</if>
+			<if test="record.ticketNo != null">
+				AND s.ticketNo LIKE CONCAT(CONCAT('%',#{ticketNo}),'%')
+			</if>
+			<if test="record.charge != null">
+				AND s.charge=#{record.charge,jdbcType=DECIMAL}
+			</if>
+			<if test="record.operatorFee != null">
+				AND s.operatorFee=#{record.operatorFee,jdbcType=DECIMAL}
+			</if>
+			<if test="record.amount != null">
+				AND s.amount=#{record.amount,jdbcType=DECIMAL}
+			</if>
+			<if test="record.type != null">
+				AND s.type=#{record.type,jdbcType=INTEGER}
+			</if>
+			<if test="record.agentId != null">
+				AND s.agentId=#{record.agentId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.remark != null">
+				AND s.remark=#{record.remark,jdbcType=VARCHAR}
+			</if>
+			<if test="record.remarkOfAgent != null">
+				AND s.remarkOfAgent=#{record.remarkOfAgent,jdbcType=VARCHAR}
+			</if>
+			<if test="record.accRemarkOfOp != null">
+				AND s.accRemarkOfOp=#{record.accRemarkOfOp,jdbcType=VARCHAR}
+			</if>
+			<if test="record.agency != null">
+				AND s.agency=#{record.agency,jdbcType=VARCHAR}
+			</if>
+			<if test="record.rateOfCurrencyId != null">
+				AND s.rateOfCurrencyId=#{record.rateOfCurrencyId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.card != null">
+				AND s.card=#{record.card,jdbcType=VARCHAR}
+			</if>
+			<if test="record.userId != null">
+				AND s.userId=#{record.userId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.userName != null">
+				AND s.userName LIKE CONCAT(CONCAT('%',#{userName}),'%')
+			</if>
+			<if test="record.deptId != null">
+				AND za.deptId =#{record.deptId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.agentName!=null">
+				AND za.userName LIKE CONCAT(CONCAT('%',#{agentName}),'%')
+			</if>
+			<if test="record.createDate!= null">
+				AND s.createDate=#{record.createDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.beginningDate != null">
+				AND s.date <![CDATA[>=]]> #{beginningDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.endingDate != null">
+				AND s.date <![CDATA[<=]]> #{endingDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="record.time!=null"> 
+				AND DATE_FORMAT(s.date,'%Y-%m')=#{record.time}
+			</if> 
+			<if test="record.year!=null"> 
+				AND DATE_FORMAT(s.date,'%Y')=#{record.year}
+			</if> 
+			<if test="record.uploadUrl!= null">
+				AND s.uploadUrl=#{record.uploadUrl,jdbcType=VARCHAR}
+			</if>
+			<if test="record.flightPnr!= null">
+				AND s.flightPnr=#{record.flightPnr,jdbcType=VARCHAR}
+			</if>
+			<if test="record.isDel != null">
+				AND s.isDel=#{record.isDel,jdbcType=INTEGER}
+			</if>
+			<if test="record.approveStatus != null">
+				AND s.approveStatus=#{record.approveStatus,jdbcType=INTEGER}
+			</if>
+			<if test="record.tempValue01!= null">
+				AND s.tempValue01=#{record.tempValue01,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tempValue02!= null">
+				AND s.tempValue02=#{record.tempValue02,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tempValue03!= null">
+				AND s.tempValue03=#{record.tempValue03,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tempValue04!= null">
+				AND s.tempValue04=#{record.tempValue04,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tempValue05!= null">
+				AND s.tempValue05=#{record.tempValue05,jdbcType=VARCHAR}
+			</if>
+			<if test="record.tempValue06!= null">
+				AND s.tempValue06=#{record.tempValue06,jdbcType=VARCHAR}
+			</if>
+			<if test="record.date != null">
+				AND s.Date = #{record.date,jdbcType=DATE}
+			</if>
+			<if test="record.arriveDate != null">
+				AND s.ArriveDate = #{record.arriveDate,jdbcType=DATE}
+			</if>
+			<if test="record.venderId!= null">
+				AND s.venderId=#{record.venderId,jdbcType=VARCHAR}
+			</if>
+			<if test="record.supplierName!= null">
+				AND s.supplierName=#{record.supplierName,jdbcType=VARCHAR}
+			</if>
+			<if test="record.code!= null">
+				AND s.code=#{record.code,jdbcType=VARCHAR}
+			</if>
+			<if test="record.TicketType!= null">
+				AND s.TicketType=#{record.TicketType,jdbcType=VARCHAR}
+			</if>
+			ORDER BY ai.ticketNo
+	</select>
+        <!-- 统计  显示总人数 -->
+	<select id="findAirPepoleStatistical" resultType="com.chinatour.entity.SupplierPriceForOrder" parameterType="com.chinatour.entity.SupplierPriceForOrder">
+		SELECT
+			SUM(s.Quantity) as Quantity,
+			SUM(s.OperatorFee) as OperatorFee,
+			SUM(s.Amount) as Amount,
+			SUM(s.Charge) as Charge,
+			ROUND(SUM(s.tempValue06),2) as tempValue06
+		FROM supplierpricefororder s LEFT JOIN zs_admin za 
+		   ON s.AgentId=za.id LEFT JOIN dept d ON d.deptId=za.deptId
+		WHERE
+		     s.IsDel=0
+		<if test="invoiceNo != null">
+				AND s.invoiceNo =#{invo=#{record.No,jdbcType=VARCHAR}
+			</if>
+			<if test="quantity!= null">
+				AND s.quantity=#{quantity,jdbcType=INTEGER}
+			</if>
+			<if test="airline != null">
+				AND s.airline LIKE CONCAT(CONCAT('%',#{airline}),'%')
+			</if>
+			<if test="ticketNo != null">
+				AND s.ticketNo LIKE CONCAT(CONCAT('%',#{ticketNo}),'%')
+			</if>
+			<if test="charge != null">
+				AND s.charge=#{charge,jdbcType=DECIMAL}
+			</if>
+			<if test="operatorFee != null">
+				AND s.operatorFee=#{operatorFee,jdbcType=DECIMAL}
+			</if>
+			<if test="amount != null">
+				AND s.amount=#{amount,jdbcType=DECIMAL}
+			</if>
+			<if test="type != null">
+				AND s.type=#{type,jdbcType=INTEGER}
+			</if>
+			<if test="agentId != null">
+				AND s.agentId=#{agentId,jdbcType=VARCHAR}
+			</if>
+			<if test="remark != null">
+				AND s.remark=#{remark,jdbcType=VARCHAR}
+			</if>
+			<if test="remarkOfAgent != null">
+				AND s.remarkOfAgent=#{remarkOfAgent,jdbcType=VARCHAR}
+			</if>
+			<if test="accRemarkOfOp != null">
+				AND s.accRemarkOfOp=#{accRemarkOfOp,jdbcType=VARCHAR}
+			</if>
+			<if test="agency != null">
+				AND s.agency=#{agency,jdbcType=VARCHAR}
+			</if>
+			<if test="rateOfCurrencyId != null">
+				AND s.rateOfCurrencyId=#{rateOfCurrencyId,jdbcType=VARCHAR}
+			</if>
+			<if test="card != null">
+				AND s.card=#{card,jdbcType=VARCHAR}
+			</if>
+			<if test="userId != null">
+				AND s.userId=#{userId,jdbcType=VARCHAR}
+			</if>
+			<if test="userName != null">
+				AND s.userName LIKE CONCAT(CONCAT('%',#{userName}),'%')
+			</if>
+			<if test="deptId != null">
+				AND za.deptId =#{deptId,jdbcType=VARCHAR}
+			</if>
+			<if test="agentName!=null">
+				AND za.userName LIKE CONCAT(CONCAT('%',#{agentName}),'%')
+			</if>
+			<if test="createDate!= null">
+				AND s.createDate=#{createDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="beginningDate != null">
+				AND s.date <![CDATA[>=]]> #{beginningDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="endingDate != null">
+				AND s.date <![CDATA[<=]]> #{endingDate,jdbcType=TIMESTAMP}
+			</if>
+			<if test="time!=null"> 
+				AND DATE_FORMAT(s.date,'%Y-%m')=#{time}
+			</if> 
+			<if test="year!=null"> 
+				AND DATE_FORMAT(s.date,'%Y')=#{year}
+			</if> 
+			<if test="uploadUrl!= null">
+				AND s.uploadUrl=#{uploadUrl,jdbcType=VARCHAR}
+			</if>
+			<if test="flightPnr!= null">
+				AND s.flightPnr=#{flightPnr,jdbcType=VARCHAR}
+			</if>
+			<if test="isDel != null">
+				AND s.isDel=#{isDel,jdbcType=INTEGER}
+			</if>
+			<if test="approveStatus != null">
+				AND s.approveStatus=#{approveStatus,jdbcType=INTEGER}
+			</if>
+			<if test="tempValue01!= null">
+				AND s.tempValue01=#{tempValue01,jdbcType=VARCHAR}
+			</if>
+			<if test="tempValue02!= null">
+				AND s.tempValue02=#{tempValue02,jdbcType=VARCHAR}
+			</if>
+			<if test="tempValue03!= null">
+				AND s.tempValue03=#{tempValue03,jdbcType=VARCHAR}
+			</if>
+			<if test="tempValue04!= null">
+				AND s.tempValue04=#{tempValue04,jdbcType=VARCHAR}
+			</if>
+			<if test="tempValue05!= null">
+				AND s.tempValue05=#{tempValue05,jdbcType=VARCHAR}
+			</if>
+			<if test="tempValue06!= null">
+				AND s.tempValue06=#{tempValue06,jdbcType=VARCHAR}
+			</if>
+			<if test="date != null">
+				AND s.Date = #{date,jdbcType=DATE}
+			</if>
+			<if test="arriveDate != null">
+				AND s.ArriveDate = #{arriveDate,jdbcType=DATE}
+			</if>
+				<if test="venderId!= null">
+				AND s.venderId=#{venderId,jdbcType=VARCHAR}
+			</if>
+			<if test="supplierName!= null">
+				AND s.supplierName=#{supplierName,jdbcType=VARCHAR}
+			</if>
+			<if test="code!= null">
+				AND s.code=#{code,jdbcType=VARCHAR}
+			</if>
+			<if test="TicketType!= null">
+				AND s.TicketType=#{TicketType,jdbcType=VARCHAR}
+			</if>
+	</select>
+		<!-- 机票账单Invoice-->
+	<select id="findByInvoiceNum" resultMap="BaseResultMap" >
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+			supplierpricefororder
+		WHERE
+			InvoiceNum=#{InvoiceNum,jdbcType=VARCHAR}
+	</select>
+    
+</mapper>

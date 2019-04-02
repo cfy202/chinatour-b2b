@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinatour.persistence.RoleMapper">
+    <delete id="delete" parameterType="java.lang.String">
+        delete from zs_role
+        where id = #{id,jdbcType=VARCHAR}
+    </delete>
+
+    <sql id="Base_Column_List">
+        id, create_date, modify_date, description, is_system, name
+    </sql>
+    <resultMap id="BaseResultMap" type="com.chinatour.entity.Role">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="create_date" property="createDate" jdbcType="TIMESTAMP"/>
+        <result column="modify_date" property="modifyDate" jdbcType="TIMESTAMP"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="is_system" property="isSystem" jdbcType="BIT"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+    </resultMap>
+    <resultMap id="ResultMapForAuthorities" type="com.chinatour.entity.Role">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="create_date" property="createDate" jdbcType="TIMESTAMP"/>
+        <result column="modify_date" property="modifyDate" jdbcType="TIMESTAMP"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="is_system" property="isSystem" jdbcType="BIT"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <collection property="authorities" ofType="String" javaType="ArrayList">
+            <result column="authorities"/>
+        </collection>
+    </resultMap>
+    <select id="findAll" resultMap="ResultMapForAuthorities">
+        SELECT
+        r.id,
+        r.create_date,
+        r.modify_date,
+        r.description,
+        r.is_system,
+        r.name,
+        ra.authorities
+        FROM
+        zs_role r
+        LEFT JOIN zs_role_authority ra
+        ON r.id = ra.role
+    </select>
+    <select id="findById" resultMap="ResultMapForAuthorities" parameterType="java.lang.String">
+        SELECT
+          r.id,
+          r.create_date,
+          r.modify_date,
+          r.description,
+          r.is_system,
+          r.name,
+          ra.authorities
+        FROM
+          zs_role r
+          LEFT JOIN zs_role_authority ra
+            ON r.id = ra.role
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+    <select id="findByIds" resultMap="ResultMapForAuthorities">
+        SELECT
+        r.id,
+        r.create_date,
+        r.modify_date,
+        r.description,
+        r.is_system,
+        r.name,
+        ra.authorities
+        FROM
+        zs_role r
+        LEFT JOIN zs_role_authority ra
+        ON r.id = ra.role
+        <where>
+            <trim suffixOverrides="AND">
+                r.id in
+                <foreach item="item" index="index" collection="ids" open="("
+                         separator="," close=")">
+                    #{item}
+                </foreach>
+                AND
+            </trim>
+        </where>
+    </select>
+    <select id="findByIdForAuthorities" resultMap="ResultMapForAuthorities" parameterType="java.lang.String">
+        SELECT
+        r.id, r.create_date, r.modify_date, r.description, r.is_system, r.name,
+        ra.authorities
+        FROM
+        zs_role r,
+        zs_role_authority ra
+        where r.id = ra.role and ra.role = #{id,jdbcType=VARCHAR}
+    </select>
+    <sql id="findForPage_sql">
+        select
+        <include refid="Base_Column_List"/>
+        from zs_role
+        <where>
+            <trim suffixOverrides="AND">
+                <if test="record.id != null">
+                    id = #{record.id,jdbcType=VARCHAR} AND
+                </if>
+                <if test="record.createDate != null">
+                    create_date = #{record.createDate,jdbcType=TIMESTAMP} AND
+                </if>
+                <if test="record.modifyDate != null">
+                    modify_date = #{record.modifyDate,jdbcType=TIMESTAMP} AND
+                </if>
+                <if test="record.description != null">
+                    description = #{record.description,jdbcType=VARCHAR} AND
+                </if>
+                <if test="record.isSystem != null">
+                    is_system = #{record.isSystem,jdbcType=BIT} AND
+                </if>
+                <if test="record.name != null">
+                    name LIKE CONCAT('%','${record.name}','%') AND
+                </if>
+            </trim>
+        </where>
+    </sql>
+    <select id="findForPage" resultMap="BaseResultMap">
+        <include refid="Pager.paginationStart"/>
+        <include refid="findForPage_sql"/>
+        <include refid="Pager.paginationEnd"/>
+    </select>
+    <select id="findForPageCount" resultType="int">
+        <include refid="Pager.countStart"/>
+        <include refid="findForPage_sql"/>
+        <include refid="Pager.countEnd"/>
+    </select>
+    <update id="update" parameterType="com.chinatour.entity.Role">
+        update zs_role
+        <set>
+            <if test="createDate != null">
+                create_date = #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyDate != null">
+                modify_date = #{modifyDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="description != null">
+                description = #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="isSystem != null">
+                is_system = #{isSystem,jdbcType=BIT},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+    <insert id="save" parameterType="com.chinatour.entity.Role">
+        insert into zs_role
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="createDate != null">
+                create_date,
+            </if>
+            <if test="modifyDate != null">
+                modify_date,
+            </if>
+            <if test="description != null">
+                description,
+            </if>
+            <if test="isSystem != null">
+                is_system,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=VARCHAR},
+            </if>
+            <if test="createDate != null">
+                #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyDate != null">
+                #{modifyDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="description != null">
+                #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="isSystem != null">
+                #{isSystem,jdbcType=BIT},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+</mapper>
